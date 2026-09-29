@@ -496,7 +496,7 @@ function inisial(string $nama): string
     <nav class="menu">
       <a href="?" class="active">Dashboard</a>
       <a href="#">Unggah Catatan</a>
-      <a href="#">Catatan Saya</a>
+      <a href="playlist.php">Catatan Saya</a>
       <a href="#">Profil</a>
     </nav>
     <nav class="menu keluar">
