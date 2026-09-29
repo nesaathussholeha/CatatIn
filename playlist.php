@@ -304,7 +304,7 @@ body.modal-open .modal-overlay{ display:flex; }
       <button type="button" class="sidebar-close" onclick="tutupSidebar()" aria-label="Tutup menu">✕</button>
     </div>
     <nav class="menu">
-      <a href="#" title="Halaman ini dibuat anggota tim lain">Dashboard</a>
+      <a href="dashboard_user.php" title="dashboard">Dashboard</a>
       <a href="#" title="Halaman ini dibuat anggota tim lain">Unggah Catatan</a>
       <a href="#" title="Halaman ini dibuat anggota tim lain">Catatan Saya</a>
       <a href="<?= $namaFile ?>" class="active">Koleksi Saya</a>
