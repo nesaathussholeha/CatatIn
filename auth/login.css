@@ -1,0 +1,383 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 35px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #eef3ff;
+    color: #14234b;
+}
+
+.login-card {
+    width: min(1200px, 100%);
+    height: min(680px, calc(100vh - 75px));
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 15px 40px rgba(45, 73, 130, 0.12);
+}
+
+.intro {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 45px;
+    background: linear-gradient(145deg, #f8faff, #edf3ff);
+    overflow: hidden;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.book-icon {
+    font-size: 18px;
+    color: #3b5ccc;
+    background: #e0e8ff;
+    padding: 7px;
+    border-radius: 8px;
+    display: flex;
+}
+
+.brand h1 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #142b61;
+    letter-spacing: -0.3px;
+}
+
+.intro-text {
+    position: relative;
+    z-index: 2;
+    margin-top: 28px;
+    max-width: 420px;
+}
+
+.intro-text h2 {
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: #172b60;
+    margin-bottom: 12px;
+}
+
+.intro-text h2 strong {
+    color: #4568d8;
+}
+
+.intro-text>p {
+    max-width: 380px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.illustration {
+    width: 100%;
+    max-width: 380px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.illustration img {
+    display: block;
+    width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 38px 70px;
+    background: #ffffff;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.login-header h2 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    color: #14234b;
+}
+
+.login-header p {
+    max-width: 440px;
+    margin: 0 auto;
+    font-size: 14px;
+    line-height: 1.45;
+    color: #687692;
+}
+
+form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #172033;
+}
+
+.label-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.label-wrapper label {
+    margin-bottom: 0;
+}
+
+.label-wrapper a {
+    color: #3159d4;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.label-wrapper a:hover {
+    text-decoration: underline;
+}
+
+input {
+    width: 100%;
+    height: 48px;
+    padding: 0 15px;
+    border: 1px solid #d8deea;
+    border-radius: 8px;
+    outline: none;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    color: #172033;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder {
+    color: #9ba5b7;
+}
+
+input:focus {
+    border-color: #4666d4;
+    box-shadow: 0 0 0 3px #e9edff;
+}
+
+.password-box {
+    position: relative;
+}
+
+.password-box input {
+    padding-right: 48px;
+}
+
+#togglePassword {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #687692;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+#togglePassword:hover {
+    opacity: 1;
+}
+
+.login-button {
+    width: 100%;
+    height: 48px;
+    margin-top: 6px;
+    border: none;
+    border-radius: 8px;
+    background: #4664d3;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.login-button:hover {
+    background: #3856c3;
+}
+
+.login-button:active {
+    transform: translateY(1px);
+}
+
+.or {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: #7b8598;
+    font-size: 13px;
+}
+
+.or span {
+    flex: 1;
+    height: 1px;
+    background: #dfe3eb;
+}
+
+.google-button {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid #d5dbe6;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #1d2639;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.google-button:hover {
+    background: #f8f9fc;
+    border-color: #c4cddb;
+}
+
+.register {
+    margin-top: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: #687692;
+}
+
+.register a {
+    color: #3159d4;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.register a:hover {
+    text-decoration: underline;
+}
+
+.message {
+    min-height: 18px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.page-footer {
+    margin-top: 16px;
+    font-size: 12px;
+    color: #71809e;
+}
+
+@media (max-width: 950px) {
+    body {
+        padding: 20px;
+    }
+
+    .login-card {
+        height: auto;
+        min-height: 600px;
+    }
+
+    .intro {
+        padding: 32px;
+    }
+
+    .login {
+        padding: 35px 40px;
+    }
+
+    .intro-text h2 {
+        font-size: 26px;
+    }
+
+    .illustration {
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 700px) {
+    body {
+        padding: 0;
+        background: #ffffff;
+    }
+
+    .login-card {
+        width: 100%;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .intro {
+        min-height: 320px;
+        padding: 30px 24px;
+    }
+
+    .intro-text {
+        margin-top: 20px;
+    }
+
+    .intro-text h2 {
+        font-size: 24px;
+    }
+
+    .illustration {
+        max-width: 220px;
+        margin-top: 20px;
+    }
+
+    .login {
+        padding: 32px 24px;
+    }
+}
