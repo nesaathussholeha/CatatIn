@@ -4,7 +4,6 @@ session_start();
 
 const APP_NAME = 'CatatIn';
 
-/* ---------- Helper ---------- */
 function e(?string $teks): string
 {
     return htmlspecialchars((string) $teks, ENT_QUOTES, 'UTF-8');
@@ -31,19 +30,22 @@ function csrf_field(): string
     return '<input type="hidden" name="csrf" value="' . e($_SESSION['csrf']) . '">';
 }
 
-/*
- * Data contoh katalog (statis, belum database).
- * Urutan kolom: id, judul, jurusan, kategori
- */
 function katalog(): array
 {
     $baris = [
-        [1,  'Rangkuman Struktur Data — Pohon & Graf', 'Informatika',      'Rangkuman'],
-        [2,  'Kumpulan Soal UAS Basis Data 2025',      'Sistem Informasi', 'Soal Ujian'],
-        [3,  'Modul Praktikum Rangkaian Digital',      'Elektro',          'Modul'],
-        [4,  'Rangkuman Pemrograman Web — Sesi 1–7',   'Informatika',      'Rangkuman'],
-        [5,  'Rangkuman Struktur Data',                'Informatika',      'Rangkuman'],
-        [6,  'Modul Praktikum HTML/CSS',               'Informatika',      'Modul'],
+        [1,  'Rangkuman Struktur Data — Pohon & Graf',   'Informatika',      'Rangkuman'],
+        [2,  'Kumpulan Soal UAS Basis Data 2025',        'Sistem Informasi', 'Soal Ujian'],
+        [3,  'Modul Praktikum Rangkaian Digital',        'Elektro',          'Modul'],
+        [4,  'Rangkuman Pemrograman Web — Sesi 1–7',     'Informatika',      'Rangkuman'],
+        [5,  'Rangkuman Struktur Data',                  'Informatika',      'Rangkuman'],
+        [6,  'Modul Praktikum HTML/CSS',                 'Informatika',      'Modul'],
+        [7,  'Ringkasan Pemrograman Web — Sesi 8–14',    'Informatika',      'Rangkuman'],
+        [8,  'Rangkuman Kalkulus — Limit & Kontinuitas', 'Informatika',      'Rangkuman'],
+        [9,  'Rangkuman Kalkulus — Turunan',             'Informatika',      'Rangkuman'],
+        [10, 'Rangkuman Kalkulus — Aplikasi Turunan',    'Informatika',      'Rangkuman'],
+        [11, 'Latihan Soal Kalkulus Bab 1–4',            'Informatika',      'Soal Ujian'],
+        [12, 'Panduan Penulisan Skripsi',                'Informatika',      'Modul'],
+        [13, 'Contoh Daftar Pustaka',                    'Informatika',      'Modul'],
     ];
 
     $hasil = [];
@@ -58,7 +60,6 @@ function find_note(int $id): ?array
     return katalog()[$id] ?? null;
 }
 
-/* ---------- State awal (disimpan di sesi, belum database) ---------- */
 if (!isset($_SESSION['folders'])) {
     $_SESSION['folders'] = [
         1 => ['id' => 1, 'nama' => 'Bahan UTS Pemrograman Web',   'notes' => [5, 6, 7]],
@@ -71,7 +72,6 @@ if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
 
-/* ---------- Proses aksi: Create, Update, Delete ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_valid($_POST['csrf'] ?? null)) {
         flash('Sesi berakhir. Muat ulang halaman lalu coba lagi.', 'error');
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = trim((string) ($_POST['nama'] ?? ''));
 
     switch ($aksi) {
-        case 'buat':                                   // CREATE folder
+        case 'buat':
             if ($nama === '' || mb_strlen($nama) > 60) {
                 flash('Nama folder wajib diisi, maksimal 60 karakter.', 'error');
                 pindah('playlist.php');
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('Folder "' . $nama . '" dibuat.');
             pindah('playlist.php?f=' . $baru);
 
-        case 'ubah_nama':                              // UPDATE nama folder
+        case 'ubah_nama':
             if (!isset($_SESSION['folders'][$fid])) { pindah('playlist.php'); }
             if ($nama === '' || mb_strlen($nama) > 60) {
                 flash('Nama folder wajib diisi, maksimal 60 karakter.', 'error');
@@ -103,14 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash('Nama folder diperbarui.');
             pindah('playlist.php?f=' . $fid);
 
-        case 'hapus':                                  // DELETE folder
+        case 'hapus':
             if (isset($_SESSION['folders'][$fid])) {
                 unset($_SESSION['folders'][$fid]);
                 flash('Folder dihapus. Catatan aslinya tetap ada di katalog.');
             }
             pindah('playlist.php');
 
-        case 'tambah':                                 // UPDATE: tambah catatan ke folder
+        case 'tambah':
             if (!isset($_SESSION['folders'][$fid])) { pindah('playlist.php'); }
             $dipilih = array_map('intval', (array) ($_POST['catatan'] ?? []));
             $jumlah  = 0;
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash($jumlah > 0 ? "$jumlah catatan ditambahkan ke folder." : 'Belum ada catatan yang dipilih.', $jumlah > 0 ? 'ok' : 'error');
             pindah('playlist.php?f=' . $fid);
 
-        case 'keluarkan':                              // UPDATE: keluarkan catatan dari folder
+        case 'keluarkan':
             if (isset($_SESSION['folders'][$fid])) {
                 $nid = (int) ($_POST['catatan_id'] ?? 0);
                 $_SESSION['folders'][$fid]['notes'] = array_values(
@@ -136,7 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     pindah('playlist.php');
 }
 
-/* ---------- Tampilan: READ ---------- */
 $folders = $_SESSION['folders'];
 $aktifId = (int) ($_GET['f'] ?? 0);
 if (!isset($folders[$aktifId])) {
@@ -181,15 +180,17 @@ unset($_SESSION['flash']);
     <aside class="sidebar" id="sidebar">
         <button type="button" class="tutup-menu" id="tutup-menu" aria-label="Tutup menu">✕</button>
         <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-        <nav aria-label="Menu utama">
+        <nav class="nav-sidebar" aria-label="Menu utama">
             <ul class="menu">
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="#">Unggah Catatan</a></li>
-                <li><a href="#">Catatan Saya</a></li>
+                <li><a href="../dashboard_user/dashboard.php">Dashboard</a></li>
+                <li><a href="unggah.php">Unggah Catatan</a></li>
+                <li><a href="catatan-saya.php">Catatan Saya</a></li>
                 <li><a href="playlist.php" aria-current="page">Koleksi Belajar</a></li>
-                <li><a href="#">Tugas Belajar</a></li>
-                <li><a href="#">Profil</a></li>
-                <li><a href="auth/login.php">Keluar</a></li>
+                <li><a href="tugas.php">Tugas Belajar</a></li>
+                <li><a href="profil.php">Profil</a></li>
+            </ul>
+            <ul class="menu">
+                <li><a href="../auth/login.php" class="menu-keluar">Keluar</a></li>
             </ul>
         </nav>
     </aside>
@@ -214,22 +215,34 @@ unset($_SESSION['flash']);
         <div class="koleksi">
             <nav class="daftar-folder" aria-label="Daftar folder">
                 <?php foreach ($folders as $f): ?>
-                    <a class="folder-kartu<?= $f['id'] === $aktifId ? ' aktif' : '' ?>"
-                       href="playlist.php?f=<?= (int) $f['id'] ?>"
-                       <?= $f['id'] === $aktifId ? 'aria-current="true"' : '' ?>>
-                        <strong><span aria-hidden="true">📁</span> <?= e($f['nama']) ?></strong>
-                        <small><?= count($f['notes']) ?> catatan</small>
-                    </a>
+                    <div class="folder-item">
+                        <a class="folder-kartu<?= $f['id'] === $aktifId ? ' aktif' : '' ?>"
+                           href="playlist.php?f=<?= (int) $f['id'] ?>"
+                           <?= $f['id'] === $aktifId ? 'aria-current="true"' : '' ?>>
+                            <strong><span aria-hidden="true">📁</span> <?= e($f['nama']) ?></strong>
+                            <small><?= count($f['notes']) ?> catatan</small>
+                        </a>
+
+                        <button type="button" class="menu-titik"
+                                aria-label="Opsi folder <?= e($f['nama']) ?>"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span aria-hidden="true">⋮</span>
+                        </button>
+                        <div class="menu-folder" hidden>
+                            <button type="button" data-buka="dlg-ubah"
+                                    data-folder-id="<?= (int) $f['id'] ?>"
+                                    data-folder-nama="<?= e($f['nama']) ?>">Edit nama</button>
+                            <button type="button" class="bahaya" data-buka="dlg-hapus"
+                                    data-folder-id="<?= (int) $f['id'] ?>"
+                                    data-folder-nama="<?= e($f['nama']) ?>">Hapus folder</button>
+                        </div>
+                    </div>
                 <?php endforeach; ?>
             </nav>
 
             <section class="panel" aria-labelledby="judul-folder">
                 <div class="panel-kepala">
                     <h2 id="judul-folder">Isi folder: <?= e($folder['nama']) ?></h2>
-                    <div class="panel-aksi">
-                        <button type="button" class="tombol" data-buka="dlg-ubah">Edit nama</button>
-                        <button type="button" class="tombol tombol-bahaya" data-buka="dlg-hapus">Hapus folder</button>
-                    </div>
                 </div>
 
                 <?php if (!$catatanFolder): ?>
@@ -268,7 +281,6 @@ unset($_SESSION['flash']);
     </main>
 </div>
 
-<!-- Dialog: buat folder -->
 <dialog id="dlg-buat" class="modal">
     <form method="post" class="modal-isi">
         <?= csrf_field() ?>
@@ -284,7 +296,6 @@ unset($_SESSION['flash']);
 </dialog>
 
 <?php if ($folder): ?>
-<!-- Dialog: edit nama -->
 <dialog id="dlg-ubah" class="modal">
     <form method="post" class="modal-isi">
         <?= csrf_field() ?>
@@ -300,14 +311,13 @@ unset($_SESSION['flash']);
     </form>
 </dialog>
 
-<!-- Dialog: hapus folder -->
 <dialog id="dlg-hapus" class="modal">
     <form method="post" class="modal-isi">
         <?= csrf_field() ?>
         <input type="hidden" name="aksi" value="hapus">
         <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
         <h2>Hapus folder?</h2>
-        <p>Folder <strong><?= e($folder['nama']) ?></strong> akan dihapus. Catatan asli di dalamnya tidak ikut terhapus.</p>
+        <p>Folder <strong data-isi-nama><?= e($folder['nama']) ?></strong> akan dihapus. Catatan asli di dalamnya tidak ikut terhapus.</p>
         <div class="modal-aksi">
             <button type="button" class="tombol" data-tutup>Batal</button>
             <button type="submit" class="tombol tombol-bahaya-penuh">Hapus folder</button>
@@ -315,7 +325,6 @@ unset($_SESSION['flash']);
     </form>
 </dialog>
 
-<!-- Dialog: tambah catatan dari katalog -->
 <dialog id="dlg-tambah" class="modal">
     <form method="post" class="modal-isi">
         <?= csrf_field() ?>

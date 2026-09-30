@@ -1,0 +1,449 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #eef1fb;
+    color: #171a3d;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 230px;
+    height: 100vh;
+    padding: 30px 14px;
+    background-color: #171a3d;
+    color: white;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    margin-bottom: 35px;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+}
+
+.logo-icon {
+    color: #4c5fe0;
+    font-size: 14px;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav-item {
+    display: block;
+    padding: 11px 12px;
+    border-radius: 8px;
+    color: #e1e4f2;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #3b4bc7;
+
+    color: white;
+}
+
+.nav-item.active {
+    background-color: #4c5fe0;
+
+    color: white;
+}
+
+.nav-item.logout {
+    margin-top: 8px;
+}
+
+.main-content {
+    min-height: 100vh;
+    margin-left: 230px;
+    background-color: #f8f9fd;
+}
+
+.topbar {
+    width: 100%;
+    height: 55px;
+    background-color: white;
+    border-bottom: 1px solid #e1e4f2;
+    
+    /* Gunakan Flexbox untuk mendorong avatar ke kanan */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 45px; /* Jarak dari tepi kanan */
+    box-sizing: border-box;
+}
+
+.breadcrumb {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.top-avatar {
+    /* Hapus position absolute agar mengikuti alur Flexbox */
+    position: static;
+    transform: none;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background-color: #4c5fe0;
+    color: white;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.content {
+    width: 100%;
+    padding: 38px 45px 60px;
+}
+
+
+.content h1 {
+    margin-bottom: 24px;
+    font-family: "Poppins", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #171a3d;
+}
+
+.success-message,
+.error-message {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.success-message {
+    border: 1px solid #86efac;
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.error-message {
+    border: 1px solid #fca5a5;
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+.statistics {
+    width: 100%;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    min-height: 115px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 22px;
+    background-color: white;
+    border: 1px solid #e1e4f2;
+    border-radius: 10px;
+    box-shadow:
+        0 2px 8px
+        rgba(23, 26, 61, 0.04);
+}
+
+
+.stat-number {
+    margin-bottom: 5px;
+    font-family: "Poppins", sans-serif;
+    font-size: 27px;
+    font-weight: 700;
+    color: #171a3d;
+}
+
+
+.stat-label {
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.badge-title {
+    margin-bottom: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 21px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #171a3d;
+}
+
+.profile-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 28px;
+    background-color: white;
+    border: 1px solid #e1e4f2;
+    border-radius: 10px;
+    box-shadow:
+        0 2px 8px
+        rgba(23, 26, 61, 0.04);
+}
+
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e1e4f2;
+}
+
+.profile-avatar-lg {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #4c5fe0;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.profile-name {
+    display: block;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #171a3d;
+}
+
+.profile-sub {
+    display: block;
+    margin-top: 3px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 0 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-family: "Poppins", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #171a3d;
+}
+
+.form-group input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    outline: none;
+    border: 1px solid #e1e4f2;
+    border-radius: 8px;
+    background-color: white;
+    color: #171a3d;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+.form-group input:focus {
+    border-color: #4c5fe0;
+    box-shadow:
+        0 0 0 3px
+        rgba(76, 95, 224, 0.10);
+}
+
+.password-wrapper {
+    position: relative;
+    display: block;
+}
+
+.password-wrapper input {
+    padding-right: 45px;
+}
+
+.show-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 15px;
+    opacity: 0.55;
+    transition: 0.2s;
+}
+
+.show-password:hover {
+    opacity: 1;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+
+.btn {
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    border: 1px solid #4c5fe0;
+    background-color: #4c5fe0;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #3b4bc7;
+}
+
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-danger {
+    border: 1px solid #fca5a5;
+    background-color: white;
+    color: #ef4444;
+}
+
+.btn-danger:hover {
+    background-color: #fef2f2;
+}
+
+@media (min-width: 1400px) {
+
+    .content {
+        padding-left: 50px;
+
+        padding-right: 50px;
+    }
+
+}
+
+@media (max-width: 1000px) {
+
+    .content {
+        padding: 30px;
+    }
+
+    .statistics,
+    .profile-card,
+    .success-message,
+    .error-message {
+        max-width: 100%;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 18px;
+    }
+
+    .logo {
+        margin-bottom: 18px;
+    }
+
+    .navigation {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .nav-item {
+        white-space: nowrap;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .topbar {
+        padding: 0 18px;
+    }
+
+    .content {
+        padding: 25px 18px;
+    }
+
+    .content h1 {
+        font-size: 24px;
+    }
+
+    .statistics {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .button-group {
+        flex-wrap: wrap;
+    }
+}

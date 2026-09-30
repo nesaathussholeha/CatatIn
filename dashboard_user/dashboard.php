@@ -59,21 +59,25 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
     </header>
     <div class="overlay" id="overlay"></div>
 
-    <aside class="sidebar" id="sidebar">
-        <button type="button" class="tutup-menu" id="tutup-menu" aria-label="Tutup menu">✕</button>
-        <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-        <nav aria-label="Menu utama">
-            <ul class="menu">
-                <li><a href="dashboard.php" aria-current="page">Dashboard</a></li>
-                <li><a href="#">Unggah Catatan</a></li>
-                <li><a href="#">Catatan Saya</a></li>
-                <li><a href="playlist.php">Koleksi Belajar</a></li>
-                <li><a href="#">Tugas Belajar</a></li>
-                <li><a href="#">Profil</a></li>
-                <li><a href="auth/login.php">Keluar</a></li>
-            </ul>
-        </nav>
-    </aside>
+<aside class="sidebar" id="sidebar">
+    <button type="button" class="tutup-menu" id="tutup-menu" aria-label="Tutup menu">✕</button>
+    <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
+    
+    <nav aria-label="Menu utama">
+        <ul class="menu">
+            <li><a href="dashboard.php" aria-current="page">Dashboard</a></li>
+            <li><a href="#">Unggah Catatan</a></li>
+            <li><a href="#">Catatan Saya</a></li>
+            <li><a href="../playlist/playlist.php">Koleksi Belajar</a></li>
+            <li><a href="#">Tugas Belajar</a></li>
+            <li><a href="#">Profil</a></li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-bawah">
+        <a href="../auth/login.php" class="menu-keluar">Keluar</a>
+    </div>
+</aside>
 
     <main class="konten">
         <div class="judul-baris">
