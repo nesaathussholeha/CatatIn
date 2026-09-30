@@ -70,7 +70,7 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
                 <li><a href="../playlist/playlist.php">Koleksi Belajar</a></li>
                 <li><a href="#">Tugas Belajar</a></li>
                 <li><a href="#">Profil</a></li>
-                <li><a href="auth/login.php">Keluar</a></li>
+                <li><a href="../auth/login.php">Keluar</a></li>
             </ul>
         </nav>
     </aside>
