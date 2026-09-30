@@ -6,9 +6,9 @@ unset($_SESSION['error_message']);
 
 if (isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'admin') {
-        header("Location: ../dashboard_admin.php");
+        header("Location: ../admin/admin.php");
     } else {
-        header("Location: ../dashboard_user.php");
+        header("Location: ../dashboard_user/dashboard.php");
     }
     exit();
 }
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email'    => 'user@gmail.com',
             'password' => '123456',
             'role'     => 'user',
-            'redirect' => '../dashboard_user.php'
+            'redirect' => '../dashboard_user/dashboard.php'
         ],
         [
             'id'       => 2,
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email'    => 'admin@gmail.com',
             'password' => '123456',
             'role'     => 'admin',
-            'redirect' => '../dashboard_admin.php'
+            'redirect' => '../admin/admin.php'
         ]
     ];
 
