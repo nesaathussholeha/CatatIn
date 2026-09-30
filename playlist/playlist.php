@@ -38,12 +38,19 @@ function csrf_field(): string
 function katalog(): array
 {
     $baris = [
-        [1,  'Rangkuman Struktur Data — Pohon & Graf', 'Informatika',      'Rangkuman'],
-        [2,  'Kumpulan Soal UAS Basis Data 2025',      'Sistem Informasi', 'Soal Ujian'],
-        [3,  'Modul Praktikum Rangkaian Digital',      'Elektro',          'Modul'],
-        [4,  'Rangkuman Pemrograman Web — Sesi 1–7',   'Informatika',      'Rangkuman'],
-        [5,  'Rangkuman Struktur Data',                'Informatika',      'Rangkuman'],
-        [6,  'Modul Praktikum HTML/CSS',               'Informatika',      'Modul'],
+        [1,  'Rangkuman Struktur Data — Pohon & Graf',   'Informatika',      'Rangkuman'],
+        [2,  'Kumpulan Soal UAS Basis Data 2025',        'Sistem Informasi', 'Soal Ujian'],
+        [3,  'Modul Praktikum Rangkaian Digital',        'Elektro',          'Modul'],
+        [4,  'Rangkuman Pemrograman Web — Sesi 1–7',     'Informatika',      'Rangkuman'],
+        [5,  'Rangkuman Struktur Data',                  'Informatika',      'Rangkuman'],
+        [6,  'Modul Praktikum HTML/CSS',                 'Informatika',      'Modul'],
+        [7,  'Ringkasan Pemrograman Web — Sesi 8–14',    'Informatika',      'Rangkuman'],
+        [8,  'Rangkuman Kalkulus — Limit & Kontinuitas', 'Informatika',      'Rangkuman'],
+        [9,  'Rangkuman Kalkulus — Turunan',             'Informatika',      'Rangkuman'],
+        [10, 'Rangkuman Kalkulus — Aplikasi Turunan',    'Informatika',      'Rangkuman'],
+        [11, 'Latihan Soal Kalkulus Bab 1–4',            'Informatika',      'Soal Ujian'],
+        [12, 'Panduan Penulisan Skripsi',                'Informatika',      'Modul'],
+        [13, 'Contoh Daftar Pustaka',                    'Informatika',      'Modul'],
     ];
 
     $hasil = [];
@@ -184,11 +191,11 @@ unset($_SESSION['flash']);
         <nav aria-label="Menu utama">
             <ul class="menu">
                 <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="#">Unggah Catatan</a></li>
-                <li><a href="#">Catatan Saya</a></li>
+                <li><a href="unggah.php">Unggah Catatan</a></li>
+                <li><a href="catatan-saya.php">Catatan Saya</a></li>
                 <li><a href="playlist.php" aria-current="page">Koleksi Belajar</a></li>
-                <li><a href="#">Tugas Belajar</a></li>
-                <li><a href="#">Profil</a></li>
+                <li><a href="tugas.php">Tugas Belajar</a></li>
+                <li><a href="profil.php">Profil</a></li>
                 <li><a href="auth/login.php">Keluar</a></li>
             </ul>
         </nav>
@@ -214,22 +221,34 @@ unset($_SESSION['flash']);
         <div class="koleksi">
             <nav class="daftar-folder" aria-label="Daftar folder">
                 <?php foreach ($folders as $f): ?>
-                    <a class="folder-kartu<?= $f['id'] === $aktifId ? ' aktif' : '' ?>"
-                       href="playlist.php?f=<?= (int) $f['id'] ?>"
-                       <?= $f['id'] === $aktifId ? 'aria-current="true"' : '' ?>>
-                        <strong><span aria-hidden="true">📁</span> <?= e($f['nama']) ?></strong>
-                        <small><?= count($f['notes']) ?> catatan</small>
-                    </a>
+                    <div class="folder-item">
+                        <a class="folder-kartu<?= $f['id'] === $aktifId ? ' aktif' : '' ?>"
+                           href="playlist.php?f=<?= (int) $f['id'] ?>"
+                           <?= $f['id'] === $aktifId ? 'aria-current="true"' : '' ?>>
+                            <strong><span aria-hidden="true">📁</span> <?= e($f['nama']) ?></strong>
+                            <small><?= count($f['notes']) ?> catatan</small>
+                        </a>
+
+                        <button type="button" class="menu-titik"
+                                aria-label="Opsi folder <?= e($f['nama']) ?>"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span aria-hidden="true">⋮</span>
+                        </button>
+                        <div class="menu-folder" hidden>
+                            <button type="button" data-buka="dlg-ubah"
+                                    data-folder-id="<?= (int) $f['id'] ?>"
+                                    data-folder-nama="<?= e($f['nama']) ?>">Edit nama</button>
+                            <button type="button" class="bahaya" data-buka="dlg-hapus"
+                                    data-folder-id="<?= (int) $f['id'] ?>"
+                                    data-folder-nama="<?= e($f['nama']) ?>">Hapus folder</button>
+                        </div>
+                    </div>
                 <?php endforeach; ?>
             </nav>
 
             <section class="panel" aria-labelledby="judul-folder">
                 <div class="panel-kepala">
                     <h2 id="judul-folder">Isi folder: <?= e($folder['nama']) ?></h2>
-                    <div class="panel-aksi">
-                        <button type="button" class="tombol" data-buka="dlg-ubah">Edit nama</button>
-                        <button type="button" class="tombol tombol-bahaya" data-buka="dlg-hapus">Hapus folder</button>
-                    </div>
                 </div>
 
                 <?php if (!$catatanFolder): ?>
@@ -284,7 +303,7 @@ unset($_SESSION['flash']);
 </dialog>
 
 <?php if ($folder): ?>
-<!-- Dialog: edit nama -->
+<!-- Dialog: edit nama (folder_id dan nama diisi JS sesuai folder yang dipilih) -->
 <dialog id="dlg-ubah" class="modal">
     <form method="post" class="modal-isi">
         <?= csrf_field() ?>
@@ -300,14 +319,14 @@ unset($_SESSION['flash']);
     </form>
 </dialog>
 
-<!-- Dialog: hapus folder -->
+<!-- Dialog: hapus folder (folder_id dan nama diisi JS sesuai folder yang dipilih) -->
 <dialog id="dlg-hapus" class="modal">
     <form method="post" class="modal-isi">
         <?= csrf_field() ?>
         <input type="hidden" name="aksi" value="hapus">
         <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
         <h2>Hapus folder?</h2>
-        <p>Folder <strong><?= e($folder['nama']) ?></strong> akan dihapus. Catatan asli di dalamnya tidak ikut terhapus.</p>
+        <p>Folder <strong data-isi-nama><?= e($folder['nama']) ?></strong> akan dihapus. Catatan asli di dalamnya tidak ikut terhapus.</p>
         <div class="modal-aksi">
             <button type="button" class="tombol" data-tutup>Batal</button>
             <button type="submit" class="tombol tombol-bahaya-penuh">Hapus folder</button>
