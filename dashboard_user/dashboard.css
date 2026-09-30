@@ -1,6 +1,5 @@
 [hidden] { display: none !important; }
 
-
 :root {
     --navy: #17193f;
     --navy-2: #23265a;
@@ -39,7 +38,6 @@ h1, h2, h3, p { margin: 0; }
 
 :focus-visible { outline: 3px solid rgba(79, 91, 213, .45); outline-offset: 2px; }
 
-
 .app { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
 
 .sidebar {
@@ -47,6 +45,8 @@ h1, h2, h3, p { margin: 0; }
     padding: 24px 16px;
     background: var(--navy);
     color: #dfe1f7;
+    display: flex;
+    flex-direction: column;
 }
 
 .logo {
@@ -67,17 +67,31 @@ h1, h2, h3, p { margin: 0; }
 .menu a:hover { background: var(--navy-2); color: #fff; }
 .menu a[aria-current="page"] { background: var(--primer); color: #fff; font-weight: 700; }
 
-.konten {     padding: 32px clamp(16px, 3vw, 48px) 48px;
+.sidebar-bawah {
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.menu-keluar {
+    display: block; padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--bahaya); font-weight: 600; text-decoration: none;
+    transition: background .15s, color .15s;
+}
+.menu-keluar:hover { background: var(--bahaya-muda); color: var(--bahaya); }
+
+.konten {
+    padding: 32px clamp(16px, 3vw, 48px) 48px;
     width: 100%;
     max-width: none;  
-    min-width: 0; }
+    min-width: 0;
+}
 
 .judul-baris {
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; margin-bottom: 20px;
 }
 .judul-baris h1 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
-
 
 .tombol {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -115,7 +129,6 @@ h1, h2, h3, p { margin: 0; }
 .toast-error { background: var(--bahaya); }
 .toast.sembunyi { opacity: 0; transition: opacity .3s; }
 
-/* ---------- Responsif (bersama) ---------- */
 @media (max-width: 860px) {
     .app { grid-template-columns: 1fr; }
     .sidebar { position: static; height: auto; padding: 14px 16px; }
@@ -128,10 +141,6 @@ h1, h2, h3, p { margin: 0; }
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
 }
-
-/* ==========================================================
-   KHUSUS HALAMAN DASHBOARD
-   ========================================================== */
 
 .avatar {
     display: grid; place-items: center;
@@ -172,6 +181,8 @@ h1, h2, h3, p { margin: 0; }
     border: 1px solid var(--garis); border-radius: 999px;
     text-decoration: none;
     transition: background .15s;
+    font-family: inherit;
+    cursor: pointer;
 }
 .chip:hover { background: var(--primer-muda); }
 .chip.aktif { background: var(--primer); border-color: var(--primer); color: #fff; font-weight: 600; }
@@ -206,10 +217,6 @@ h1, h2, h3, p { margin: 0; }
 .detail { font-size: 12px; color: var(--redup); text-decoration: none; }
 .detail:hover { color: var(--primer); text-decoration: underline; }
 
-/* chip berupa <button> */
-.chip { font-family: inherit; cursor: pointer; }
-
-/* dropdown jurusan */
 .pilih-jurusan select {
     padding: 6px 12px;
     font: inherit; font-size: 13px; font-weight: 600; color: var(--teks);
@@ -231,7 +238,7 @@ h1, h2, h3, p { margin: 0; }
     .bar-cari { flex-direction: column; }
     .pilih-urut select { width: 100%; padding: 10px 14px; }
 }
-/* ---------- Menu mobile (off-canvas) ---------- */
+
 .topbar, .overlay, .tutup-menu { display: none; }
 
 @media (max-width: 860px) {
@@ -252,7 +259,6 @@ h1, h2, h3, p { margin: 0; }
         background: #fff; border-radius: 2px;
     }
 
-    /* sidebar jadi panel yang bergeser dari kiri */
     .sidebar {
         position: fixed; top: 0; left: 0; z-index: 40;
         width: 250px; height: 100%;
@@ -261,11 +267,17 @@ h1, h2, h3, p { margin: 0; }
         transform: translateX(-100%);
         visibility: hidden;
         transition: transform .25s, visibility .25s;
+        display: flex;
+        flex-direction: column;
     }
     .sidebar.terbuka { transform: translateX(0); visibility: visible; }
 
-    .menu { display: grid; gap: 4px; }   /* kembali vertikal */
+    .menu { display: grid; gap: 4px; }
     .logo { margin-bottom: 24px; }
+
+    .sidebar-bawah {
+        margin-top: 16px;
+    }
 
     .tutup-menu {
         display: block; position: absolute; top: 12px; right: 12px;
