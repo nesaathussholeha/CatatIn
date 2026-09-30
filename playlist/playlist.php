@@ -190,13 +190,13 @@ unset($_SESSION['flash']);
         <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
         <nav aria-label="Menu utama">
             <ul class="menu">
-                <li><a href="dashboard.php">Dashboard</a></li>
+                <li><a href="../dashboard_user/dashboard.php">Dashboard</a></li>
                 <li><a href="unggah.php">Unggah Catatan</a></li>
                 <li><a href="catatan-saya.php">Catatan Saya</a></li>
                 <li><a href="playlist.php" aria-current="page">Koleksi Belajar</a></li>
                 <li><a href="tugas.php">Tugas Belajar</a></li>
                 <li><a href="profil.php">Profil</a></li>
-                <li><a href="auth/login.php">Keluar</a></li>
+                <li><a href="../auth/login.php">Keluar</a></li>
             </ul>
         </nav>
     </aside>
