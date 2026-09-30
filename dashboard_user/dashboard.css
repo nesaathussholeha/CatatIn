@@ -234,6 +234,191 @@ h1, h2, h3, p { margin: 0; }
 }
 .kosong .tombol { margin-top: 10px; }
 
+/* Styling Form Unggah Catatan */
+.top-bar-desktop {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.card-form {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px 40px;
+  max-width: 620px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.card-form h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  color: #0f172a;
+}
+
+.form-group {
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.form-group input[type="text"],
+.form-group select {
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  outline: none;
+  background-color: #ffffff;
+  color: #334155;
+  transition: border-color 0.15s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group select:focus {
+  border-color: #4f46e5;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+/* Radio Button Gaya Pill (Tipe Berkas) */
+.pill-group {
+  display: flex;
+  gap: 12px;
+}
+
+.pill-btn {
+  cursor: pointer;
+}
+
+.pill-btn input[type="radio"] {
+  display: none;
+}
+
+.pill-btn span {
+  display: inline-block;
+  padding: 8px 22px;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pill-btn input[type="radio"]:checked + span {
+  background: #4f46e5;
+  color: #ffffff;
+  border-color: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+}
+
+/* Checkbox & Button */
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 24px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #4f46e5;
+  cursor: pointer;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 13px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: q0px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+/* Styling Tabel Catatan Saya */
+.tabel-container {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.tabel-catatan {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.tabel-catatan th {
+  padding: 16px;
+  color: #64748b;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tabel-catatan td {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.td-judul {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.link-edit {
+  color: #64748b;
+  text-decoration: none;
+  margin-right: 12px;
+  font-weight: 500;
+}
+
+.link-hapus {
+  color: #ef4444;
+  text-decoration: none;
+  font-weight: 500;
+}
+
 @media (max-width: 860px) {
     .bar-cari { flex-direction: column; }
     .pilih-urut select { width: 100%; padding: 10px 14px; }
