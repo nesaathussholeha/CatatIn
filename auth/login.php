@@ -8,11 +8,7 @@ if (isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'admin') {
         header("Location: ../admin/admin.php");
     } else {
-<<<<<<< Updated upstream
         header("Location: ../dashboard_user/dashboard.php");
-=======
-        header("Location: ../dashboard.php");
->>>>>>> Stashed changes
     }
     exit();
 }
@@ -28,11 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email'    => 'user@gmail.com',
             'password' => '123456',
             'role'     => 'user',
-<<<<<<< Updated upstream
             'redirect' => '../dashboard_user/dashboard.php'
-=======
-            'redirect' => '../dashboard.php'
->>>>>>> Stashed changes
         ],
         [
             'id'       => 2,
