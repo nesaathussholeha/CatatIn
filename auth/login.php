@@ -26,7 +26,7 @@ unset($_SESSION['active_tab']);
 // Jika pengguna sudah login
 if (isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'admin') {
-        header("Location: ../admin/admin.php");
+        header("Location: ../dashboard_admin/dashboard.php");
     } else {
         header("Location: ../dashboard_user/dashboard.php");
     }
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION["role"]         = $found_user["role"];
 
                     if ($found_user["role"] === "admin") {
-                        header("Location: ../admin/admin.php");
+                        header("Location: ../dashboard_admin/dashboard.php");
                     } else {
                         header("Location: ../dashboard_user/dashboard.php");
                     }
@@ -252,8 +252,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="action" value="login">
 
                     <div class="input-group">
-                        <label for="login-email">Email / NIM</label>
-                        <input type="text" id="login-email" name="email" placeholder="Masukkan email atau NIM" required>
+                        <label for="login-email">Email</label>
+                        <input type="text" id="login-email" name="email" placeholder="Masukkan email" required>
                     </div>
 
                     <div class="input-group">

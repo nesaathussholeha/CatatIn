@@ -22,6 +22,6 @@ if (ini_get("session.use_cookies")) {
 // Hancurkan session di server
 session_destroy();
 
-header("Location: ../auth/login.php");
+header("Location: auth/login.php");
 
 exit;
