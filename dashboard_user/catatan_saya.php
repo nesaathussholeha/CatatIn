@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const APP_NAME = 'Notes Hub';
+const APP_NAME = 'CatatIn';
 const PENGGUNA_INISIAL = 'SF';
 
 function e(?string $teks): string
