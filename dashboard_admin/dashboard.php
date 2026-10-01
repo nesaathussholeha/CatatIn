@@ -229,7 +229,7 @@ $avatar = strtoupper(substr($namaAdmin, 0, 1));
 
         <nav class="sidebar-nav">
 
-            <a href="dashboard.php" class="nav-item active">
+            <a href="../dashboard_admin/dashboard.php" class="nav-item active">
                 Dashboard
             </a>
 
@@ -241,15 +241,15 @@ $avatar = strtoupper(substr($namaAdmin, 0, 1));
                 Kelola Pengguna
             </a>
 
-            <a href="#" class="nav-item">
+            <a href="../master_data/index.php" class="nav-item">
                 Master Data
             </a>
 
-            <a href="#" class="nav-item">
+            <a href="../report/report_admin.php" class="nav-item">
                 Kelola Laporan
             </a>
 
-            <a href="#" class="nav-item btn-logout"
+            <a href="../logout.php" class="nav-item btn-logout"
                onclick="return confirm('Apakah Anda yakin ingin keluar?');">
                 Keluar
             </a>

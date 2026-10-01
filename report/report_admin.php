@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -71,17 +72,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- CSS -->
     <link rel="stylesheet" href="report_admin.css">
 </head>
+
 <body>
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <header class="logo">
-            <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true"><path d="M6.5 0 0 2.2v5c0 3.6 2.6 6.2 6.5 7.8C10.4 13.4 13 10.8 13 7.2v-5L6.5 0z" fill="#4a90e2"/></svg>
+            <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true">
+                <path d="M6.5 0 0 2.2v5c0 3.6 2.6 6.2 6.5 7.8C10.4 13.4 13 10.8 13 7.2v-5L6.5 0z" fill="#4a90e2" />
+            </svg>
             <strong>Admin Panel</strong>
         </header>
-        <nav class="navigation">
-            <?php foreach ($menu as $label => $file): ?>
-                <a href="<?= e($file) ?>" class="nav-item<?= $label === $menuAktif ? ' active' : '' ?>"><?= e($label) ?></a>
-            <?php endforeach; ?>
+        <nav class="sidebar-nav">
+
+            <a href="../dashboard_admin/dashboard.php" class="nav-item">
+                Dashboard
+            </a>
+
+            <a href="../kelola_catatan/catatan.php" class="nav-item">
+                Kelola Catatan
+            </a>
+
+            <a href="../kelola_pengguna/pengguna.php" class="nav-item">
+                Kelola Pengguna
+            </a>
+
+            <a href="../master_data/index.php" class="nav-item">
+                Master Data
+            </a>
+
+            <a href="../report/report_admin.php" class="nav-item active">
+                Kelola Laporan
+            </a>
+
+            <a href="../logout.php" class="nav-item btn-logout"
+                onclick="return confirm('Apakah Anda yakin ingin keluar?');">
+                Keluar
+            </a>
+
         </nav>
     </aside>
 
@@ -120,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="status <?= strtolower($lap['status']) ?>">
                                 <select class="pilih-status" aria-label="Ubah status">
                                     <?php foreach ($statusList as $s): ?>
-                                        <option value="<?= e($s) ?>"<?= $s === $lap['status'] ? ' selected' : '' ?>><?= e($s) ?></option>
+                                        <option value="<?= e($s) ?>" <?= $s === $lap['status'] ? ' selected' : '' ?>><?= e($s) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </span>
@@ -142,11 +169,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <dialog id="dialogDetail">
         <h2>Detail laporan</h2>
         <dl>
-            <dt>Catatan</dt><dd id="dCatatan"></dd>
-            <dt>Pelapor</dt><dd id="dPelapor"></dd>
-            <dt>Alasan</dt><dd id="dAlasan"></dd>
-            <dt>Status</dt><dd id="dStatus"></dd>
-            <dt>Keterangan</dt><dd id="dKeterangan"></dd>
+            <dt>Catatan</dt>
+            <dd id="dCatatan"></dd>
+            <dt>Pelapor</dt>
+            <dd id="dPelapor"></dd>
+            <dt>Alasan</dt>
+            <dd id="dAlasan"></dd>
+            <dt>Status</dt>
+            <dd id="dStatus"></dd>
+            <dt>Keterangan</dt>
+            <dd id="dKeterangan"></dd>
         </dl>
         <form method="dialog">
             <button class="tutup">Tutup</button>
@@ -156,4 +188,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- JAVASCRIPT -->
     <script src="report_admin.js"></script>
 </body>
+
 </html>

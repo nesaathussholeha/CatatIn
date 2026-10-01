@@ -146,7 +146,7 @@ $avatar = strtoupper(substr($namaAdmin, 0, 1));
     <title>CatatIn - Kelola Pengguna</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
 
     <link rel="stylesheet" href="pengguna.css">
 
@@ -154,432 +154,431 @@ $avatar = strtoupper(substr($namaAdmin, 0, 1));
 
 <body>
 
-<div class="admin-wrapper">
+    <div class="admin-wrapper">
 
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-    <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar">
 
-        <div class="sidebar-header">
+            <div class="sidebar-header">
 
-            <div class="brand-logo">
+                <div class="brand-logo">
 
-                <svg width="22" height="22" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="22" height="22" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2.5">
 
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
 
-                </svg>
+                    </svg>
 
-                <span>CatatIn</span>
+                    <span>CatatIn</span>
 
-            </div>
+                </div>
 
-            <button class="sidebar-close-btn" id="sidebar-close-btn">
-                ×
-            </button>
-
-        </div>
-
-
-        <nav class="sidebar-nav">
-
-            <a href="../dashboard_admin/dashboard.php"
-               class="nav-item">
-                Dashboard
-            </a>
-
-            <a href="../kelola_catatan/catatan.php"
-               class="nav-item">
-                Kelola Catatan
-            </a>
-
-            <a href="pengguna.php"
-               class="nav-item active">
-                Kelola Pengguna
-            </a>
-
-            <a href="#" class="nav-item">
-                Master Data
-            </a>
-
-            <a href="#" class="nav-item">
-                Kelola Laporan
-            </a>
-
-            <a href="#" class="nav-item btn-logout">
-                Keluar
-            </a>
-
-        </nav>
-
-    </aside>
-
-
-    <main class="main-content">
-
-        <header class="top-header">
-
-            <div class="header-left">
-
-                <button class="hamburger-btn"
-                        id="hamburger-btn">
-                    ☰
+                <button class="sidebar-close-btn" id="sidebar-close-btn">
+                    ×
                 </button>
 
-                <h1>Kelola pengguna</h1>
-
             </div>
 
 
-            <div class="user-profile">
+            <nav class="sidebar-nav">
 
-                <div class="user-info">
+                <a href="../dashboard_admin/dashboard.php" class="nav-item">
+                    Dashboard
+                </a>
 
-                    <span class="user-name">
-                        <?= e($namaAdmin); ?>
-                    </span>
+                <a href="../kelola_catatan/catatan.php" class="nav-item">
+                    Kelola Catatan
+                </a>
 
-                    <span class="user-role">
-                        <?= e(ucfirst($roleAdmin)); ?>
-                    </span>
+                <a href="../kelola_pengguna/pengguna.php" class="nav-item active">
+                    Kelola Pengguna
+                </a>
 
-                </div>
+                <a href="../master_data/index.php" class="nav-item">
+                    Master Data
+                </a>
 
-                <div class="user-avatar">
-                    <?= e($avatar); ?>
-                </div>
+                <a href="../report/report_admin.php" class="nav-item">
+                    Kelola Laporan
+                </a>
 
-            </div>
+                <a href="../logout.php" class="nav-item btn-logout"
+                    onclick="return confirm('Apakah Anda yakin ingin keluar?');">
+                    Keluar
+                </a>
 
-        </header>
+            </nav>
+
+        </aside>
 
 
-        <section class="page-card">
+        <main class="main-content">
 
-            <div class="page-card-header">
+            <header class="top-header">
 
-                <h2>Daftar pengguna</h2>
+                <div class="header-left">
 
-                <div class="toolbar">
-
-                    <input type="text"
-                           id="search-input"
-                           placeholder="Cari nama atau NIM...">
-
-                    <button class="add-button"
-                            id="open-add-modal">
-
-                        + Tambah pengguna
-
+                    <button class="hamburger-btn"
+                        id="hamburger-btn">
+                        ☰
                     </button>
 
+                    <h1>Kelola pengguna</h1>
+
                 </div>
 
-            </div>
+
+                <div class="user-profile">
+
+                    <div class="user-info">
+
+                        <span class="user-name">
+                            <?= e($namaAdmin); ?>
+                        </span>
+
+                        <span class="user-role">
+                            <?= e(ucfirst($roleAdmin)); ?>
+                        </span>
+
+                    </div>
+
+                    <div class="user-avatar">
+                        <?= e($avatar); ?>
+                    </div>
+
+                </div>
+
+            </header>
 
 
-            <div class="table-container">
+            <section class="page-card">
 
-                <table id="user-table">
+                <div class="page-card-header">
 
-                    <thead>
+                    <h2>Daftar pengguna</h2>
 
-                    <tr>
+                    <div class="toolbar">
 
-                        <th>Nama</th>
-                        <th>NIM</th>
-                        <th>Jurusan</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+                        <input type="text"
+                            id="search-input"
+                            placeholder="Cari nama atau NIM...">
 
-                    </tr>
+                        <button class="add-button"
+                            id="open-add-modal">
 
-                    </thead>
+                            + Tambah pengguna
 
-                    <tbody>
+                        </button>
 
-                    <?php foreach ($pengguna as $user): ?>
+                    </div>
 
-                        <tr>
+                </div>
 
-                            <td>
-                                <?= e($user['nama']); ?>
-                            </td>
 
-                            <td>
-                                <?= e($user['nim']); ?>
-                            </td>
+                <div class="table-container">
 
-                            <td>
-                                <?= e($user['jurusan']); ?>
-                            </td>
+                    <table id="user-table">
 
-                            <td>
+                        <thead>
 
-                                <span class="status-badge
+                            <tr>
+
+                                <th>Nama</th>
+                                <th>NIM</th>
+                                <th>Jurusan</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <?php foreach ($pengguna as $user): ?>
+
+                                <tr>
+
+                                    <td>
+                                        <?= e($user['nama']); ?>
+                                    </td>
+
+                                    <td>
+                                        <?= e($user['nim']); ?>
+                                    </td>
+
+                                    <td>
+                                        <?= e($user['jurusan']); ?>
+                                    </td>
+
+                                    <td>
+
+                                        <span class="status-badge
                                 <?= $user['status'] === 'Aktif'
                                     ? 'status-active'
                                     : 'status-blocked'; ?>">
 
-                                    <?= e($user['status']); ?>
+                                            <?= e($user['status']); ?>
 
-                                </span>
+                                        </span>
 
-                            </td>
+                                    </td>
 
-                            <td>
+                                    <td>
 
-                                <div class="action-wrap">
+                                        <div class="action-wrap">
 
-                                    <button class="action-button dropdown-trigger">
+                                            <button class="action-button dropdown-trigger">
 
-                                        Aksi <span>▼</span>
-
-                                    </button>
-
-                                    <div class="action-menu">
-
-                                        <button class="menu-item view-user"
-                                                type="button"
-                                                data-name="<?= e($user['nama']); ?>"
-                                                data-nim="<?= e($user['nim']); ?>"
-                                                data-major="<?= e($user['jurusan']); ?>"
-                                                data-status="<?= e($user['status']); ?>">
-
-                                            Lihat
-
-                                        </button>
-
-
-                                        <button class="menu-item edit-user"
-                                                type="button"
-                                                data-id="<?= $user['id']; ?>"
-                                                data-name="<?= e($user['nama']); ?>"
-                                                data-nim="<?= e($user['nim']); ?>"
-                                                data-major="<?= e($user['jurusan']); ?>">
-
-                                            Edit
-
-                                        </button>
-
-
-                                        <form method="POST">
-
-                                            <input type="hidden"
-                                                   name="action"
-                                                   value="status">
-
-                                            <input type="hidden"
-                                                   name="id"
-                                                   value="<?= $user['id']; ?>">
-
-                                            <input type="hidden"
-                                                   name="status"
-                                                   value="<?= $user['status'] === 'Aktif'
-                                                       ? 'Diblokir'
-                                                       : 'Aktif'; ?>">
-
-                                            <button class="menu-item"
-                                                    type="submit">
-
-                                                <?= $user['status'] === 'Aktif'
-                                                    ? 'Blokir'
-                                                    : 'Buka blokir'; ?>
+                                                Aksi <span>▼</span>
 
                                             </button>
 
-                                        </form>
+                                            <div class="action-menu">
+
+                                                <button class="menu-item view-user"
+                                                    type="button"
+                                                    data-name="<?= e($user['nama']); ?>"
+                                                    data-nim="<?= e($user['nim']); ?>"
+                                                    data-major="<?= e($user['jurusan']); ?>"
+                                                    data-status="<?= e($user['status']); ?>">
+
+                                                    Lihat
+
+                                                </button>
 
 
-                                        <form method="POST"
-                                              onsubmit="return confirm('Hapus pengguna ini?');">
+                                                <button class="menu-item edit-user"
+                                                    type="button"
+                                                    data-id="<?= $user['id']; ?>"
+                                                    data-name="<?= e($user['nama']); ?>"
+                                                    data-nim="<?= e($user['nim']); ?>"
+                                                    data-major="<?= e($user['jurusan']); ?>">
 
-                                            <input type="hidden"
-                                                   name="action"
-                                                   value="delete">
+                                                    Edit
 
-                                            <input type="hidden"
-                                                   name="id"
-                                                   value="<?= $user['id']; ?>">
-
-                                            <button class="menu-item delete-item">
-                                                Hapus
-                                            </button>
-
-                                        </form>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    <?php endforeach; ?>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-    </main>
-
-</div>
+                                                </button>
 
 
-<!-- MODAL TAMBAH -->
+                                                <form method="POST">
 
-<div class="modal-overlay" id="add-modal">
+                                                    <input type="hidden"
+                                                        name="action"
+                                                        value="status">
 
-    <div class="modal">
+                                                    <input type="hidden"
+                                                        name="id"
+                                                        value="<?= $user['id']; ?>">
 
-        <button class="modal-close"
+                                                    <input type="hidden"
+                                                        name="status"
+                                                        value="<?= $user['status'] === 'Aktif'
+                                                                    ? 'Diblokir'
+                                                                    : 'Aktif'; ?>">
+
+                                                    <button class="menu-item"
+                                                        type="submit">
+
+                                                        <?= $user['status'] === 'Aktif'
+                                                            ? 'Blokir'
+                                                            : 'Buka blokir'; ?>
+
+                                                    </button>
+
+                                                </form>
+
+
+                                                <form method="POST"
+                                                    onsubmit="return confirm('Hapus pengguna ini?');">
+
+                                                    <input type="hidden"
+                                                        name="action"
+                                                        value="delete">
+
+                                                    <input type="hidden"
+                                                        name="id"
+                                                        value="<?= $user['id']; ?>">
+
+                                                    <button class="menu-item delete-item">
+                                                        Hapus
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            <?php endforeach; ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- MODAL TAMBAH -->
+
+    <div class="modal-overlay" id="add-modal">
+
+        <div class="modal">
+
+            <button class="modal-close"
                 data-close="add-modal">
-            ×
-        </button>
-
-        <h2>Tambah pengguna</h2>
-
-        <form method="POST">
-
-            <input type="hidden"
-                   name="action"
-                   value="add">
-
-            <label>Nama</label>
-
-            <input type="text"
-                   name="nama"
-                   required>
-
-            <label>NIM</label>
-
-            <input type="text"
-                   name="nim"
-                   required>
-
-            <label>Jurusan</label>
-
-            <input type="text"
-                   name="jurusan"
-                   required>
-
-            <button class="save-button">
-                Tambahkan
+                ×
             </button>
 
-        </form>
+            <h2>Tambah pengguna</h2>
+
+            <form method="POST">
+
+                <input type="hidden"
+                    name="action"
+                    value="add">
+
+                <label>Nama</label>
+
+                <input type="text"
+                    name="nama"
+                    required>
+
+                <label>NIM</label>
+
+                <input type="text"
+                    name="nim"
+                    required>
+
+                <label>Jurusan</label>
+
+                <input type="text"
+                    name="jurusan"
+                    required>
+
+                <button class="save-button">
+                    Tambahkan
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
 
-</div>
 
+    <!-- MODAL EDIT -->
 
-<!-- MODAL EDIT -->
+    <div class="modal-overlay" id="edit-modal">
 
-<div class="modal-overlay" id="edit-modal">
+        <div class="modal">
 
-    <div class="modal">
-
-        <button class="modal-close"
+            <button class="modal-close"
                 data-close="edit-modal">
-            ×
-        </button>
-
-        <h2>Edit pengguna</h2>
-
-        <form method="POST">
-
-            <input type="hidden"
-                   name="action"
-                   value="edit">
-
-            <input type="hidden"
-                   name="id"
-                   id="edit-id">
-
-            <label>Nama</label>
-
-            <input type="text"
-                   name="nama"
-                   id="edit-name"
-                   required>
-
-            <label>NIM</label>
-
-            <input type="text"
-                   name="nim"
-                   id="edit-nim"
-                   required>
-
-            <label>Jurusan</label>
-
-            <input type="text"
-                   name="jurusan"
-                   id="edit-major"
-                   required>
-
-            <button class="save-button">
-                Simpan perubahan
+                ×
             </button>
 
-        </form>
+            <h2>Edit pengguna</h2>
+
+            <form method="POST">
+
+                <input type="hidden"
+                    name="action"
+                    value="edit">
+
+                <input type="hidden"
+                    name="id"
+                    id="edit-id">
+
+                <label>Nama</label>
+
+                <input type="text"
+                    name="nama"
+                    id="edit-name"
+                    required>
+
+                <label>NIM</label>
+
+                <input type="text"
+                    name="nim"
+                    id="edit-nim"
+                    required>
+
+                <label>Jurusan</label>
+
+                <input type="text"
+                    name="jurusan"
+                    id="edit-major"
+                    required>
+
+                <button class="save-button">
+                    Simpan perubahan
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
 
-</div>
 
+    <!-- MODAL DETAIL -->
 
-<!-- MODAL DETAIL -->
+    <div class="modal-overlay"
+        id="view-modal">
 
-<div class="modal-overlay"
-     id="view-modal">
+        <div class="modal">
 
-    <div class="modal">
-
-        <button class="modal-close"
+            <button class="modal-close"
                 data-close="view-modal">
-            ×
-        </button>
+                ×
+            </button>
 
-        <h2>Detail pengguna</h2>
+            <h2>Detail pengguna</h2>
 
-        <div class="detail-list">
+            <div class="detail-list">
 
-            <div>
-                <span>Nama</span>
-                <strong id="view-name"></strong>
-            </div>
+                <div>
+                    <span>Nama</span>
+                    <strong id="view-name"></strong>
+                </div>
 
-            <div>
-                <span>NIM</span>
-                <strong id="view-nim"></strong>
-            </div>
+                <div>
+                    <span>NIM</span>
+                    <strong id="view-nim"></strong>
+                </div>
 
-            <div>
-                <span>Jurusan</span>
-                <strong id="view-major"></strong>
-            </div>
+                <div>
+                    <span>Jurusan</span>
+                    <strong id="view-major"></strong>
+                </div>
 
-            <div>
-                <span>Status</span>
-                <strong id="view-status"></strong>
+                <div>
+                    <span>Status</span>
+                    <strong id="view-status"></strong>
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-</div>
 
-
-<script src="pengguna.js"></script>
+    <script src="pengguna.js"></script>
 
 </body>
+
 </html>
