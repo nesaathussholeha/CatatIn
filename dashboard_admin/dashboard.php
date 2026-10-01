@@ -1,76 +1,21 @@
 <?php
 session_start();
 
-if (isset($_GET['logout'])) {
-    $_SESSION = [];
+/* ==============================
+   DATA AWAL
+================================ */
 
-    if (ini_get('session.use_cookies')) {
-        $params = session_get_cookie_params();
-
-        setcookie(
-            session_name(),
-            '',
-            time() - 42000,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly']
-        );
-    }
-
-    session_destroy();
-
-    header('Location: login.php');
-    exit;
-}
-
-function e($nilai) {
-    return htmlspecialchars((string)$nilai, ENT_QUOTES, 'UTF-8');
-}
-
-function flash($tipe, $pesan) {
-    $_SESSION['flash'] = [
-        'tipe' => $tipe,
-        'pesan' => $pesan
-    ];
-}
-
-function panjang($teks) {
-    return mb_strlen($teks, 'UTF-8');
-}
-
-function formatAngka($n) {
-    if ($n >= 1000) {
-        return rtrim(
-            rtrim(
-                number_format($n / 1000, 1, '.', ''),
-                '0'
-            ),
-            '.'
-        ) . 'k';
-    }
-
-    return (string)$n;
-}
-
-if (
-    !isset($_SESSION['admin_catatan']) ||
-    ($_SESSION['admin_versi'] ?? 0) < 2
-) {
-    $_SESSION['admin_catatan'] = [
+if (!isset($_SESSION['catatan_data'])) {
+    $_SESSION['catatan_data'] = [
         [
             'id' => 1,
             'judul' => 'Ringkasan Struktur Data — Binary Tree',
             'penulis' => 'Sarah Faradila',
             'jurusan' => 'Informatika',
             'upvote' => 128,
-            'status' => 'terbit',
-            'alasan_laporan' => '',
-            'isi' => "Binary tree adalah struktur data berbentuk pohon di mana setiap node punya maksimal dua anak: kiri dan kanan.
-
-Traversal ada tiga: preorder (akar-kiri-kanan), inorder (kiri-akar-kanan), dan postorder (kiri-kanan-akar).
-
-Contoh pemakaian: pencarian data (binary search tree) dan ekspresi matematika."
+            'status' => 'Terbit',
+            'isi' => 'Catatan mengenai struktur data Binary Tree, jenis tree, traversal, dan penerapannya.',
+            'alasan' => ''
         ],
         [
             'id' => 2,
@@ -78,11 +23,9 @@ Contoh pemakaian: pencarian data (binary search tree) dan ekspresi matematika."
             'penulis' => 'Nazma Fairuz M.',
             'jurusan' => 'Sistem Informasi',
             'upvote' => 94,
-            'status' => 'terbit',
-            'alasan_laporan' => '',
-            'isi' => "Basis data relasional menyimpan data dalam tabel yang punya baris dan kolom.
-
-Konsep penting: primary key, foreign key, dan normalisasi (1NF sampai 3NF) untuk mengurangi data ganda."
+            'status' => 'Terbit',
+            'isi' => 'Rangkuman database relasional, tabel, primary key, foreign key, dan relasi.',
+            'alasan' => ''
         ],
         [
             'id' => 3,
@@ -90,11 +33,9 @@ Konsep penting: primary key, foreign key, dan normalisasi (1NF sampai 3NF) untuk
             'penulis' => 'Bagas Wicaksono',
             'jurusan' => 'Teknik Informatika',
             'upvote' => 61,
-            'status' => 'dilaporkan',
-            'alasan_laporan' => 'Isi catatan diduga disalin dari buku tanpa mencantumkan sumber.',
-            'isi' => "Integral lipat dua dipakai untuk menghitung volume di bawah permukaan z = f(x, y) pada suatu daerah D.
-
-Langkahnya: tentukan batas x dan y, integralkan terhadap satu variabel dulu, lalu variabel lainnya."
+            'status' => 'Dilaporkan',
+            'isi' => 'Pembahasan integral lipat dua dan tiga beserta contoh soal dan penyelesaiannya.',
+            'alasan' => 'Terdapat bagian catatan yang dianggap kurang sesuai dengan materi.'
         ],
         [
             'id' => 4,
@@ -102,276 +43,139 @@ Langkahnya: tentukan batas x dan y, integralkan terhadap satu variabel dulu, lal
             'penulis' => 'Dewi Anjani',
             'jurusan' => 'Informatika',
             'upvote' => 45,
-            'status' => 'terbit',
-            'alasan_laporan' => '',
-            'isi' => "Model OSI punya 7 layer: Physical, Data Link, Network, Transport, Session, Presentation, dan Application.
-
-Tiap layer punya tugas sendiri, misalnya Network mengurus pengalamatan IP dan routing."
-        ],
+            'status' => 'Terbit',
+            'isi' => 'Ringkasan tujuh layer pada model OSI dan fungsi setiap layer.',
+            'alasan' => ''
+        ]
     ];
+}
 
-    $_SESSION['admin_pengguna'] = [
+if (!isset($_SESSION['pengguna_data'])) {
+    $_SESSION['pengguna_data'] = [
         [
             'id' => 1,
             'nama' => 'Sarah Faradila',
             'nim' => '2551506...003',
             'jurusan' => 'Informatika',
-            'status' => 'aktif'
+            'status' => 'Aktif'
         ],
         [
             'id' => 2,
             'nama' => 'Nazma Fairuz M.',
             'nim' => '2551506...001',
             'jurusan' => 'Sistem Informasi',
-            'status' => 'aktif'
+            'status' => 'Aktif'
         ],
         [
             'id' => 3,
             'nama' => 'Bagas Wicaksono',
-            'nim' => '2551506...014',
+            'nim' => '2551506...004',
             'jurusan' => 'Teknik Informatika',
-            'status' => 'diblokir'
-        ],
-        [
-            'id' => 4,
-            'nama' => 'Dewi Anjani',
-            'nim' => '2551506...022',
-            'jurusan' => 'Informatika',
-            'status' => 'aktif'
-        ],
+            'status' => 'Aktif'
+        ]
     ];
-
-    $_SESSION['admin_next_id'] = 5;
-    $_SESSION['admin_versi'] = 2;
 }
 
-if (empty($_SESSION['csrf'])) {
-    $_SESSION['csrf'] = bin2hex(random_bytes(32));
-}
+
+/* ==============================
+   AKSI PENGGUNA
+================================ */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $balik = 'dashboard.php';
+    if (isset($_POST['user_action'])) {
 
-    if (
-        !hash_equals(
-            $_SESSION['csrf'],
-            $_POST['csrf'] ?? ''
-        )
-    ) {
-        flash(
-            'error',
-            'Sesi form tidak valid. Coba ulangi lagi ya.'
-        );
+        $id = (int) $_POST['id'];
+        $action = $_POST['user_action'];
 
-        header('Location: ' . $balik);
-        exit;
-    }
+        foreach ($_SESSION['pengguna_data'] as $key => $user) {
 
-    $entitas = $_POST['entitas'] ?? '';
-    $aksi = $_POST['aksi'] ?? '';
-    $id = (int)($_POST['id'] ?? 0);
+            if ($user['id'] == $id) {
 
-    if (
-        $entitas === 'catatan' &&
-        in_array($aksi, ['terbitkan', 'hapus'], true)
-    ) {
-
-        if ($aksi === 'terbitkan') {
-
-            $ketemu = false;
-
-            foreach ($_SESSION['admin_catatan'] as &$c) {
-
-                if ($c['id'] === $id) {
-
-                    $c['status'] = 'terbit';
-                    $c['alasan_laporan'] = '';
-
-                    $ketemu = true;
-                    break;
+                if ($action === 'block') {
+                    $_SESSION['pengguna_data'][$key]['status'] = 'Diblokir';
                 }
-            }
 
-            unset($c);
+                if ($action === 'unblock') {
+                    $_SESSION['pengguna_data'][$key]['status'] = 'Aktif';
+                }
 
-            if ($ketemu) {
-                flash(
-                    'sukses',
-                    'Catatan dinyatakan aman dan diterbitkan kembali.'
-                );
-            } else {
-                flash(
-                    'error',
-                    'Catatan tidak ditemukan.'
-                );
-            }
+                if ($action === 'delete') {
+                    unset($_SESSION['pengguna_data'][$key]);
+                    $_SESSION['pengguna_data'] = array_values($_SESSION['pengguna_data']);
+                }
 
-        } else {
-
-            $sebelum = count(
-                $_SESSION['admin_catatan']
-            );
-
-            $_SESSION['admin_catatan'] = array_values(
-                array_filter(
-                    $_SESSION['admin_catatan'],
-                    fn($c) => $c['id'] !== $id
-                )
-            );
-
-            if (
-                count($_SESSION['admin_catatan']) <
-                $sebelum
-            ) {
-                flash(
-                    'sukses',
-                    'Catatan berhasil dihapus.'
-                );
-            } else {
-                flash(
-                    'error',
-                    'Catatan tidak ditemukan.'
-                );
-            }
-        }
-
-    } elseif (
-        $entitas === 'pengguna' &&
-        in_array(
-            $aksi,
-            ['blokir', 'bukablokir'],
-            true
-        )
-    ) {
-
-        $ketemu = false;
-
-        foreach ($_SESSION['admin_pengguna'] as &$p) {
-
-            if ($p['id'] === $id) {
-
-                $p['status'] =
-                    ($aksi === 'blokir')
-                        ? 'diblokir'
-                        : 'aktif';
-
-                $ketemu = true;
                 break;
             }
         }
 
-        unset($p);
-
-        if ($ketemu) {
-
-            flash(
-                'sukses',
-                $aksi === 'blokir'
-                    ? 'Pengguna berhasil diblokir.'
-                    : 'Blokir pengguna berhasil dibuka.'
-            );
-
-        } else {
-
-            flash(
-                'error',
-                'Pengguna tidak ditemukan.'
-            );
-        }
+        header('Location: dashboard.php');
+        exit;
     }
 
-    header('Location: ' . $balik);
-    exit;
+
+    /* ==============================
+       AKSI CATATAN
+    ================================ */
+
+    if (isset($_POST['note_action'])) {
+
+        $id = (int) $_POST['id'];
+        $action = $_POST['note_action'];
+
+        foreach ($_SESSION['catatan_data'] as $key => $note) {
+
+            if ($note['id'] == $id) {
+
+                if ($action === 'publish') {
+                    $_SESSION['catatan_data'][$key]['status'] = 'Terbit';
+                    $_SESSION['catatan_data'][$key]['alasan'] = '';
+                }
+
+                if ($action === 'delete') {
+                    unset($_SESSION['catatan_data'][$key]);
+                    $_SESSION['catatan_data'] = array_values($_SESSION['catatan_data']);
+                }
+
+                break;
+            }
+        }
+
+        header('Location: dashboard.php');
+        exit;
+    }
 }
 
-$data_catatan = $_SESSION['admin_catatan'];
-$data_pengguna = $_SESSION['admin_pengguna'];
 
-$stats = [
-    'total_catatan' =>
-        count($data_catatan),
+/* ==============================
+   DATA DASHBOARD
+================================ */
 
-    'total_pengguna' =>
-        count($data_pengguna),
+$catatan = $_SESSION['catatan_data'];
+$pengguna = $_SESSION['pengguna_data'];
 
-    'total_upvote' =>
-        formatAngka(
-            array_sum(
-                array_column(
-                    $data_catatan,
-                    'upvote'
-                )
-            )
-        ),
-];
+$totalCatatan = count($catatan);
+$totalPengguna = count($pengguna);
 
-$catatan_dilaporkan = array_values(
-    array_filter(
-        $data_catatan,
-        fn($c) =>
-            $c['status'] === 'dilaporkan'
-    )
-);
+$totalUpvote = 0;
 
-$jumlah_per_penulis = [];
-
-foreach ($data_catatan as $c) {
-
-    $kunci = mb_strtolower(
-        $c['penulis'],
-        'UTF-8'
-    );
-
-    $jumlah_per_penulis[$kunci] =
-        ($jumlah_per_penulis[$kunci] ?? 0) + 1;
+foreach ($catatan as $item) {
+    $totalUpvote += (int) $item['upvote'];
 }
 
-$judul_halaman = 'Ringkasan sistem';
+$laporan = array_filter($catatan, function ($item) {
+    return $item['status'] === 'Dilaporkan';
+});
 
-$admin_nama =
-    $_SESSION['admin_nama'] ?? 'Admin';
 
-$admin_inisial = strtoupper(
-    mb_substr(
-        $admin_nama,
-        0,
-        1,
-        'UTF-8'
-    )
-);
-
-$flash =
-    $_SESSION['flash'] ?? null;
-
-unset($_SESSION['flash']);
-
-function dataCatatan($c) {
-    return e(
-        json_encode(
-            $c,
-            JSON_UNESCAPED_UNICODE
-        )
-    );
+function e($text)
+{
+    return htmlspecialchars($text ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-function dataPengguna($p, $jumlah) {
-
-    $p['jumlah_catatan'] =
-        $jumlah[
-            mb_strtolower(
-                $p['nama'],
-                'UTF-8'
-            )
-        ] ?? 0;
-
-    return e(
-        json_encode(
-            $p,
-            JSON_UNESCAPED_UNICODE
-        )
-    );
-}
+$namaAdmin = $_SESSION['user_name'] ?? 'Administrator';
+$roleAdmin = $_SESSION['role'] ?? 'Admin';
+$avatar = strtoupper(substr($namaAdmin, 0, 1));
 ?>
 
 <!DOCTYPE html>
@@ -379,510 +183,379 @@ function dataPengguna($p, $jumlah) {
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <title>CatatIn - Dashboard Admin</title>
 
-<title>
-    <?= e($judul_halaman) ?> — Catatin Admin
-</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
-<link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
->
-
-<link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
->
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet"
->
-
-<link
-    rel="stylesheet"
-    href="dashboard.css"
->
+    <link rel="stylesheet" href="dashboard.css">
 
 </head>
 
 <body>
 
-<div class="layout">
+<div class="admin-wrapper">
 
-    <div
-        class="sidebar-overlay"
-        id="sidebarOverlay"
-    ></div>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
 
-        <div class="sidebar-brand">
+        <div class="sidebar-header">
 
-            <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-            >
-                <path
-                    d="M12 2L3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6l-9-4z"
-                    fill="#4C5FE0"
-                />
-            </svg>
+            <div class="brand-logo">
 
-            Admin Panel
+                <svg width="22" height="22" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.5">
 
-        </div>
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
 
-        <ul class="sidebar-nav">
+                </svg>
 
-            <li>
-                <a
-                    href="dashboard.php"
-                    class="active"
-                >
-                    Dashboard
-                </a>
-            </li>
-
-            <li>
-                <a href="kelola catatan.php">
-                    Kelola Catatan
-                </a>
-            </li>
-
-            <li>
-                <a href="kelola pengguna.php">
-                    Kelola Pengguna
-                </a>
-            </li>
-
-            <li>
-                <a href="?logout=1">
-                    Keluar
-                </a>
-            </li>
-
-        </ul>
-
-    </aside>
-
-    <main class="main">
-
-        <div class="main-header">
-
-            <div class="header-left">
-
-                <button
-                    class="menu-toggle"
-                    id="menuToggle"
-                    aria-label="Buka menu navigasi"
-                >
-
-                    <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#171A3D"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                    >
-
-                        <line
-                            x1="3"
-                            y1="6"
-                            x2="21"
-                            y2="6"
-                        />
-
-                        <line
-                            x1="3"
-                            y1="12"
-                            x2="21"
-                            y2="12"
-                        />
-
-                        <line
-                            x1="3"
-                            y1="18"
-                            x2="21"
-                            y2="18"
-                        />
-
-                    </svg>
-
-                </button>
-
-                <h2>
-                    <?= e($judul_halaman) ?>
-                </h2>
+                <span>CatatIn</span>
 
             </div>
 
-            <div class="avatar">
-                <?= e($admin_inisial) ?>
-            </div>
-
-        </div>
-
-        <?php if ($flash): ?>
-
-        <div
-            class="flash flash-<?= e($flash['tipe']) ?>"
-            id="flashPesan"
-            role="alert"
-        >
-
-            <span>
-                <?= e($flash['pesan']) ?>
-            </span>
-
-            <button
-                type="button"
-                class="flash-tutup"
-                data-tutup-flash
-                aria-label="Tutup pesan"
-            >
-                &times;
+            <button class="sidebar-close-btn" id="sidebar-close-btn">
+                ×
             </button>
 
         </div>
 
-        <?php endif; ?>
+
+        <nav class="sidebar-nav">
+
+            <a href="dashboard.php" class="nav-item active">
+                Dashboard
+            </a>
+
+            <a href="../kelola_catatan/catatan.php" class="nav-item">
+                Kelola Catatan
+            </a>
+
+            <a href="../kelola_pengguna/pengguna.php" class="nav-item">
+                Kelola Pengguna
+            </a>
+
+            <a href="#" class="nav-item">
+                Master Data
+            </a>
+
+            <a href="#" class="nav-item">
+                Kelola Laporan
+            </a>
+
+            <a href="#" class="nav-item btn-logout"
+               onclick="return confirm('Apakah Anda yakin ingin keluar?');">
+                Keluar
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- CONTENT -->
+    <main class="main-content">
+
+        <header class="top-header">
+
+            <div class="header-left">
+
+                <button class="hamburger-btn" id="hamburger-btn">
+                    ☰
+                </button>
+
+                <h1 class="page-title">
+                    Ringkasan sistem
+                </h1>
+
+            </div>
+
+
+            <div class="user-profile">
+
+                <div class="user-info">
+
+                    <span class="user-name">
+                        <?= e($namaAdmin); ?>
+                    </span>
+
+                    <span class="user-role">
+                        <?= e(ucfirst($roleAdmin)); ?>
+                    </span>
+
+                </div>
+
+                <div class="user-avatar">
+                    <?= e($avatar); ?>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- STATISTIK -->
 
         <section class="stat-grid">
 
             <div class="stat-card">
-
-                <div class="stat-value">
-                    <?= e($stats['total_catatan']) ?>
-                </div>
-
-                <div class="stat-label">
-                    Total catatan
-                </div>
-
+                <strong><?= $totalCatatan; ?></strong>
+                <span>Total catatan</span>
             </div>
 
             <div class="stat-card">
-
-                <div class="stat-value">
-                    <?= e($stats['total_pengguna']) ?>
-                </div>
-
-                <div class="stat-label">
-                    Total pengguna
-                </div>
-
+                <strong><?= $totalPengguna; ?></strong>
+                <span>Total pengguna</span>
             </div>
 
             <div class="stat-card">
-
-                <div class="stat-value">
-                    <?= e($stats['total_upvote']) ?>
-                </div>
-
-                <div class="stat-label">
-                    Total upvote
-                </div>
-
+                <strong><?= $totalUpvote; ?></strong>
+                <span>Total upvote</span>
             </div>
 
         </section>
 
-        <section class="panel">
 
-            <div class="panel-head">
+        <!-- PENGGUNA -->
 
-                <h3>
-                    Catatan dilaporkan
-                    (<?= count($catatan_dilaporkan) ?>)
-                </h3>
+        <section class="content-section">
 
-                <a
-                    href="kelola catatan.php"
-                    class="btn-link btn-lihat"
-                    style="margin-left:0;"
-                >
-                    Kelola catatan &rarr;
+            <div class="section-heading">
+
+                <h2>Kelola pengguna</h2>
+
+                <a href="../kelola_pengguna/pengguna.php">
+                    Lihat semua
                 </a>
 
             </div>
 
-            <div class="table-scroll">
 
-                <table>
+            <div class="table-card">
 
-                    <thead>
+                <div class="table-responsive">
 
-                        <tr>
-                            <th>Judul catatan</th>
-                            <th>Penulis</th>
-                            <th>Alasan laporan</th>
-                            <th class="aksi">Aksi</th>
-                        </tr>
+                    <table>
 
-                    </thead>
-
-                    <tbody>
-
-                    <?php if (empty($catatan_dilaporkan)): ?>
-
-                        <tr>
-
-                            <td
-                                colspan="4"
-                                class="kosong"
-                            >
-                                Tidak ada catatan yang dilaporkan. 🎉
-                            </td>
-
-                        </tr>
-
-                    <?php endif; ?>
-
-                    <?php foreach ($catatan_dilaporkan as $c): ?>
-
-                        <tr>
-
-                            <td>
-                                <?= e($c['judul']) ?>
-                            </td>
-
-                            <td>
-                                <?= e($c['penulis']) ?>
-                            </td>
-
-                            <td>
-                                <?= e(
-                                    $c['alasan_laporan'] !== ''
-                                        ? $c['alasan_laporan']
-                                        : '—'
-                                ) ?>
-                            </td>
-
-                            <td class="aksi">
-
-                                <div class="dropdown">
-
-                                    <button
-                                        type="button"
-                                        class="btn-aksi"
-                                        data-dropdown
-                                        aria-haspopup="true"
-                                        aria-expanded="false"
-                                    >
-                                        Aksi
-                                        <span>
-                                            &#9662;
-                                        </span>
-                                    </button>
-
-                                    <div
-                                        class="dropdown-menu"
-                                        role="menu"
-                                    >
-
-                                        <button
-                                            type="button"
-                                            class="dropdown-item"
-                                            data-lihat
-                                            data-entitas="catatan"
-                                            data-item="<?= dataCatatan($c) ?>"
-                                        >
-                                            Periksa isi
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            class="dropdown-item item-sukses"
-                                            data-konfirmasi
-                                            data-entitas="catatan"
-                                            data-aksi="terbitkan"
-                                            data-id="<?= $c['id'] ?>"
-                                            data-pesan="Nyatakan catatan &quot;<?= e($c['judul']) ?>&quot; aman dan terbitkan kembali?"
-                                        >
-                                            Terbitkan
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            class="dropdown-item item-danger"
-                                            data-konfirmasi
-                                            data-entitas="catatan"
-                                            data-aksi="hapus"
-                                            data-id="<?= $c['id'] ?>"
-                                            data-pesan="Hapus catatan &quot;<?= e($c['judul']) ?>&quot;?"
-                                        >
-                                            Hapus
-                                        </button>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    <?php endforeach; ?>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-        <section class="panel">
-
-            <div class="panel-head">
-
-                <h3>
-                    Kelola pengguna
-                </h3>
-
-                <a
-                    href="kelola pengguna.php"
-                    class="btn-link btn-lihat"
-                    style="margin-left:0;"
-                >
-                    Lihat semua &rarr;
-                </a>
-
-            </div>
-
-            <div class="table-scroll">
-
-                <table>
-
-                    <thead>
+                        <thead>
 
                         <tr>
                             <th>Nama</th>
                             <th>NIM</th>
                             <th>Jurusan</th>
-                            <th class="aksi">Aksi</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
                         </tr>
 
-                    </thead>
+                        </thead>
 
-                    <tbody>
+                        <tbody>
 
-                    <?php foreach (
-                        array_slice(
-                            $data_pengguna,
-                            0,
-                            2
-                        ) as $p
-                    ): ?>
+                        <?php foreach (array_slice($pengguna, 0, 5) as $user): ?>
 
-                        <tr>
+                            <tr>
 
-                            <td>
-                                <?= e($p['nama']) ?>
-                            </td>
+                                <td><?= e($user['nama']); ?></td>
 
-                            <td>
-                                <?= e($p['nim']) ?>
-                            </td>
+                                <td><?= e($user['nim']); ?></td>
 
-                            <td>
-                                <?= e($p['jurusan']) ?>
-                            </td>
+                                <td><?= e($user['jurusan']); ?></td>
 
-                            <td class="aksi">
+                                <td>
 
-                                <div class="dropdown">
+                                    <span class="status-user
+                                    <?= $user['status'] === 'Aktif'
+                                        ? 'status-active'
+                                        : 'status-blocked'; ?>">
 
-                                    <button
-                                        type="button"
-                                        class="btn-aksi"
-                                        data-dropdown
-                                        aria-haspopup="true"
-                                        aria-expanded="false"
-                                    >
-                                        Aksi
-                                        <span>
-                                            &#9662;
-                                        </span>
-                                    </button>
+                                        <?= e($user['status']); ?>
 
-                                    <div
-                                        class="dropdown-menu"
-                                        role="menu"
-                                    >
+                                    </span>
 
-                                        <button
-                                            type="button"
-                                            class="dropdown-item"
-                                            data-lihat
-                                            data-entitas="pengguna"
-                                            data-item="<?= dataPengguna($p, $jumlah_per_penulis) ?>"
-                                        >
-                                            Lihat
+                                </td>
+
+                                <td>
+
+                                    <div class="action-wrap">
+
+                                        <button class="action-button dropdown-trigger"
+                                                type="button">
+
+                                            Aksi <span>▼</span>
+
                                         </button>
 
-                                        <?php if (
-                                            $p['status'] === 'aktif'
-                                        ): ?>
+                                        <div class="action-menu">
 
-                                            <button
-                                                type="button"
-                                                class="dropdown-item item-danger"
-                                                data-konfirmasi
-                                                data-entitas="pengguna"
-                                                data-aksi="blokir"
-                                                data-id="<?= $p['id'] ?>"
-                                                data-pesan="Blokir pengguna <?= e($p['nama']) ?>?"
-                                            >
-                                                Blokir
+                                            <button class="menu-item view-user"
+                                                    type="button"
+                                                    data-name="<?= e($user['nama']); ?>"
+                                                    data-nim="<?= e($user['nim']); ?>"
+                                                    data-jurusan="<?= e($user['jurusan']); ?>"
+                                                    data-status="<?= e($user['status']); ?>">
+
+                                                Lihat
+
                                             </button>
 
-                                        <?php else: ?>
+                                            <form method="POST">
 
-                                            <button
-                                                type="button"
-                                                class="dropdown-item"
-                                                data-konfirmasi
-                                                data-entitas="pengguna"
-                                                data-aksi="bukablokir"
-                                                data-id="<?= $p['id'] ?>"
-                                                data-pesan="Buka blokir pengguna <?= e($p['nama']) ?>?"
-                                            >
-                                                Buka Blokir
-                                            </button>
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="<?= $user['id']; ?>">
 
-                                        <?php endif; ?>
+                                                <input type="hidden"
+                                                       name="user_action"
+                                                       value="<?= $user['status'] === 'Aktif'
+                                                           ? 'block'
+                                                           : 'unblock'; ?>">
+
+                                                <button class="menu-item"
+                                                        type="submit">
+
+                                                    <?= $user['status'] === 'Aktif'
+                                                        ? 'Blokir'
+                                                        : 'Buka blokir'; ?>
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
 
                                     </div>
 
-                                </div>
+                                </td>
 
-                            </td>
+                            </tr>
 
-                        </tr>
+                        <?php endforeach; ?>
 
-                    <?php endforeach; ?>
+                        </tbody>
 
-                    </tbody>
+                    </table>
 
-                </table>
+                </div>
 
             </div>
+
+        </section>
+
+
+        <!-- LAPORAN -->
+
+        <section class="report-card">
+
+            <div>
+
+                <h2>Catatan dilaporkan</h2>
+
+                <p>
+                    Terdapat <strong><?= count($laporan); ?></strong>
+                    catatan yang perlu diperiksa.
+                </p>
+
+            </div>
+
+            <button class="primary-button" id="report-button">
+                Periksa laporan
+            </button>
+
+        </section>
+
+
+        <section class="report-list" id="report-list">
+
+            <div class="section-heading">
+                <h2>Daftar laporan</h2>
+            </div>
+
+            <?php if (count($laporan) > 0): ?>
+
+                <?php foreach ($laporan as $note): ?>
+
+                    <div class="reported-item">
+
+                        <div class="reported-info">
+
+                            <h3><?= e($note['judul']); ?></h3>
+
+                            <p>
+                                Penulis: <?= e($note['penulis']); ?>
+                            </p>
+
+                            <p>
+                                Alasan:
+                                <?= e($note['alasan']); ?>
+                            </p>
+
+                        </div>
+
+                        <div class="report-actions">
+
+                            <button class="secondary-button view-note"
+                                    type="button"
+                                    data-title="<?= e($note['judul']); ?>"
+                                    data-author="<?= e($note['penulis']); ?>"
+                                    data-content="<?= e($note['isi']); ?>"
+                                    data-reason="<?= e($note['alasan']); ?>">
+
+                                Lihat isi
+
+                            </button>
+
+                            <form method="POST">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="<?= $note['id']; ?>">
+
+                                <input type="hidden"
+                                       name="note_action"
+                                       value="publish">
+
+                                <button class="primary-button">
+                                    Terbitkan
+                                </button>
+
+                            </form>
+
+                            <form method="POST"
+                                  onsubmit="return confirm('Hapus catatan ini?');">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="<?= $note['id']; ?>">
+
+                                <input type="hidden"
+                                       name="note_action"
+                                       value="delete">
+
+                                <button class="danger-button">
+                                    Hapus
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                <?php endforeach; ?>
+
+            <?php else: ?>
+
+                <div class="empty-state">
+                    Tidak ada catatan yang dilaporkan.
+                </div>
+
+            <?php endif; ?>
 
         </section>
 
@@ -890,71 +563,77 @@ function dataPengguna($p, $jumlah) {
 
 </div>
 
-<form
-    method="post"
-    id="formAksi"
-    hidden
->
 
-    <input
-        type="hidden"
-        name="csrf"
-        value="<?= e($_SESSION['csrf']) ?>"
-    >
+<!-- MODAL USER -->
 
-    <input
-        type="hidden"
-        name="entitas"
-    >
+<div class="modal-overlay" id="user-modal">
 
-    <input
-        type="hidden"
-        name="aksi"
-    >
+    <div class="modal">
 
-    <input
-        type="hidden"
-        name="id"
-    >
+        <button class="modal-close" data-close="user-modal">
+            ×
+        </button>
 
-</form>
+        <h2>Detail pengguna</h2>
 
-<div
-    class="modal-latar"
-    id="modalLihat"
-    aria-hidden="true"
->
+        <div class="detail-list">
 
-    <div
-        class="modal"
-        role="dialog"
-        aria-labelledby="judulModalLihat"
-    >
+            <div>
+                <span>Nama</span>
+                <strong id="modal-user-name"></strong>
+            </div>
 
-        <h3 id="judulModalLihat">
-            Detail
-        </h3>
+            <div>
+                <span>NIM</span>
+                <strong id="modal-user-nim"></strong>
+            </div>
 
-        <dl
-            class="detail-list"
-            id="isiDetail"
-        ></dl>
+            <div>
+                <span>Jurusan</span>
+                <strong id="modal-user-jurusan"></strong>
+            </div>
 
-        <div class="modal-tombol">
-
-            <button
-                type="button"
-                class="btn-batal"
-                data-tutup
-            >
-                Tutup
-            </button>
+            <div>
+                <span>Status</span>
+                <strong id="modal-user-status"></strong>
+            </div>
 
         </div>
 
     </div>
 
 </div>
+
+
+<!-- MODAL CATATAN -->
+
+<div class="modal-overlay" id="note-modal">
+
+    <div class="modal modal-large">
+
+        <button class="modal-close" data-close="note-modal">
+            ×
+        </button>
+
+        <h2 id="modal-note-title"></h2>
+
+        <p class="modal-author" id="modal-note-author"></p>
+
+        <div class="note-content"
+             id="modal-note-content"></div>
+
+        <div class="report-box">
+
+            <strong>Alasan laporan</strong>
+
+            <p id="modal-note-reason"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <script src="dashboard.js"></script>
 

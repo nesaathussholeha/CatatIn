@@ -1,438 +1,182 @@
-(function () {
-    'use strict';
+document.addEventListener('DOMContentLoaded', function () {
 
-    var sidebar = document.getElementById('sidebar');
-    var overlay = document.getElementById('sidebarOverlay');
-    var toggleBtn = document.getElementById('menuToggle');
+    /* =========================
+       SIDEBAR
+    ========================= */
 
-    function bukaSidebar() {
-        sidebar.classList.add('open');
-        overlay.classList.add('show');
+    const hamburger = document.getElementById('hamburger-btn');
+    const closeBtn = document.getElementById('sidebar-close-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function openSidebar() {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
 
-    function tutupSidebar() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('show');
+    function closeSidebar() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
     }
 
-    toggleBtn.addEventListener('click', function () {
-        sidebar.classList.contains('open')
-            ? tutupSidebar()
-            : bukaSidebar();
+    if (hamburger) {
+        hamburger.addEventListener('click', openSidebar);
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeSidebar);
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+    }
+
+
+    /* =========================
+       DROPDOWN
+    ========================= */
+
+    document.querySelectorAll('.dropdown-trigger').forEach(button => {
+
+        button.addEventListener('click', function (event) {
+
+            event.stopPropagation();
+
+            const menu = this.nextElementSibling;
+
+            document.querySelectorAll('.action-menu').forEach(item => {
+
+                if (item !== menu) {
+                    item.classList.remove('show');
+                }
+
+            });
+
+            menu.classList.toggle('show');
+        });
+
     });
 
-    overlay.addEventListener(
-        'click',
-        tutupSidebar
-    );
 
-    window.addEventListener(
-        'resize',
-        function () {
-            if (window.innerWidth > 640) {
-                tutupSidebar();
-            }
-        }
-    );
+    document.addEventListener('click', function () {
 
-    function bukaModal(modal) {
-        modal.classList.add('tampil');
-        modal.setAttribute(
-            'aria-hidden',
-            'false'
-        );
-    }
+        document.querySelectorAll('.action-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
 
-    function tutupSemuaModal() {
+    });
 
-        document
-            .querySelectorAll(
-                '.modal-latar.tampil'
-            )
-            .forEach(function (m) {
 
-                m.classList.remove('tampil');
+    /* =========================
+       MODAL USER
+    ========================= */
 
-                m.setAttribute(
-                    'aria-hidden',
-                    'true'
-                );
-            });
-    }
+    const userModal = document.getElementById('user-modal');
 
-    document
-        .querySelectorAll('.modal-latar')
-        .forEach(function (m) {
+    document.querySelectorAll('.view-user').forEach(button => {
 
-            m.addEventListener(
-                'click',
-                function (e) {
+        button.addEventListener('click', function () {
 
-                    if (e.target === m) {
-                        tutupSemuaModal();
-                    }
+            document.getElementById('modal-user-name').textContent =
+                this.dataset.name;
 
-                }
-            );
+            document.getElementById('modal-user-nim').textContent =
+                this.dataset.nim;
+
+            document.getElementById('modal-user-jurusan').textContent =
+                this.dataset.jurusan;
+
+            document.getElementById('modal-user-status').textContent =
+                this.dataset.status;
+
+            userModal.classList.add('show');
 
         });
 
-    var kolomDetail = {
+    });
 
-        catatan: [
-            ['judul', 'Judul catatan'],
-            ['penulis', 'Penulis'],
-            ['jurusan', 'Jurusan'],
-            ['upvote', 'Upvote'],
-            ['status', 'Status'],
-            ['alasan_laporan', 'Alasan laporan'],
-            ['isi', 'Isi catatan']
-        ],
 
-        pengguna: [
-            ['nama', 'Nama'],
-            ['nim', 'NIM'],
-            ['jurusan', 'Jurusan'],
-            ['status', 'Status'],
-            ['jumlah_catatan', 'Jumlah catatan']
-        ]
+    /* =========================
+       MODAL CATATAN
+    ========================= */
 
-    };
+    const noteModal = document.getElementById('note-modal');
 
-    function huruf1Besar(teks) {
+    document.querySelectorAll('.view-note').forEach(button => {
 
-        teks = String(teks);
+        button.addEventListener('click', function () {
 
-        return (
-            teks.charAt(0).toUpperCase() +
-            teks.slice(1)
-        );
+            document.getElementById('modal-note-title').textContent =
+                this.dataset.title;
+
+            document.getElementById('modal-note-author').textContent =
+                'Penulis: ' + this.dataset.author;
+
+            document.getElementById('modal-note-content').textContent =
+                this.dataset.content;
+
+            document.getElementById('modal-note-reason').textContent =
+                this.dataset.reason || 'Tidak ada alasan laporan.';
+
+            noteModal.classList.add('show');
+
+        });
+
+    });
+
+
+    /* =========================
+       TUTUP MODAL
+    ========================= */
+
+    document.querySelectorAll('.modal-close').forEach(button => {
+
+        button.addEventListener('click', function () {
+
+            const id = this.dataset.close;
+
+            document.getElementById(id).classList.remove('show');
+
+        });
+
+    });
+
+
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+
+        modal.addEventListener('click', function (event) {
+
+            if (event.target === this) {
+                this.classList.remove('show');
+            }
+
+        });
+
+    });
+
+
+    /* =========================
+       LAPORAN
+    ========================= */
+
+    const reportButton = document.getElementById('report-button');
+    const reportList = document.getElementById('report-list');
+
+    if (reportButton) {
+
+        reportButton.addEventListener('click', function () {
+
+            reportList.classList.toggle('show');
+
+            this.textContent =
+                reportList.classList.contains('show')
+                    ? 'Tutup laporan'
+                    : 'Periksa laporan';
+
+        });
+
     }
 
-    function tampilkanDetail(
-        entitas,
-        data
-    ) {
-
-        var modal =
-            document.getElementById(
-                'modalLihat'
-            );
-
-        var isi =
-            document.getElementById(
-                'isiDetail'
-            );
-
-        var judul =
-            document.getElementById(
-                'judulModalLihat'
-            );
-
-        judul.textContent =
-            'Detail ' + entitas;
-
-        isi.innerHTML = '';
-
-        kolomDetail[entitas].forEach(
-            function (par) {
-
-                var nilai =
-                    data[par[0]];
-
-                if (
-                    nilai === undefined ||
-                    nilai === null ||
-                    nilai === ''
-                ) {
-                    return;
-                }
-
-                if (par[0] === 'status') {
-                    nilai =
-                        huruf1Besar(nilai);
-                }
-
-                var dt =
-                    document.createElement('dt');
-
-                var dd =
-                    document.createElement('dd');
-
-                dt.textContent =
-                    par[1];
-
-                dd.textContent =
-                    nilai;
-
-                if (par[0] === 'isi') {
-                    dd.className =
-                        'detail-isi';
-                }
-
-                isi.appendChild(dt);
-                isi.appendChild(dd);
-            }
-        );
-
-        bukaModal(modal);
-    }
-
-    function kirimAksi(
-        entitas,
-        aksi,
-        id
-    ) {
-
-        var form =
-            document.getElementById(
-                'formAksi'
-            );
-
-        form.elements['entitas'].value =
-            entitas;
-
-        form.elements['aksi'].value =
-            aksi;
-
-        form.elements['id'].value =
-            id;
-
-        form.submit();
-    }
-
-    var menuTerbuka = null;
-    var tombolTerbuka = null;
-
-    function tutupDropdown() {
-
-        if (!menuTerbuka) {
-            return;
-        }
-
-        menuTerbuka.classList.remove(
-            'tampil'
-        );
-
-        tombolTerbuka.setAttribute(
-            'aria-expanded',
-            'false'
-        );
-
-        menuTerbuka = null;
-        tombolTerbuka = null;
-    }
-
-    function bukaDropdown(tombol) {
-
-        var menu =
-            tombol.parentNode.querySelector(
-                '.dropdown-menu'
-            );
-
-        var sudahTerbuka =
-            menu === menuTerbuka;
-
-        tutupDropdown();
-
-        if (sudahTerbuka) {
-            return;
-        }
-
-        menu.classList.add('tampil');
-
-        var r =
-            tombol.getBoundingClientRect();
-
-        var lebar =
-            menu.offsetWidth;
-
-        var tinggi =
-            menu.offsetHeight;
-
-        var kiri =
-            r.right - lebar;
-
-        if (kiri < 8) {
-            kiri = 8;
-        }
-
-        var atas =
-            r.bottom + 6;
-
-        if (
-            atas + tinggi >
-            window.innerHeight - 8
-        ) {
-            atas =
-                r.top -
-                tinggi -
-                6;
-        }
-
-        if (atas < 8) {
-            atas = 8;
-        }
-
-        menu.style.left =
-            kiri + 'px';
-
-        menu.style.top =
-            atas + 'px';
-
-        tombol.setAttribute(
-            'aria-expanded',
-            'true'
-        );
-
-        menuTerbuka = menu;
-        tombolTerbuka = tombol;
-    }
-
-    window.addEventListener(
-        'scroll',
-        tutupDropdown,
-        true
-    );
-
-    window.addEventListener(
-        'resize',
-        tutupDropdown
-    );
-
-    document.addEventListener(
-        'keydown',
-        function (e) {
-
-            if (e.key === 'Escape') {
-
-                tutupSemuaModal();
-                tutupDropdown();
-
-            }
-
-        }
-    );
-
-    document.addEventListener(
-        'click',
-        function (e) {
-
-            var tombol;
-
-            var pemicu =
-                e.target.closest(
-                    '[data-dropdown]'
-                );
-
-            if (pemicu) {
-
-                bukaDropdown(pemicu);
-
-                return;
-            }
-
-            tutupDropdown();
-
-            if (
-                (tombol =
-                    e.target.closest(
-                        '[data-lihat]'
-                    ))
-            ) {
-
-                tampilkanDetail(
-                    tombol.dataset.entitas,
-                    JSON.parse(
-                        tombol.dataset.item
-                    )
-                );
-
-                return;
-            }
-
-            if (
-                (tombol =
-                    e.target.closest(
-                        '[data-konfirmasi]'
-                    ))
-            ) {
-
-                if (
-                    window.confirm(
-                        tombol.dataset.pesan
-                    )
-                ) {
-
-                    kirimAksi(
-                        tombol.dataset.entitas,
-                        tombol.dataset.aksi,
-                        tombol.dataset.id
-                    );
-                }
-
-                return;
-            }
-
-            if (
-                e.target.closest(
-                    '[data-tutup]'
-                )
-            ) {
-
-                tutupSemuaModal();
-
-                return;
-            }
-
-            if (
-                e.target.closest(
-                    '[data-tutup-flash]'
-                )
-            ) {
-
-                var pesan =
-                    document.getElementById(
-                        'flashPesan'
-                    );
-
-                if (pesan) {
-                    pesan.remove();
-                }
-            }
-
-        }
-    );
-
-    var flashPesan =
-        document.getElementById(
-            'flashPesan'
-        );
-
-    if (flashPesan) {
-
-        setTimeout(
-            function () {
-
-                flashPesan.style.opacity =
-                    '0';
-
-                setTimeout(
-                    function () {
-
-                        if (
-                            flashPesan.parentNode
-                        ) {
-                            flashPesan.remove();
-                        }
-
-                    },
-                    300
-                );
-
-            },
-            4000
-        );
-    }
-
-})();
+});
