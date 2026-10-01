@@ -174,26 +174,3 @@
     initMenu();
     initDashboard();
 })();
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Sidebar Mobile Toggle
-  const tombolMenu = document.getElementById('tombol-menu');
-  const tutupMenu = document.getElementById('tutup-menu');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
-
-  if (tombolMenu && sidebar && overlay) {
-    tombolMenu.addEventListener('click', () => {
-      sidebar.classList.add('aktif');
-      overlay.classList.add('aktif');
-    });
-
-    const tutupSidebar = () => {
-      sidebar.classList.remove('aktif');
-      overlay.classList.remove('aktif');
-    };
-
-    if (tutupMenu) tutupMenu.addEventListener('click', tutupSidebar);
-    overlay.addEventListener('click', tutupSidebar);
-  }
-});
