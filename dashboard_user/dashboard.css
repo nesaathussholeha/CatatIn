@@ -241,6 +241,21 @@ h1, h2, h3, p { margin: 0; }
   margin-bottom: 20px;
 }
 
+/* Header Judul + Avatar Sejajar Kiri-Kanan */
+.top-bar-catatan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.top-bar-catatan h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
 .card-form {
   background: #ffffff;
   border-radius: 16px;

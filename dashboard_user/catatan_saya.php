@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const APP_NAME = 'Notes Hub';
+const APP_NAME = 'CatatIn';
 const PENGGUNA_INISIAL = 'SF';
 
 function e(?string $teks): string
@@ -57,7 +57,7 @@ $catatanSaya = [
 
     <!-- Main Content -->
     <main class="konten">
-        <div class="top-bar-desktop">
+        <div class="top-bar-catatan">
             <h1>Catatan saya</h1>
             <div class="avatar" title="Akun saya"><?= e(PENGGUNA_INISIAL) ?></div>
         </div>
