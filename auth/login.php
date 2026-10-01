@@ -43,35 +43,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $identifier = trim($_POST['email'] ?? '');
         $password   = $_POST['password'] ?? '';
 
-    $dummy_users = [
-        [
-            'id'       => 1,
-            'name'     => 'User biasa',
-            'email'    => 'user@gmail.com',
-            'password' => '123456',
-            'role'     => 'user',
-            'redirect' => '../dashboard_user/dashboard.php'
-        ],
-        [
-            'id'       => 2,
-            'name'     => 'Administrator',
-            'email'    => 'admin@gmail.com',
-            'password' => '123456',
-            'role'     => 'admin',
-            'redirect' => '../admin/admin.php'
-        ]
-    ];
+        if (empty($identifier) || empty($password)) {
+            $errors[] = "Email/NIM dan Password wajib diisi.";
+        } else {
+            $users = json_decode(file_get_contents($data_file), true) ?: [];
+            $found_user = null;
 
-    $is_authenticated = false;
+            foreach ($users as $u) {
+                if ($u["email"] === $identifier || $u["nim"] === $identifier) {
+                    $found_user = $u;
+                    break;
+                }
+            }
 
-    foreach ($dummy_users as $account) {
-        if ($email_input === $account['email'] && $password_input === $account['password']) {
-            $_SESSION['user_id']   = $account['id'];
-            $_SESSION['user_name'] = $account['name'];
-            $_SESSION['role']      = $account['role'];
+            if ($found_user && password_verify($password, $found_user["password"])) {
+                if (isset($found_user["is_active"]) && !$found_user["is_active"]) {
+                    $errors[] = "Akun Anda sedang dinonaktifkan.";
+                } else {
+                    $_SESSION["user_id"]      = $found_user["id"];
+                    $_SESSION["nama_lengkap"] = $found_user["nama_lengkap"];
+                    $_SESSION["role"]         = $found_user["role"];
 
-            $is_authenticated = true;
-            header("Location: " . $account['redirect']);
+                    if ($found_user["role"] === "admin") {
+                        header("Location: ../admin/admin.php");
+                    } else {
+                        header("Location: ../dashboard_user/dashboard.php");
+                    }
+                    exit();
+                }
+            } else {
+                $errors[] = "Email/NIM atau Password salah.";
+            }
+        }
+
+        // Redirect balik jika ada error pada Login
+        if (!empty($errors)) {
+            $_SESSION['error_messages'] = $errors;
+            $_SESSION['active_tab']     = 'masuk';
+            header("Location: login.php");
             exit();
         }
     }
@@ -217,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="inline-error">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="8" x2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
                                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
                             </svg>
                             <span><?php echo htmlspecialchars($err); ?></span>
