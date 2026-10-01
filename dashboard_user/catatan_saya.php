@@ -57,7 +57,7 @@ $catatanSaya = [
 
     <!-- Main Content -->
     <main class="konten">
-        <div class="top-bar-desktop">
+        <div class="top-bar-catatan">
             <h1>Catatan saya</h1>
             <div class="avatar" title="Akun saya"><?= e(PENGGUNA_INISIAL) ?></div>
         </div>
