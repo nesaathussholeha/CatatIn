@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+session_start();
 
 const APP_NAME = 'CatatIn';
 const PENGGUNA_INISIAL = 'SF';
@@ -9,12 +10,52 @@ function e(?string $teks): string
     return htmlspecialchars((string) $teks, ENT_QUOTES, 'UTF-8');
 }
 
-// Data simulasi catatan pengguna
-$catatanSaya = [
-    ['id' => 1, 'judul' => 'Rangkuman Struktur Data', 'tipe' => 'Rangkuman', 'upvote' => 128],
-    ['id' => 2, 'judul' => 'Latihan Soal Kalkulus II', 'tipe' => 'Soal Ujian', 'upvote' => 37],
-    ['id' => 3, 'judul' => 'Modul Praktikum Jaringan', 'tipe' => 'Modul', 'upvote' => 19],
-];
+/* Data simulasi disimpan di session (sama dengan upload.php) */
+function ambilCatatan(): array
+{
+    if (!isset($_SESSION['catatan'])) {
+        $_SESSION['catatan'] = [
+            ['id' => 1, 'judul' => 'Rangkuman Struktur Data', 'matkul' => 'Struktur Data', 'jurusan' => 'Informatika', 'tipe' => 'Rangkuman', 'deskripsi' => '', 'tautan' => '', 'anonim' => false, 'upvote' => 128],
+            ['id' => 2, 'judul' => 'Latihan Soal Kalkulus II', 'matkul' => 'Kalkulus II', 'jurusan' => 'Informatika', 'tipe' => 'Soal Ujian', 'deskripsi' => '', 'tautan' => '', 'anonim' => false, 'upvote' => 37],
+            ['id' => 3, 'judul' => 'Modul Praktikum Jaringan', 'matkul' => 'Jaringan Komputer', 'jurusan' => 'Teknik Komputer', 'tipe' => 'Modul', 'deskripsi' => '', 'tautan' => '', 'anonim' => false, 'upvote' => 19],
+        ];
+    }
+    return $_SESSION['catatan'];
+}
+
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+}
+
+ambilCatatan();
+
+// Proses hapus (POST + CSRF), lalu redirect agar tidak terkirim ulang saat refresh
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $token = $_POST['csrf'] ?? '';
+    $idHapus = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
+
+    if (!is_string($token) || !hash_equals($_SESSION['csrf'], $token)) {
+        $_SESSION['flash'] = ['pesan' => 'Sesi tidak valid. Muat ulang halaman lalu coba lagi.', 'galat' => true];
+    } elseif ($idHapus === false || $idHapus === null) {
+        $_SESSION['flash'] = ['pesan' => 'Permintaan tidak valid.', 'galat' => true];
+    } else {
+        $sebelum = count($_SESSION['catatan']);
+        $_SESSION['catatan'] = array_values(array_filter(
+            $_SESSION['catatan'],
+            static fn(array $c): bool => $c['id'] !== $idHapus
+        ));
+        $_SESSION['flash'] = count($_SESSION['catatan']) < $sebelum
+            ? ['pesan' => 'Catatan berhasil dihapus.', 'galat' => false]
+            : ['pesan' => 'Catatan tidak ditemukan.', 'galat' => true];
+    }
+    header('Location: catatan_saya.php');
+    exit;
+}
+
+$flash = $_SESSION['flash'] ?? null;
+unset($_SESSION['flash']);
+
+$catatanSaya = $_SESSION['catatan'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -31,7 +72,8 @@ $catatanSaya = [
 <div class="app">
     <!-- Header Topbar Mobile -->
     <header class="topbar">
-        <button type="button" class="hamburger" id="tombol-menu" aria-label="Buka menu">
+        <button type="button" class="hamburger" id="tombol-menu" aria-label="Buka menu"
+                aria-expanded="false" aria-controls="sidebar">
             <span></span><span></span><span></span>
         </button>
         <a class="logo-atas" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
@@ -46,7 +88,7 @@ $catatanSaya = [
             <ul class="menu">
                 <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="upload.php">Unggah Catatan</a></li>
-                <li><a href="catatan-saya.php" aria-current="page">Catatan Saya</a></li>
+                <li><a href="catatan_saya.php" aria-current="page">Catatan Saya</a></li>
                 <li><a href="#">Profil</a></li>
             </ul>
         </nav>
@@ -57,10 +99,16 @@ $catatanSaya = [
 
     <!-- Main Content -->
     <main class="konten">
-        <div class="top-bar-catatan">
+        <div class="top-bar-desktop">
             <h1>Catatan saya</h1>
             <div class="avatar" title="Akun saya"><?= e(PENGGUNA_INISIAL) ?></div>
         </div>
+
+        <?php if ($flash): ?>
+            <div class="toast<?= $flash['galat'] ? ' toast-error' : '' ?>" role="status" data-auto>
+                <?= e($flash['pesan']) ?>
+            </div>
+        <?php endif; ?>
 
         <div class="tabel-container">
             <table class="tabel-catatan">
@@ -73,14 +121,26 @@ $catatanSaya = [
                     </tr>
                 </thead>
                 <tbody>
+                    <?php if ($catatanSaya === []): ?>
+                        <tr>
+                            <td colspan="4">
+                                Belum ada catatan. <a href="upload.php">Unggah catatan pertamamu</a>.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
                     <?php foreach ($catatanSaya as $item): ?>
                         <tr>
                             <td class="td-judul"><?= e($item['judul']) ?></td>
                             <td><?= e($item['tipe']) ?></td>
                             <td><?= (int) $item['upvote'] ?></td>
                             <td class="td-aksi">
-                                <a href="upload.php?edit=<?= $item['id'] ?>" class="link-edit">Edit</a>
-                                <a href="proses-hapus.php?id=<?= $item['id'] ?>" class="link-hapus" onclick="return confirm('Yakin ingin menghapus catatan ini?')">Hapus</a>
+                                <a href="upload.php?edit=<?= (int) $item['id'] ?>" class="link-edit">Edit</a>
+                                <form action="catatan_saya.php" method="POST" class="form-hapus"
+                                      onsubmit="return confirm('Yakin ingin menghapus catatan ini?')">
+                                    <input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
+                                    <input type="hidden" name="id" value="<?= (int) $item['id'] ?>">
+                                    <button type="submit" class="link-hapus">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -90,6 +150,6 @@ $catatanSaya = [
     </main>
 </div>
 
-<script src="script.js"></script>
+<script src="dashboard.js"></script>
 </body>
 </html>
