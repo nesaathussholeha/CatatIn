@@ -249,7 +249,8 @@ h1, h2, h3, p { margin: 0; }
   background: #ffffff;
   border-radius: 16px;
   padding: 32px 40px;
-  max-width: 620px;
+  width: 100%;
+  max-width: none;
   border: 1px solid #f1f5f9;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
@@ -502,4 +503,43 @@ h1, h2, h3, p { margin: 0; }
         background: rgba(23, 25, 63, .5);
     }
     .overlay.tampil { display: block; }
+}
+
+/* ==========================================================
+   Layout form Unggah Catatan: 2 kolom, melebar ke kanan
+   ========================================================== */
+.card-form form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 28px;
+}
+
+/* Judul, baris matkul+jurusan, tautan, centang anonim, tombol: selebar kartu */
+.card-form form > div:nth-of-type(1),
+.card-form form > div:nth-of-type(2),
+.card-form form > div:nth-of-type(5),
+.card-form form > div:nth-of-type(6),
+.card-form form > .btn-primary {
+  grid-column: 1 / -1;
+}
+
+/* Tipe berkas (kiri) dan Deskripsi (kanan) bersebelahan */
+.pill-group { flex-wrap: wrap; }
+
+/* Tombol tidak perlu selebar layar */
+.card-form .btn-primary {
+  width: auto;
+  min-width: 220px;
+  justify-self: start;
+  padding: 13px 36px;
+}
+
+/* HP & tablet kecil: kembali jadi 1 kolom */
+@media (max-width: 860px) {
+  .card-form { padding: 24px 20px; }
+  .card-form form { grid-template-columns: 1fr; }
+  .card-form .btn-primary { width: 100%; justify-self: stretch; }
+}
+@media (max-width: 520px) {
+  .form-row { flex-direction: column; gap: 0; }
 }
