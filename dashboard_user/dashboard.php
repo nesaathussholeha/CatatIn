@@ -59,6 +59,8 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
                     <li><a href="dashboard.php" aria-current="page">Dashboard</a></li>
                     <li><a href="upload.php">Unggah Catatan</a></li>
                     <li><a href="catatan_saya.php">Catatan Saya</a></li>
+                    <li><a href="../playlist/playlist.php">Koleksi Belajar</a></li>
+                    <li><a href="#">Tugas Belajar</a></li>
                     <li><a href="#">Profil</a></li>
                 </ul>
             </nav>
