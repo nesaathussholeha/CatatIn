@@ -194,12 +194,11 @@ $modeEdit = $idForm > 0;
     <!-- Main Content -->
     <main class="konten">
         <div class="top-bar-desktop">
+            <h1><?= $modeEdit ? 'Edit catatan' : 'Unggah catatan' ?></h1>
             <div class="avatar" title="Akun saya"><?= e(PENGGUNA_INISIAL) ?></div>
         </div>
 
         <div class="card-form">
-            <h2><?= $modeEdit ? 'Edit catatan' : 'Unggah catatan baru' ?></h2>
-
             <?php if ($galat !== []): ?>
                 <div class="alert-galat" role="alert">
                     <ul>
