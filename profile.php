@@ -175,7 +175,7 @@ if ($user['foto'] !== '' && file_exists(__DIR__ . '/uploads/' . basename($user['
 </head>
 <body>
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <header class="logo">
             <svg class="logo-icon" width="26" height="26" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -183,7 +183,17 @@ if ($user['foto'] !== '' && file_exists(__DIR__ . '/uploads/' . basename($user['
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
             </svg>
             <strong>CatatIn</strong>
+
+            <!-- Tombol tutup (hanya tampil di HP/tab) -->
+            <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Tutup menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </header>
+
         <nav class="navigation">
             <a href="dashboard.php" class="nav-item">Dashboard</a>
             <a href="unggah-catatan.php" class="nav-item">Unggah Catatan</a>
@@ -195,10 +205,23 @@ if ($user['foto'] !== '' && file_exists(__DIR__ . '/uploads/' . basename($user['
         <a href="logout.php" class="nav-item logout">Keluar</a>
     </aside>
 
+    <!-- Overlay gelap di belakang sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- KONTEN UTAMA -->
     <main class="main-content">
         <!-- TOP BAR -->
         <header class="topbar">
+            <button type="button" class="menu-toggle" id="menuToggle"
+                    aria-label="Buka menu" aria-controls="sidebar" aria-expanded="false">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
             <span class="top-avatar">
                 <?php if ($foto_url !== ''): ?><!-- [UPLOAD] -->
                     <img src="<?php echo htmlspecialchars($foto_url); ?>" alt="Foto profil">
