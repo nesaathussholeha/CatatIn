@@ -94,23 +94,21 @@ body {
 ===================================== */
 
 .main-content {
+    position: relative;          /* tambahan: acuan posisi topbar */
     min-height: 100vh;
     margin-left: 230px;
     background-color: #f8f9fd;
 }
 
 .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    width: 100%;
-    height: 48px;               /* tadinya 56px */
-    padding: 0 var(--page-px);
+    position: absolute;
+    top: 32px;                   /* sama dengan padding-top .content */
+    right: var(--page-px);
+    height: 40px;                /* sama dengan line-height judul */
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    background-color: #f8f9fd;
-    border-bottom: none;
+    background: transparent;
+    border: none;
 }
 
 .breadcrumb {
@@ -119,28 +117,27 @@ body {
 }
 
 .top-avatar {
-    position: static;
-    transform: none;
-    width: 34px;
-    height: 34px;
+    width: 40px;                 /* tadinya 34px */
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background-color: #4c5fe0;
     color: white;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
 }
 
+
 .content {
     width: 100%;
-    padding: 4px var(--page-px) 60px;   /* tadinya 32px di atas */
+    padding: 32px var(--page-px) 60px;
 }
 
 .content h1 {
-    margin-bottom: 20px;        /* tadinya 24px */
-    line-height: 1.2;
+    margin-bottom: 20px;
+    line-height: 40px;           /* tinggi baris sama dengan avatar */
     font-family: "Poppins", sans-serif;
     font-size: 28px;
     font-weight: 700;
