@@ -108,3 +108,81 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
+
+/* =====================================
+   [UPLOAD] FOTO PROFIL (tambahan baru)
+===================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const photoInput = document.getElementById("photo");
+    const photoPreview = document.getElementById("photoPreview");
+    const photoError = document.getElementById("photoError");
+    const profileForm = document.getElementById("profileForm");
+    const saveButton = document.getElementById("saveButton");
+
+    // Hentikan jika halaman ini tidak punya input foto
+    if (!photoInput) return;
+
+    const allowedExt = ["jpg", "jpeg", "png"];
+    const maxSize = 2 * 1024 * 1024; // 2MB
+
+    // Validasi di sisi klien (validasi final tetap di server / profile.php)
+    function checkPhoto() {
+
+        photoError.hidden = true;
+        photoPreview.hidden = true;
+
+        if (photoInput.files.length === 0) return true;
+
+        const file = photoInput.files[0];
+        const ext = file.name.split(".").pop().toLowerCase();
+        let message = "";
+
+        if (!allowedExt.includes(ext)) {
+
+            message = "Ekstensi tidak diizinkan (hanya jpg, jpeg, png).";
+
+        } else if (file.size > maxSize) {
+
+            message = "Ukuran file melebihi 2MB.";
+
+        }
+
+        if (message) {
+
+            photoError.textContent = message;
+            photoError.hidden = false;
+            photoInput.value = "";
+
+            return false;
+
+        }
+
+        // Pratinjau foto sebelum diunggah
+        photoPreview.src = URL.createObjectURL(file);
+        photoPreview.hidden = false;
+
+        return true;
+
+    }
+
+    photoInput.addEventListener("change", checkPhoto);
+
+    // Batalkan pengiriman form jika foto tidak valid
+    profileForm.addEventListener("submit", function (event) {
+
+        if (!checkPhoto()) {
+
+            event.preventDefault();
+
+            // Kembalikan tombol simpan (sudah dinonaktifkan oleh kode di atas)
+            saveButton.textContent = "Simpan perubahan";
+            saveButton.disabled = false;
+
+        }
+
+    });
+
+});

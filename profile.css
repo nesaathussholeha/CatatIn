@@ -4,11 +4,20 @@
     box-sizing: border-box;
 }
 
+:root {
+    --page-px: 45px; /* jarak kiri-kanan topbar & konten, biar selalu sejajar */
+}
+
 body {
     font-family: "Inter", sans-serif;
     background-color: #eef1fb;
     color: #171a3d;
 }
+
+/* =====================================
+   SIDEBAR (disamakan dengan admin,
+   menu aktif tetap biru)
+===================================== */
 
 .sidebar {
     position: fixed;
@@ -16,58 +25,73 @@ body {
     left: 0;
     width: 230px;
     height: 100vh;
-    padding: 30px 14px;
-    background-color: #171a3d;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 16px 26px;
+    background-color: #0b1228;
     color: white;
+    font-family: "Plus Jakarta Sans", "Inter", sans-serif;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     padding: 0 12px;
-    margin-bottom: 35px;
-    font-family: "Poppins", sans-serif;
-    font-size: 16px;
+    margin-bottom: 34px;
+    font-family: "Plus Jakarta Sans", "Poppins", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #38bdf8;
 }
 
 .logo-icon {
-    color: #4c5fe0;
-    font-size: 14px;
+    flex-shrink: 0;
+    color: #38bdf8;
 }
 
 .navigation {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .nav-item {
     display: block;
-    padding: 11px 12px;
-    border-radius: 8px;
-    color: #e1e4f2;
+    padding: 13px 20px;
+    border-radius: 14px;
+    color: #a8b5e8;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     transition: 0.2s;
 }
 
 .nav-item:hover {
-    background-color: #3b4bc7;
-
+    background-color: rgba(76, 95, 224, 0.18);
     color: white;
 }
 
 .nav-item.active {
     background-color: #4c5fe0;
-
     color: white;
+    font-weight: 700;
 }
 
+/* Keluar: menempel di bawah sidebar, warna merah */
 .nav-item.logout {
-    margin-top: 8px;
+    margin-top: auto;
+    color: #ff5c5c;
 }
+
+.nav-item.logout:hover {
+    background-color: rgba(255, 92, 92, 0.12);
+    color: #ff7a7a;
+}
+
+/* =====================================
+   MAIN CONTENT & TOPBAR
+===================================== */
 
 .main-content {
     min-height: 100vh;
@@ -76,17 +100,17 @@ body {
 }
 
 .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
     width: 100%;
-    height: 55px;
-    background-color: white;
-    border-bottom: 1px solid #e1e4f2;
-    
-    /* Gunakan Flexbox untuk mendorong avatar ke kanan */
+    height: 48px;               /* tadinya 56px */
+    padding: 0 var(--page-px);
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0 45px; /* Jarak dari tepi kanan */
-    box-sizing: border-box;
+    background-color: #f8f9fd;
+    border-bottom: none;
 }
 
 .breadcrumb {
@@ -95,38 +119,37 @@ body {
 }
 
 .top-avatar {
-    /* Hapus position absolute agar mengikuti alur Flexbox */
     position: static;
     transform: none;
-
     width: 34px;
     height: 34px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 50%;
     background-color: #4c5fe0;
     color: white;
-
     font-size: 12px;
     font-weight: 600;
 }
 
 .content {
     width: 100%;
-    padding: 38px 45px 60px;
+    padding: 4px var(--page-px) 60px;   /* tadinya 32px di atas */
 }
 
-
 .content h1 {
-    margin-bottom: 24px;
+    margin-bottom: 20px;        /* tadinya 24px */
+    line-height: 1.2;
     font-family: "Poppins", sans-serif;
     font-size: 28px;
     font-weight: 700;
     color: #171a3d;
 }
+
+/* =====================================
+   PESAN SUKSES / ERROR
+===================================== */
 
 .success-message,
 .error-message {
@@ -150,6 +173,10 @@ body {
     color: #991b1b;
 }
 
+/* =====================================
+   STATISTIK
+===================================== */
+
 .statistics {
     width: 100%;
     max-width: 100%;
@@ -168,11 +195,8 @@ body {
     background-color: white;
     border: 1px solid #e1e4f2;
     border-radius: 10px;
-    box-shadow:
-        0 2px 8px
-        rgba(23, 26, 61, 0.04);
+    box-shadow: 0 2px 8px rgba(23, 26, 61, 0.04);
 }
-
 
 .stat-number {
     margin-bottom: 5px;
@@ -181,7 +205,6 @@ body {
     font-weight: 700;
     color: #171a3d;
 }
-
 
 .stat-label {
     color: #64748b;
@@ -198,6 +221,10 @@ body {
     color: #171a3d;
 }
 
+/* =====================================
+   KARTU PROFIL
+===================================== */
+
 .profile-card {
     width: 100%;
     max-width: 100%;
@@ -205,9 +232,7 @@ body {
     background-color: white;
     border: 1px solid #e1e4f2;
     border-radius: 10px;
-    box-shadow:
-        0 2px 8px
-        rgba(23, 26, 61, 0.04);
+    box-shadow: 0 2px 8px rgba(23, 26, 61, 0.04);
 }
 
 .profile-card-header {
@@ -249,11 +274,13 @@ body {
     color: #64748b;
 }
 
+/* =====================================
+   FORM
+===================================== */
+
 .form-grid {
     display: grid;
-
     grid-template-columns: repeat(2, 1fr);
-
     gap: 0 20px;
 }
 
@@ -294,9 +321,7 @@ body {
 
 .form-group input:focus {
     border-color: #4c5fe0;
-    box-shadow:
-        0 0 0 3px
-        rgba(76, 95, 224, 0.10);
+    box-shadow: 0 0 0 3px rgba(76, 95, 224, 0.10);
 }
 
 .password-wrapper {
@@ -330,7 +355,6 @@ body {
     gap: 10px;
     margin-top: 5px;
 }
-
 
 .btn {
     min-height: 40px;
@@ -368,20 +392,77 @@ body {
     background-color: #fef2f2;
 }
 
+/* =====================================
+   [UPLOAD] FOTO PROFIL
+===================================== */
+
+.top-avatar,
+.profile-avatar-lg {
+    overflow: hidden;
+}
+
+.top-avatar img,
+.profile-avatar-lg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.form-group input[type="file"] {
+    height: auto;
+    padding: 10px 14px;
+}
+
+.field-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.field-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #ef4444;
+}
+
+.photo-preview {
+    display: block;
+    margin-top: 12px;
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid #e1e4f2;
+}
+
+.photo-preview[hidden],
+.field-error[hidden] {
+    display: none;
+}
+
+.btn-small {
+    min-height: 34px;
+    margin-top: 10px;
+    padding: 0 14px;
+}
+
+/* =====================================
+   RESPONSIVE
+   (taruh paling bawah biar bisa menimpa
+   style di atasnya)
+===================================== */
+
 @media (min-width: 1400px) {
-
-    .content {
-        padding-left: 50px;
-
-        padding-right: 50px;
+    :root {
+        --page-px: 50px;
     }
-
 }
 
 @media (max-width: 1000px) {
-
-    .content {
-        padding: 30px;
+    :root {
+        --page-px: 30px;
     }
 
     .statistics,
@@ -390,10 +471,12 @@ body {
     .error-message {
         max-width: 100%;
     }
-
 }
 
 @media (max-width: 650px) {
+    :root {
+        --page-px: 18px;
+    }
 
     .sidebar {
         position: static;
@@ -404,6 +487,10 @@ body {
 
     .logo {
         margin-bottom: 18px;
+    }
+
+    .nav-item.logout {
+        margin-top: 10px;
     }
 
     .navigation {
@@ -419,12 +506,9 @@ body {
         margin-left: 0;
     }
 
-    .topbar {
-        padding: 0 18px;
-    }
-
     .content {
-        padding: 25px 18px;
+        padding-top: 25px;
+        padding-bottom: 25px;
     }
 
     .content h1 {
