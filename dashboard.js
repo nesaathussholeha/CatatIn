@@ -1,4 +1,4 @@
-/* dashboard.js — menu mobile (semua halaman) + interaksi dashboard */
+/* dashboard.js — khusus halaman dashboard.php (menu mobile + pencarian/filter/upvote) */
 (function () {
     'use strict';
 
@@ -18,7 +18,7 @@
     }
 
     /* ==========================================================
-       BAGIAN 1: MENU MOBILE (berjalan di semua halaman)
+       MENU MOBILE (hamburger + sidebar)
        ========================================================== */
     function initMenu() {
         var sidebar     = document.getElementById('sidebar');
@@ -64,7 +64,7 @@
     }
 
     /* ==========================================================
-       BAGIAN 2: DASHBOARD (hanya jika #grid ada di halaman)
+       DASHBOARD (pencarian, filter, urutan, upvote)
        ========================================================== */
     function initDashboard() {
         var grid = document.getElementById('grid');
@@ -168,9 +168,6 @@
         terapkan(); // sinkronkan tampilan awal
     }
 
-    /* ==========================================================
-       JALANKAN
-       ========================================================== */
     initMenu();
     initDashboard();
 })();

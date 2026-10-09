@@ -42,7 +42,7 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard  <?= APP_NAME ?></title>
+    <title>Dashboard — <?= APP_NAME ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -62,12 +62,12 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
 <aside class="sidebar" id="sidebar">
     <button type="button" class="tutup-menu" id="tutup-menu" aria-label="Tutup menu">✕</button>
     <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-    
+
     <nav aria-label="Menu utama">
         <ul class="menu">
             <li><a href="dashboard.php" aria-current="page">Dashboard</a></li>
-            <li><a href="#">Unggah Catatan</a></li>
-            <li><a href="#">Catatan Saya</a></li>
+            <li><a href="unggah_catatan.php">Unggah Catatan</a></li>
+            <li><a href="catatan_saya.php">Catatan Saya</a></li>
             <li><a href="../playlist/playlist.php">Koleksi Belajar</a></li>
             <li><a href="#">Tugas Belajar</a></li>
             <li><a href="#">Profil</a></li>
