@@ -89,6 +89,8 @@ $catatanSaya = $_SESSION['catatan'];
                 <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="upload.php">Unggah Catatan</a></li>
                 <li><a href="catatan_saya.php" aria-current="page">Catatan Saya</a></li>
+                <li><a href="#">Koleksi Belajar</a><li>
+                <li><a href="#">Tugas Belajar</a><li>
                 <li><a href="#">Profil</a></li>
             </ul>
         </nav>

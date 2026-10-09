@@ -183,6 +183,8 @@ $modeEdit = $idForm > 0;
                 <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="upload.php" aria-current="page">Unggah Catatan</a></li>
                 <li><a href="catatan_saya.php">Catatan Saya</a></li>
+                <li><a href="#">Koleksi Belajar</a><li>
+                <li><a href="#">Tugas Belajar</a><li>
                 <li><a href="#">Profil</a></li>
             </ul>
         </nav>
