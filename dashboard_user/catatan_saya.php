@@ -3,7 +3,6 @@ declare(strict_types=1);
 session_start();
 
 const APP_NAME = 'CatatIn';
-const PENGGUNA_INISIAL = 'SF';
 
 function e(?string $teks): string
 {
@@ -23,15 +22,32 @@ function ambilCatatan(): array
     return $_SESSION['catatan'];
 }
 
+/* Kelas warna badge sesuai tipe catatan */
+function kelasTipe(string $tipe): string
+{
+    return match ($tipe) {
+        'Soal Ujian' => 'badge-soal',
+        'Modul'      => 'badge-modul',
+        default      => 'badge-rangkuman',
+    };
+}
+
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
 
 ambilCatatan();
 
+/* Variabel template layout (index.php) */
+$page_title   = "Catatan Saya";
+$active_menu  = "catatan_saya"; // Pilihan: 'dashboard', 'unggah', 'catatan_saya', 'koleksi', 'tugas', 'profil'
+$user_name    = "Username";
+$user_role    = "Role";
+$user_initial = strtoupper(substr($user_name, 0, 1));
+
 // Proses hapus (POST + CSRF), lalu redirect agar tidak terkirim ulang saat refresh
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = $_POST['csrf'] ?? '';
+    $token   = $_POST['csrf'] ?? '';
     $idHapus = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
 
     if (!is_string($token) || !hash_equals($_SESSION['csrf'], $token)) {
@@ -59,99 +75,162 @@ $catatanSaya = $_SESSION['catatan'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Catatan Saya — <?= APP_NAME ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= e($page_title); ?> - <?= APP_NAME ?></title>
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+
+    <!-- Iconify CDN -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <link rel="stylesheet" href="../layout_user/style.css">
     <link rel="stylesheet" href="catatan_saya.css">
 </head>
+
 <body>
-<div class="app">
-    <!-- Header Topbar Mobile -->
-    <header class="topbar">
-        <button type="button" class="hamburger" id="tombol-menu" aria-label="Buka menu"
-                aria-expanded="false" aria-controls="sidebar">
-            <span></span><span></span><span></span>
-        </button>
-        <a class="logo-atas" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-    </header>
-    <div class="overlay" id="overlay"></div>
 
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar" id="sidebar">
-        <button type="button" class="tutup-menu" id="tutup-menu" aria-label="Tutup menu">✕</button>
-        <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-        <nav aria-label="Menu utama">
-            <ul class="menu">
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="upload.php">Unggah Catatan</a></li>
-                <li><a href="catatan_saya.php" aria-current="page">Catatan Saya</a></li>
-                <li><a href="#">Koleksi Belajar</a><li>
-                <li><a href="#">Tugas Belajar</a><li>
-                <li><a href="#">Profil</a></li>
-            </ul>
-        </nav>
-        <div class="sidebar-bawah">
-            <a href="../auth/login.php" class="menu-keluar">Keluar</a>
-        </div>
-    </aside>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Main Content -->
-    <main class="konten">
-        <div class="top-bar-desktop">
-            <h1>Catatan saya</h1>
-            <div class="avatar" title="Akun saya"><?= e(PENGGUNA_INISIAL) ?></div>
-        </div>
+        <!-- Sidebar Navigasi -->
+        <aside class="sidebar" id="sidebar">
+            <div>
+                <!-- Header Sidebar + Tombol Close (X) -->
+                <div class="sidebar-header">
+                    <div class="brand">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <span>CatatIn</span>
+                    </div>
+                    <button class="close-sidebar-btn" id="closeSidebar" aria-label="Tutup Menu">
+                        <iconify-icon icon="lucide:x"></iconify-icon>
+                    </button>
+                </div>
 
-        <?php if ($flash): ?>
-            <div class="toast<?= $flash['galat'] ? ' toast-error' : '' ?>" role="status" data-auto>
-                <?= e($flash['pesan']) ?>
+                <ul class="nav-list">
+                    <li>
+                        <a href="dashboard.php" class="nav-link <?= ($active_menu == 'dashboard') ? 'active' : ''; ?>">
+                            <iconify-icon icon="akar-icons:dashboard"></iconify-icon> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="upload.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
+                            <iconify-icon icon="reicon:document-upload"></iconify-icon> Unggah Catatan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="catatan_saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
+                            <iconify-icon icon="hugeicons:note"></iconify-icon> Catatan Saya
+                        </a>
+                    </li>
+                    <li>
+                        <a href="koleksi.php" class="nav-link <?= ($active_menu == 'koleksi') ? 'active' : ''; ?>">
+                            <iconify-icon icon="codicon:folder-opened-compact"></iconify-icon> Koleksi
+                        </a>
+                    </li>
+                    <li>
+                        <a href="tugas.php" class="nav-link <?= ($active_menu == 'tugas') ? 'active' : ''; ?>">
+                            <iconify-icon icon="hugeicons:sticky-note-02"></iconify-icon> Tugas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="profil.php" class="nav-link <?= ($active_menu == 'profil') ? 'active' : ''; ?>">
+                            <iconify-icon icon="iconamoon:profile-circle"></iconify-icon> Profil
+                        </a>
+                    </li>
+                </ul>
             </div>
-        <?php endif; ?>
 
-        <div class="tabel-container">
-            <table class="tabel-catatan">
-                <thead>
-                    <tr>
-                        <th>Judul</th>
-                        <th>Tipe</th>
-                        <th>Upvote</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($catatanSaya === []): ?>
-                        <tr>
-                            <td colspan="4">
-                                Belum ada catatan. <a href="upload.php">Unggah catatan pertamamu</a>.
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                    <?php foreach ($catatanSaya as $item): ?>
-                        <tr>
-                            <td class="td-judul"><?= e($item['judul']) ?></td>
-                            <td><?= e($item['tipe']) ?></td>
-                            <td><?= (int) $item['upvote'] ?></td>
-                            <td class="td-aksi">
-                                <a href="upload.php?edit=<?= (int) $item['id'] ?>" class="link-edit">Edit</a>
-                                <form action="catatan_saya.php" method="POST" class="form-hapus"
-                                      onsubmit="return confirm('Yakin ingin menghapus catatan ini?')">
-                                    <input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
-                                    <input type="hidden" name="id" value="<?= (int) $item['id'] ?>">
-                                    <button type="submit" class="link-hapus">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <div>
+                <a href="logout.php" class="nav-link logout">
+                    <iconify-icon icon="hugeicons:logout-square-01"></iconify-icon> Keluar
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <iconify-icon icon="lucide:menu"></iconify-icon>
+                    </button>
+                    <h1 class="page-title"><?= e($page_title); ?></h1>
+                </div>
+
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name"><?= e($user_name); ?></span>
+                        <span class="user-role"><?= e($user_role); ?></span>
+                    </div>
+                    <div class="avatar">
+                        <?= e($user_initial); ?>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Area Konten Utama -->
+            <main class="content-area">
+                <?php if ($flash): ?>
+                    <div class="toast<?= $flash['galat'] ? ' toast-error' : '' ?>" role="status" data-auto>
+                        <?= e($flash['pesan']) ?>
+                    </div>
+                <?php endif; ?>
+
+                <div class="tabel-container">
+                    <table class="tabel-catatan">
+                        <thead>
+                            <tr>
+                                <th>Judul</th>
+                                <th>Tipe</th>
+                                <th>Upvote</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($catatanSaya === []): ?>
+                                <tr>
+                                    <td colspan="4" class="td-kosong">
+                                        Belum ada catatan. <a href="upload.php">Unggah catatan pertamamu</a>.
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php foreach ($catatanSaya as $item): ?>
+                                <tr>
+                                    <td class="td-judul"><?= e($item['judul']) ?></td>
+                                    <td><span class="badge <?= kelasTipe($item['tipe']) ?>"><?= e($item['tipe']) ?></span></td>
+                                    <td>
+                                        <span class="upvote">
+                                            <iconify-icon icon="lucide:thumbs-up"></iconify-icon>
+                                            <?= (int) $item['upvote'] ?>
+                                        </span>
+                                    </td>
+                                    <td class="td-aksi">
+                                        <a href="upload.php?edit=<?= (int) $item['id'] ?>" class="btn-aksi btn-edit">Edit</a>
+                                        <form action="catatan_saya.php" method="POST" class="form-hapus"
+                                              onsubmit="return confirm('Yakin ingin menghapus catatan ini?')">
+                                            <input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
+                                            <input type="hidden" name="id" value="<?= (int) $item['id'] ?>">
+                                            <button type="submit" class="btn-aksi btn-hapus">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
-    </main>
-</div>
+    </div>
 
-<script src="catatan_saya.js"></script>
+    <script src="../layout_user/script.js"></script>
+    <script src="catatan_saya.js"></script>
 </body>
+
 </html>

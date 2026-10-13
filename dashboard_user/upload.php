@@ -4,7 +4,6 @@ declare(strict_types=1);
 session_start();
 
 const APP_NAME = 'CatatIn';
-const PENGGUNA_INISIAL = 'SF';
 
 function e(?string $teks): string
 {
@@ -162,141 +161,200 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $modeEdit = $idForm > 0;
+
+/* Variabel template layout (index.php) */
+$page_title   = $modeEdit ? 'Edit catatan' : 'Unggah catatan';
+$active_menu  = "unggah"; // Pilihan: 'dashboard', 'unggah', 'catatan_saya', 'koleksi', 'tugas', 'profil'
+$user_name    = "Username";
+$user_role    = "Role";
+$user_initial = strtoupper(substr($user_name, 0, 1));
 ?>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= $modeEdit ? 'Edit Catatan' : 'Unggah Catatan Baru' ?> — <?= APP_NAME ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="upload.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= e($page_title) ?> - <?= APP_NAME ?></title>
 
-    <link rel="stylesheet" href="dashboard.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+
+    <!-- Iconify CDN -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+    <link rel="stylesheet" href="../layout_user/style.css">
+    <link rel="stylesheet" href="upload.css">
 </head>
 
 <body>
-    <div class="app">
-        <!-- Header Topbar Mobile -->
-        <header class="topbar">
-            <button type="button" class="hamburger" id="tombol-menu" aria-label="Buka menu"
-                aria-expanded="false" aria-controls="sidebar">
-                <span></span><span></span><span></span>
-            </button>
-            <a class="logo-atas" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-        </header>
-        <div class="overlay" id="overlay"></div>
 
-        <!-- Sidebar Navigation -->
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar Navigasi -->
         <aside class="sidebar" id="sidebar">
-            <button type="button" class="tutup-menu" id="tutup-menu" aria-label="Tutup menu">✕</button>
-            <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-            <nav aria-label="Menu utama">
-                <ul class="menu">
-                    <li><a href="dashboard.php">Dashboard</a></li>
-                    <li><a href="upload.php" aria-current="page">Unggah Catatan</a></li>
-                    <li><a href="catatan_saya.php">Catatan Saya</a></li>
-                    <li><a href="#">Koleksi Belajar</a>
+            <div>
+                <!-- Header Sidebar + Tombol Close (X) -->
+                <div class="sidebar-header">
+                    <div class="brand">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <span>CatatIn</span>
+                    </div>
+                    <button class="close-sidebar-btn" id="closeSidebar" aria-label="Tutup Menu">
+                        <iconify-icon icon="lucide:x"></iconify-icon>
+                    </button>
+                </div>
+
+                <ul class="nav-list">
                     <li>
-                    <li><a href="#">Tugas Belajar</a>
+                        <a href="dashboard.php" class="nav-link <?= ($active_menu == 'dashboard') ? 'active' : ''; ?>">
+                            <iconify-icon icon="akar-icons:dashboard"></iconify-icon> Dashboard
+                        </a>
+                    </li>
                     <li>
-                    <li><a href="#">Profil</a></li>
+                        <a href="upload.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
+                            <iconify-icon icon="reicon:document-upload"></iconify-icon> Unggah Catatan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="catatan_saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
+                            <iconify-icon icon="hugeicons:note"></iconify-icon> Catatan Saya
+                        </a>
+                    </li>
+                    <li>
+                        <a href="koleksi.php" class="nav-link <?= ($active_menu == 'koleksi') ? 'active' : ''; ?>">
+                            <iconify-icon icon="codicon:folder-opened-compact"></iconify-icon> Koleksi
+                        </a>
+                    </li>
+                    <li>
+                        <a href="tugas.php" class="nav-link <?= ($active_menu == 'tugas') ? 'active' : ''; ?>">
+                            <iconify-icon icon="hugeicons:sticky-note-02"></iconify-icon> Tugas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="profil.php" class="nav-link <?= ($active_menu == 'profil') ? 'active' : ''; ?>">
+                            <iconify-icon icon="iconamoon:profile-circle"></iconify-icon> Profil
+                        </a>
+                    </li>
                 </ul>
-            </nav>
-            <div class="sidebar-bawah">
-                <a href="../auth/login.php" class="menu-keluar">Keluar</a>
+            </div>
+
+            <div>
+                <a href="logout.php" class="nav-link logout">
+                    <iconify-icon icon="hugeicons:logout-square-01"></iconify-icon> Keluar
+                </a>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="konten">
-            <div class="top-bar-desktop">
-                <h1><?= $modeEdit ? 'Edit catatan' : 'Unggah catatan' ?></h1>
-                <div class="avatar" title="Akun saya"><?= e(PENGGUNA_INISIAL) ?></div>
-            </div>
+        <!-- Main Content Wrapper -->
+        <div class="main-wrapper">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <iconify-icon icon="lucide:menu"></iconify-icon>
+                    </button>
+                    <h1 class="page-title"><?= e($page_title); ?></h1>
+                </div>
 
-            <div class="card-form">
-                <?php if ($galat !== []): ?>
-                    <div class="alert-galat" role="alert">
-                        <ul>
-                            <?php foreach ($galat as $g): ?>
-                                <li><?= e($g) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name"><?= e($user_name); ?></span>
+                        <span class="user-role"><?= e($user_role); ?></span>
                     </div>
-                <?php endif; ?>
+                    <div class="avatar">
+                        <?= e($user_initial); ?>
+                    </div>
+                </div>
+            </header>
 
+            <!-- Area Konten Utama -->
+            <main class="content-area">
                 <form action="upload.php" method="POST">
                     <input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
                     <input type="hidden" name="id" value="<?= $idForm ?>">
 
-                    <div class="form-group">
-                        <label for="judul">Judul catatan</label>
-                        <input type="text" id="judul" name="judul" maxlength="150"
-                            value="<?= e($input['judul']) ?>"
-                            placeholder="Rangkuman Aljabar Linear Bab 3" required>
-                    </div>
+                    <div class="card-form">
+                        <?php if ($galat !== []): ?>
+                            <div class="alert-galat" role="alert">
+                                <ul>
+                                    <?php foreach ($galat as $g): ?>
+                                        <li><?= e($g) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
 
-                    <div class="form-row">
                         <div class="form-group">
-                            <label for="matkul">Mata kuliah</label>
-                            <input type="text" id="matkul" name="matkul" maxlength="100"
-                                value="<?= e($input['matkul']) ?>"
-                                placeholder="Aljabar Linear" required>
+                            <label for="judul">Judul catatan</label>
+                            <input type="text" id="judul" name="judul" maxlength="150"
+                                value="<?= e($input['judul']) ?>"
+                                placeholder="Rangkuman Aljabar Linear Bab 3" required>
                         </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="matkul">Mata kuliah</label>
+                                <input type="text" id="matkul" name="matkul" maxlength="100"
+                                    value="<?= e($input['matkul']) ?>"
+                                    placeholder="Aljabar Linear" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="jurusan">Jurusan</label>
+                                <select id="jurusan" name="jurusan" required>
+                                    <?php foreach ($daftarJurusan as $j): ?>
+                                        <option value="<?= e($j) ?>" <?= $input['jurusan'] === $j ? 'selected' : '' ?>><?= e($j) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <label for="jurusan">Jurusan</label>
-                            <select id="jurusan" name="jurusan" required>
-                                <?php foreach ($daftarJurusan as $j): ?>
-                                    <option value="<?= e($j) ?>" <?= $input['jurusan'] === $j ? 'selected' : '' ?>><?= e($j) ?></option>
+                            <span class="label-teks">Tipe berkas</span>
+                            <div class="pill-group">
+                                <?php foreach ($daftarKategori as $k): ?>
+                                    <label class="pill-btn">
+                                        <input type="radio" name="kategori" value="<?= e($k) ?>" <?= $input['kategori'] === $k ? 'checked' : '' ?>>
+                                        <span><?= e($k) ?></span>
+                                    </label>
                                 <?php endforeach; ?>
-                            </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deskripsi">Deskripsi singkat</label>
+                            <textarea id="deskripsi" name="deskripsi" rows="3" maxlength="255"
+                                placeholder="Mencakup transformasi linear dan nilai eigen..." required><?= e($input['deskripsi']) ?></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tautan">Tautan berkas</label>
+                            <input type="text" id="tautan" name="tautan" maxlength="500"
+                                value="<?= e($input['tautan']) ?>"
+                                placeholder="drive.google.com/..." required>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" name="is_anonim" value="1" <?= $input['is_anonim'] ? 'checked' : '' ?>>
+                                Unggah sebagai anonim
+                            </label>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Tipe berkas</label>
-                        <div class="pill-group">
-                            <?php foreach ($daftarKategori as $k): ?>
-                                <label class="pill-btn">
-                                    <input type="radio" name="kategori" value="<?= e($k) ?>" <?= $input['kategori'] === $k ? 'checked' : '' ?>>
-                                    <span><?= e($k) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
+                    <div class="form-actions">
+                        <a href="catatan_saya.php" class="btn-batal">Batal</a>
+                        <button type="submit" class="btn-primary"><?= $modeEdit ? 'Perbarui catatan' : 'Simpan catatan' ?></button>
                     </div>
-
-                    <div class="form-group">
-                        <label for="deskripsi">Deskripsi singkat</label>
-                        <input type="text" id="deskripsi" name="deskripsi" maxlength="255"
-                            value="<?= e($input['deskripsi']) ?>"
-                            placeholder="Mencakup transformasi linear dan nilai eigen..." required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tautan">Tautan berkas</label>
-                        <input type="text" id="tautan" name="tautan" maxlength="500"
-                            value="<?= e($input['tautan']) ?>"
-                            placeholder="drive.google.com/..." required>
-                    </div>
-
-                    <div class="form-group checkbox-group">
-                        <label class="checkbox-container">
-                            <input type="checkbox" name="is_anonim" value="1" <?= $input['is_anonim'] ? 'checked' : '' ?>>
-                            Unggah sebagai anonim
-                        </label>
-                    </div>
-
-                    <button type="submit" class="btn-primary"><?= $modeEdit ? 'Perbarui catatan' : 'Simpan catatan' ?></button>
                 </form>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
 
-    <script src="upload.js"></script>
+    <script src="../layout_user/script.js"></script>
 </body>
 
 </html>
