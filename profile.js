@@ -1,188 +1,178 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     /* =====================================
+       SIDEBAR RESPONSIF (HAMBURGER)
+    ===================================== */
+
+    const sidebar = document.getElementById("sidebar");
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebarClose = document.getElementById("sidebarClose");
+    const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+    if (sidebar && menuToggle && sidebarClose && sidebarOverlay) {
+
+        function openSidebar() {
+            document.body.classList.add("sidebar-open");
+            menuToggle.setAttribute("aria-expanded", "true");
+        }
+
+        function closeSidebar() {
+            document.body.classList.remove("sidebar-open");
+            menuToggle.setAttribute("aria-expanded", "false");
+        }
+
+        menuToggle.addEventListener("click", openSidebar);
+        sidebarClose.addEventListener("click", closeSidebar);
+        sidebarOverlay.addEventListener("click", closeSidebar);
+
+        // Tutup dengan tombol Esc
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") closeSidebar();
+        });
+
+        // Tutup setelah memilih menu
+        sidebar.querySelectorAll(".nav-item").forEach(function (link) {
+            link.addEventListener("click", closeSidebar);
+        });
+
+        // Reset kalau layar dibesarkan ke desktop
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 1000) closeSidebar();
+        });
+    }
+
+
+    /* =====================================
        TAMPILKAN / SEMBUNYIKAN PASSWORD
     ===================================== */
 
-    const passwordInput =
-        document.getElementById("password");
+    const passwordInput = document.getElementById("password");
+    const showPassword = document.getElementById("showPassword");
 
-    const showPassword =
-        document.getElementById("showPassword");
-
-
-    showPassword.addEventListener("click", function () {
-
-        if (passwordInput.type === "password") {
-
-            passwordInput.type = "text";
-
-            showPassword.textContent = "🙈";
-
-        } else {
-
-            passwordInput.type = "password";
-
-            showPassword.textContent = "👁";
-
-        }
-
-    });
+    if (passwordInput && showPassword) {
+        showPassword.addEventListener("click", function () {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                showPassword.textContent = "🙈";
+            } else {
+                passwordInput.type = "password";
+                showPassword.textContent = "👁";
+            }
+        });
+    }
 
 
     /* =====================================
        SIMPAN PERUBAHAN
     ===================================== */
 
-    const profileForm =
-        document.getElementById("profileForm");
+    const profileForm = document.getElementById("profileForm");
+    const saveButton = document.getElementById("saveButton");
 
-    const saveButton =
-        document.getElementById("saveButton");
-
-
-    profileForm.addEventListener("submit", function () {
-
-        saveButton.textContent = "Menyimpan...";
-
-        saveButton.disabled = true;
-
-    });
+    if (profileForm && saveButton) {
+        profileForm.addEventListener("submit", function () {
+            saveButton.textContent = "Menyimpan...";
+            saveButton.disabled = true;
+        });
+    }
 
 
     /* =====================================
        NONAKTIFKAN AKUN
     ===================================== */
 
-    const deactivateButton =
-        document.getElementById("deactivateButton");
+    const deactivateButton = document.getElementById("deactivateButton");
 
-
-    deactivateButton.addEventListener("click", function () {
-
-        const confirmation = confirm(
-            "Apakah kamu yakin ingin menonaktifkan akun?"
-        );
-
-
-        if (confirmation) {
-
-            alert(
-                "Permintaan penonaktifan akun berhasil diproses."
+    if (deactivateButton) {
+        deactivateButton.addEventListener("click", function () {
+            const confirmation = confirm(
+                "Apakah kamu yakin ingin menonaktifkan akun?"
             );
 
-        }
-
-    });
+            if (confirmation) {
+                alert("Permintaan penonaktifan akun berhasil diproses.");
+            }
+        });
+    }
 
 
     /* =====================================
        INTERAKSI INPUT
     ===================================== */
 
-    const inputs =
-        document.querySelectorAll(
-            ".form-group input"
-        );
-
+    const inputs = document.querySelectorAll(".form-group input");
 
     inputs.forEach(function (input) {
-
         input.addEventListener("focus", function () {
-
             input.style.borderColor = "#4C5FE0";
-
         });
-
 
         input.addEventListener("blur", function () {
-
             if (input.value === "") {
-
                 input.style.borderColor = "#E1E4F2";
-
             }
-
         });
-
     });
 
-});
 
-
-/* =====================================
-   [UPLOAD] FOTO PROFIL (tambahan baru)
-===================================== */
-
-document.addEventListener("DOMContentLoaded", function () {
+    /* =====================================
+       [UPLOAD] FOTO PROFIL
+    ===================================== */
 
     const photoInput = document.getElementById("photo");
     const photoPreview = document.getElementById("photoPreview");
     const photoError = document.getElementById("photoError");
-    const profileForm = document.getElementById("profileForm");
-    const saveButton = document.getElementById("saveButton");
 
-    // Hentikan jika halaman ini tidak punya input foto
-    if (!photoInput) return;
+    if (photoInput && photoPreview && photoError && profileForm) {
 
-    const allowedExt = ["jpg", "jpeg", "png"];
-    const maxSize = 2 * 1024 * 1024; // 2MB
+        const allowedExt = ["jpg", "jpeg", "png"];
+        const maxSize = 2 * 1024 * 1024; // 2MB
 
-    // Validasi di sisi klien (validasi final tetap di server / profile.php)
-    function checkPhoto() {
+        // Validasi sisi klien (validasi final tetap di server / profile.php)
+        function checkPhoto() {
 
-        photoError.hidden = true;
-        photoPreview.hidden = true;
+            photoError.hidden = true;
+            photoPreview.hidden = true;
 
-        if (photoInput.files.length === 0) return true;
+            if (photoInput.files.length === 0) return true;
 
-        const file = photoInput.files[0];
-        const ext = file.name.split(".").pop().toLowerCase();
-        let message = "";
+            const file = photoInput.files[0];
+            const ext = file.name.split(".").pop().toLowerCase();
+            let message = "";
 
-        if (!allowedExt.includes(ext)) {
+            if (!allowedExt.includes(ext)) {
+                message = "Ekstensi tidak diizinkan (hanya jpg, jpeg, png).";
+            } else if (file.size > maxSize) {
+                message = "Ukuran file melebihi 2MB.";
+            }
 
-            message = "Ekstensi tidak diizinkan (hanya jpg, jpeg, png).";
+            if (message) {
+                photoError.textContent = message;
+                photoError.hidden = false;
+                photoInput.value = "";
+                return false;
+            }
 
-        } else if (file.size > maxSize) {
+            // Pratinjau foto sebelum diunggah
+            photoPreview.src = URL.createObjectURL(file);
+            photoPreview.hidden = false;
 
-            message = "Ukuran file melebihi 2MB.";
-
+            return true;
         }
 
-        if (message) {
+        photoInput.addEventListener("change", checkPhoto);
 
-            photoError.textContent = message;
-            photoError.hidden = false;
-            photoInput.value = "";
+        // Batalkan pengiriman form jika foto tidak valid
+        profileForm.addEventListener("submit", function (event) {
+            if (!checkPhoto()) {
+                event.preventDefault();
 
-            return false;
-
-        }
-
-        // Pratinjau foto sebelum diunggah
-        photoPreview.src = URL.createObjectURL(file);
-        photoPreview.hidden = false;
-
-        return true;
-
+                if (saveButton) {
+                    saveButton.textContent = "Simpan perubahan";
+                    saveButton.disabled = false;
+                }
+            }
+        });
     }
-
-    photoInput.addEventListener("change", checkPhoto);
-
-    // Batalkan pengiriman form jika foto tidak valid
-    profileForm.addEventListener("submit", function (event) {
-
-        if (!checkPhoto()) {
-
-            event.preventDefault();
-
-            // Kembalikan tombol simpan (sudah dinonaktifkan oleh kode di atas)
-            saveButton.textContent = "Simpan perubahan";
-            saveButton.disabled = false;
-
-        }
-
-    });
 
 });
