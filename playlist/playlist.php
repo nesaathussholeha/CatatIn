@@ -1,9 +1,43 @@
 <?php
 declare(strict_types=1);
-session_start();
 
+// 1. Inisialisasi Session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 2. Proteksi Auth Guard (User Wajib Login)
+if (empty($_SESSION['user_id'])) {
+    $_SESSION['flash'] = [
+        'pesan' => 'Silakan login terlebih dahulu untuk mengakses halaman ini.',
+        'tipe'  => 'error'
+    ];
+    header('Location: ../auth/login.php');
+    exit;
+}
+
+// 3. Proteksi Anti-Tembak URL Langsung
+// Mengecek apakah halaman dibuka dari navigasi internal (Dashboard/menu)
+$referer = $_SERVER['HTTP_REFERER'] ?? '';
+$domain_asal = parse_url($referer, PHP_URL_HOST);
+$domain_saat_ini = $_SERVER['HTTP_HOST'] ?? '';
+
+// Jika tidak ada Referer (diketik/ditembak langsung) atau berasal dari domain luar
+if (empty($referer) || $domain_asal !== $domain_saat_ini) {
+    header('Location: ../dashboard_user/dashboard.php');
+    exit;
+}
+
+// --- KONSTANTA & KONFIGURASI HALAMAN ---
 const APP_NAME = 'CatatIn';
+$page_title  = "Koleksi belajar saya";
+$active_menu = "koleksi";
 
+$user_name    = $_SESSION['user_name'] ?? "Pengguna";
+$user_role    = $_SESSION['user_role'] ?? "User";
+$user_initial = strtoupper(substr($user_name, 0, 2));
+
+// --- HELPER FUNCTIONS ---
 function e(?string $teks): string
 {
     return htmlspecialchars((string) $teks, ENT_QUOTES, 'UTF-8');
@@ -22,12 +56,12 @@ function flash(string $pesan, string $tipe = 'ok'): void
 
 function csrf_valid(?string $token): bool
 {
-    return is_string($token) && hash_equals($_SESSION['csrf'], $token);
+    return is_string($token) && isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], $token);
 }
 
 function csrf_field(): string
 {
-    return '<input type="hidden" name="csrf" value="' . e($_SESSION['csrf']) . '">';
+    return '<input type="hidden" name="csrf" value="' . e($_SESSION['csrf'] ?? '') . '">';
 }
 
 function katalog(): array
@@ -60,18 +94,22 @@ function find_note(int $id): ?array
     return katalog()[$id] ?? null;
 }
 
+// Inisialisasi Data Folder di Session jika belum ada
 if (!isset($_SESSION['folders'])) {
     $_SESSION['folders'] = [
-        1 => ['id' => 1, 'nama' => 'Bahan UTS Pemrograman Web',   'notes' => [5, 6, 7]],
+        1 => ['id' => 1, 'nama' => 'Bahan UTS Pemrograman WEB',   'notes' => [5, 6, 7]],
         2 => ['id' => 2, 'nama' => 'Rangkuman Bab 1–4 Kalkulus', 'notes' => [8, 9, 10, 11]],
         3 => ['id' => 3, 'nama' => 'Referensi Skripsi',          'notes' => [12, 13]],
     ];
     $_SESSION['folder_next'] = 4;
 }
+
+// Token CSRF
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
 
+// --- PENANGANAN FORM POST ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_valid($_POST['csrf'] ?? null)) {
         flash('Sesi berakhir. Muat ulang halaman lalu coba lagi.', 'error');
@@ -129,13 +167,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['folders'][$fid]['notes'] = array_values(
                     array_filter($_SESSION['folders'][$fid]['notes'], static fn($x) => $x !== $nid)
                 );
-                flash('Catatan dikeluarkan dari folder. Catatan aslinya tidak terhapus.');
+                flash('Catatan dikeluarkan dari folder.');
             }
             pindah('playlist.php?f=' . $fid);
     }
     pindah('playlist.php');
 }
 
+// Data Pendukung Tampilan
 $folders = $_SESSION['folders'];
 $aktifId = (int) ($_GET['f'] ?? 0);
 if (!isset($folders[$aktifId])) {
@@ -157,203 +196,266 @@ unset($_SESSION['flash']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Koleksi Belajar <?= APP_NAME ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= e($page_title) ?> — <?= APP_NAME ?></title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
     <link rel="stylesheet" href="playlist.css">
 </head>
+
 <body>
-<div class="app">
-    <header class="topbar">
-        <button type="button" class="hamburger" id="tombol-menu" aria-label="Buka menu"
-                aria-expanded="false" aria-controls="sidebar">
-            <span></span><span></span><span></span>
-        </button>
-        <a class="logo-atas" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-    </header>
-    <div class="overlay" id="overlay"></div>
 
-    <aside class="sidebar" id="sidebar">
-        <button type="button" class="tutup-menu" id="tutup-menu" aria-label="Tutup menu">✕</button>
-        <a class="logo" href="dashboard.php"><span aria-hidden="true">📖</span> <?= APP_NAME ?></a>
-        <nav class="nav-sidebar" aria-label="Menu utama">
-            <ul class="menu">
-                <li><a href="../dashboard_user/dashboard.php">Dashboard</a></li>
-                <li><a href="unggah.php">Unggah Catatan</a></li>
-                <li><a href="catatan-saya.php">Catatan Saya</a></li>
-                <li><a href="playlist.php" aria-current="page">Koleksi Belajar</a></li>
-                <li><a href="tugas.php">Tugas Belajar</a></li>
-                <li><a href="profil.php">Profil</a></li>
-            </ul>
-            <ul class="menu">
-                <li><a href="../auth/login.php" class="menu-keluar">Keluar</a></li>
-            </ul>
-        </nav>
-    </aside>
+    <div class="app-container">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <main class="konten">
-        <?php if ($flash): ?>
-            <div class="toast toast-<?= e($flash['tipe']) ?>" role="status"><?= e($flash['pesan']) ?></div>
-        <?php endif; ?>
-
-        <div class="judul-baris">
-            <h1>Koleksi belajar saya</h1>
-            <button type="button" class="tombol tombol-utama" data-buka="dlg-buat">+ Buat folder</button>
-        </div>
-
-        <?php if (!$folders): ?>
-            <div class="kosong">
-                <p><strong>Belum ada folder.</strong></p>
-                <p>Buat folder pertama untuk mengelompokkan catatan yang ingin kamu simpan.</p>
-                <button type="button" class="tombol tombol-utama" data-buka="dlg-buat">+ Buat folder</button>
-            </div>
-        <?php else: ?>
-        <div class="koleksi">
-            <nav class="daftar-folder" aria-label="Daftar folder">
-                <?php foreach ($folders as $f): ?>
-                    <div class="folder-item">
-                        <a class="folder-kartu<?= $f['id'] === $aktifId ? ' aktif' : '' ?>"
-                           href="playlist.php?f=<?= (int) $f['id'] ?>"
-                           <?= $f['id'] === $aktifId ? 'aria-current="true"' : '' ?>>
-                            <strong><span aria-hidden="true">📁</span> <?= e($f['nama']) ?></strong>
-                            <small><?= count($f['notes']) ?> catatan</small>
-                        </a>
-
-                        <button type="button" class="menu-titik"
-                                aria-label="Opsi folder <?= e($f['nama']) ?>"
-                                aria-haspopup="true" aria-expanded="false">
-                            <span aria-hidden="true">⋮</span>
-                        </button>
-                        <div class="menu-folder" hidden>
-                            <button type="button" data-buka="dlg-ubah"
-                                    data-folder-id="<?= (int) $f['id'] ?>"
-                                    data-folder-nama="<?= e($f['nama']) ?>">Edit nama</button>
-                            <button type="button" class="bahaya" data-buka="dlg-hapus"
-                                    data-folder-id="<?= (int) $f['id'] ?>"
-                                    data-folder-nama="<?= e($f['nama']) ?>">Hapus folder</button>
-                        </div>
+        <aside class="sidebar" id="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <div class="brand">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                        <span><?= APP_NAME ?></span>
                     </div>
-                <?php endforeach; ?>
-            </nav>
-
-            <section class="panel" aria-labelledby="judul-folder">
-                <div class="panel-kepala">
-                    <h2 id="judul-folder">Isi folder: <?= e($folder['nama']) ?></h2>
+                    <button class="close-sidebar-btn" id="closeSidebar" aria-label="Tutup Menu">
+                        <iconify-icon icon="lucide:x"></iconify-icon>
+                    </button>
                 </div>
 
-                <?php if (!$catatanFolder): ?>
-                    <p class="kosong-kecil">Folder ini masih kosong. Tambahkan catatan dari katalog.</p>
-                <?php else: ?>
-                    <div class="tabel-bungkus">
-                        <table class="tabel">
-                            <thead>
-                                <tr><th scope="col">Judul catatan</th><th scope="col">Jurusan</th><th scope="col"><span class="sr-only">Aksi</span></th></tr>
-                            </thead>
-                            <tbody>
-                            <?php foreach ($catatanFolder as $n): ?>
-                                <tr>
-                                    <td><?= e($n['judul']) ?></td>
-                                    <td><?= e($n['jurusan']) ?></td>
-                                    <td class="kolom-aksi">
-                                        <form method="post" data-konfirm="Keluarkan catatan ini dari folder?">
-                                            <?= csrf_field() ?>
-                                            <input type="hidden" name="aksi" value="keluarkan">
-                                            <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
-                                            <input type="hidden" name="catatan_id" value="<?= (int) $n['id'] ?>">
-                                            <button type="submit" class="tombol-teks-bahaya">Keluarkan</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                <ul class="nav-list">
+                    <li>
+                        <a href="../dashboard_user/dashboard.php" class="nav-link <?= ($active_menu === 'dashboard') ? 'active' : ''; ?>">
+                            <iconify-icon icon="akar-icons:dashboard"></iconify-icon> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../dashboard_user/upload.php" class="nav-link <?= ($active_menu === 'unggah') ? 'active' : ''; ?>">
+                            <iconify-icon icon="reicon:document-upload"></iconify-icon> Unggah Catatan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../dashboard_user/catatan_saya.php" class="nav-link <?= ($active_menu === 'catatan_saya') ? 'active' : ''; ?>">
+                            <iconify-icon icon="hugeicons:note"></iconify-icon> Catatan Saya
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../playlist/playlist.php" class="nav-link <?= ($active_menu === 'koleksi') ? 'active' : ''; ?>">
+                            <iconify-icon icon="codicon:folder-opened-compact"></iconify-icon> Koleksi
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../pengingat/tugas.php" class="nav-link <?= ($active_menu === 'tugas') ? 'active' : ''; ?>">
+                            <iconify-icon icon="hugeicons:sticky-note-02"></iconify-icon> Tugas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../profile.php" class="nav-link <?= ($active_menu === 'profil') ? 'active' : ''; ?>">
+                            <iconify-icon icon="iconamoon:profile-circle"></iconify-icon> Profil
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <a href="../auth/login.php" class="nav-link logout">
+                    <iconify-icon icon="hugeicons:logout-square-01"></iconify-icon> Keluar
+                </a>
+            </div>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <iconify-icon icon="lucide:menu"></iconify-icon>
+                    </button>
+                    <h1 class="page-title"><?= e($page_title); ?></h1>
+                </div>
+
+              <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name"><?= e($user_name) ?></span>
+                        <span class="user-role"><?= e($user_role) ?></span>
                     </div>
+                    <div class="avatar"><?= e($user_initial) ?></div>
+                </div>
+            </header>
+            </header>
+
+            <main class="content-area">
+                <?php if ($flash): ?>
+                    <div class="toast toast-<?= e($flash['tipe']) ?>" role="status"><?= e($flash['pesan']) ?></div>
                 <?php endif; ?>
 
-                <button type="button" class="tombol tambah-catatan" data-buka="dlg-tambah">+ Tambahkan catatan dari katalog</button>
-            </section>
-        </div>
-        <?php endif; ?>
-    </main>
-</div>
+                <?php if (!$folders): ?>
+                    <div class="kosong">
+                        <p><strong>Belum ada folder.</strong></p>
+                        <p>Buat folder pertama untuk mengelompokkan catatan yang ingin kamu simpan.</p>
+                        <button type="button" class="tombol tombol-utama" data-buka="dlg-buat">+ Buat folder</button>
+                    </div>
+                <?php else: ?>
+                    <div class="koleksi">
+                        <div class="kolom-folder">
+                            <nav class="daftar-folder" aria-label="Daftar folder">
+                                <?php foreach ($folders as $f): ?>
+                                    <div class="folder-item">
+                                        <a class="folder-kartu<?= $f['id'] === $aktifId ? ' aktif' : '' ?>"
+                                           href="playlist.php?f=<?= (int) $f['id'] ?>">
+                                            <strong><?= e($f['nama']) ?></strong>
+                                            <small><?= count($f['notes']) ?> catatan</small>
+                                        </a>
 
-<dialog id="dlg-buat" class="modal">
-    <form method="post" class="modal-isi">
-        <?= csrf_field() ?>
-        <input type="hidden" name="aksi" value="buat">
-        <h2>Buat folder</h2>
-        <label for="nama-baru">Nama folder</label>
-        <input type="text" id="nama-baru" name="nama" maxlength="60" required placeholder="Contoh: Bahan UAS Basis Data">
-        <div class="modal-aksi">
-            <button type="button" class="tombol" data-tutup>Batal</button>
-            <button type="submit" class="tombol tombol-utama">Buat folder</button>
-        </div>
-    </form>
-</dialog>
+                                        <button type="button" class="menu-titik"
+                                                aria-label="Opsi folder <?= e($f['nama']) ?>"
+                                                aria-haspopup="true" aria-expanded="false">
+                                            <span aria-hidden="true">⋮</span>
+                                        </button>
+                                        <div class="menu-folder" hidden>
+                                            <button type="button" data-buka="dlg-ubah"
+                                                    data-folder-id="<?= (int) $f['id'] ?>"
+                                                    data-folder-nama="<?= e($f['nama']) ?>">Edit nama</button>
+                                            <button type="button" class="bahaya" data-buka="dlg-hapus"
+                                                    data-folder-id="<?= (int) $f['id'] ?>"
+                                                    data-folder-nama="<?= e($f['nama']) ?>">Hapus folder</button>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </nav>
 
-<?php if ($folder): ?>
-<dialog id="dlg-ubah" class="modal">
-    <form method="post" class="modal-isi">
-        <?= csrf_field() ?>
-        <input type="hidden" name="aksi" value="ubah_nama">
-        <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
-        <h2>Edit nama folder</h2>
-        <label for="nama-ubah">Nama folder</label>
-        <input type="text" id="nama-ubah" name="nama" maxlength="60" required value="<?= e($folder['nama']) ?>">
-        <div class="modal-aksi">
-            <button type="button" class="tombol" data-tutup>Batal</button>
-            <button type="submit" class="tombol tombol-utama">Simpan nama</button>
-        </div>
-    </form>
-</dialog>
+                            <div class="area-buat-folder">
+                                <button type="button" class="tombol tombol-utama-biru" data-buka="dlg-buat">+ Buat folder</button>
+                            </div>
+                        </div>
 
-<dialog id="dlg-hapus" class="modal">
-    <form method="post" class="modal-isi">
-        <?= csrf_field() ?>
-        <input type="hidden" name="aksi" value="hapus">
-        <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
-        <h2>Hapus folder?</h2>
-        <p>Folder <strong data-isi-nama><?= e($folder['nama']) ?></strong> akan dihapus. Catatan asli di dalamnya tidak ikut terhapus.</p>
-        <div class="modal-aksi">
-            <button type="button" class="tombol" data-tutup>Batal</button>
-            <button type="submit" class="tombol tombol-bahaya-penuh">Hapus folder</button>
-        </div>
-    </form>
-</dialog>
+                        <section class="panel" aria-labelledby="judul-folder">
+                            <div class="panel-kepala">
+                                <h2 id="judul-folder">Isi Folder: <?= e($folder['nama']) ?></h2>
+                            </div>
 
-<dialog id="dlg-tambah" class="modal">
-    <form method="post" class="modal-isi">
-        <?= csrf_field() ?>
-        <input type="hidden" name="aksi" value="tambah">
-        <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
-        <h2>Tambahkan catatan</h2>
-        <?php if (!$tersedia): ?>
-            <p>Semua catatan di katalog sudah ada di folder ini.</p>
-            <div class="modal-aksi"><button type="button" class="tombol" data-tutup>Tutup</button></div>
-        <?php else: ?>
-            <ul class="pilih-catatan">
-                <?php foreach ($tersedia as $n): ?>
-                    <li>
-                        <label>
-                            <input type="checkbox" name="catatan[]" value="<?= (int) $n['id'] ?>">
-                            <span><?= e($n['judul']) ?><small><?= e($n['jurusan']) ?> · <?= e($n['kategori']) ?></small></span>
-                        </label>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+                            <?php if (!$catatanFolder): ?>
+                                <p class="kosong-kecil">Folder ini masih kosong. Tambahkan catatan dari katalog.</p>
+                            <?php else: ?>
+                                <div class="tabel-bungkus">
+                                    <table class="tabel">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Judul catatan</th>
+                                                <th scope="col">Jurusan</th>
+                                                <th scope="col"><span class="sr-only">Aksi</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php foreach ($catatanFolder as $n): ?>
+                                            <tr>
+                                                <td><?= e($n['judul']) ?></td>
+                                                <td><?= e($n['jurusan']) ?></td>
+                                                <td class="kolom-aksi">
+                                                    <form method="post" data-konfirm="Keluarkan catatan ini dari folder?">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="aksi" value="keluarkan">
+                                                        <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
+                                                        <input type="hidden" name="catatan_id" value="<?= (int) $n['id'] ?>">
+                                                        <button type="submit" class="tombol-teks-bahaya">Keluarkan</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php endif; ?>
+
+                            <div class="area-tambah-catatan">
+                                <button type="button" class="tombol-outline-pill" data-buka="dlg-tambah">+ Tambahkan Catatan dari katalog</button>
+                            </div>
+                        </section>
+                    </div>
+                <?php endif; ?>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <dialog id="dlg-buat" class="modal">
+        <form method="post" class="modal-isi">
+            <?= csrf_field() ?>
+            <input type="hidden" name="aksi" value="buat">
+            <h2>Buat folder</h2>
+            <label for="nama-baru">Nama folder</label>
+            <input type="text" id="nama-baru" name="nama" maxlength="60" required placeholder="Contoh: Bahan UAS Basis Data">
             <div class="modal-aksi">
                 <button type="button" class="tombol" data-tutup>Batal</button>
-                <button type="submit" class="tombol tombol-utama">Tambahkan</button>
+                <button type="submit" class="tombol tombol-utama-biru">Buat folder</button>
             </div>
-        <?php endif; ?>
-    </form>
-</dialog>
-<?php endif; ?>
+        </form>
+    </dialog>
 
-<script src="playlist.js"></script>
+    <?php if ($folder): ?>
+    <dialog id="dlg-ubah" class="modal">
+        <form method="post" class="modal-isi">
+            <?= csrf_field() ?>
+            <input type="hidden" name="aksi" value="ubah_nama">
+            <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
+            <h2>Edit nama folder</h2>
+            <label for="nama-ubah">Nama folder</label>
+            <input type="text" id="nama-ubah" name="nama" maxlength="60" required value="<?= e($folder['nama']) ?>">
+            <div class="modal-aksi">
+                <button type="button" class="tombol" data-tutup>Batal</button>
+                <button type="submit" class="tombol tombol-utama-biru">Simpan nama</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="dlg-hapus" class="modal">
+        <form method="post" class="modal-isi">
+            <?= csrf_field() ?>
+            <input type="hidden" name="aksi" value="hapus">
+            <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
+            <h2>Hapus folder?</h2>
+            <p>Folder <strong data-isi-nama><?= e($folder['nama']) ?></strong> akan dihapus.</p>
+            <div class="modal-aksi">
+                <button type="button" class="tombol" data-tutup>Batal</button>
+                <button type="submit" class="tombol tombol-bahaya-penuh">Hapus folder</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="dlg-tambah" class="modal">
+        <form method="post" class="modal-isi">
+            <?= csrf_field() ?>
+            <input type="hidden" name="aksi" value="tambah">
+            <input type="hidden" name="folder_id" value="<?= (int) $folder['id'] ?>">
+            <h2>Tambahkan catatan</h2>
+            <?php if (!$tersedia): ?>
+                <p>Semua catatan di katalog sudah ada di folder ini.</p>
+                <div class="modal-aksi"><button type="button" class="tombol" data-tutup>Tutup</button></div>
+            <?php else: ?>
+                <ul class="pilih-catatan">
+                    <?php foreach ($tersedia as $n): ?>
+                        <li>
+                            <label>
+                                <input type="checkbox" name="catatan[]" value="<?= (int) $n['id'] ?>">
+                                <span><?= e($n['judul']) ?><small><?= e($n['jurusan']) ?> · <?= e($n['kategori']) ?></small></span>
+                            </label>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <div class="modal-aksi">
+                    <button type="button" class="tombol" data-tutup>Batal</button>
+                    <button type="submit" class="tombol tombol-utama-biru">Tambahkan</button>
+                </div>
+            <?php endif; ?>
+        </form>
+    </dialog>
+    <?php endif; ?>
+
+    <script src="playlist.js"></script>
 </body>
+
 </html>

@@ -1,38 +1,25 @@
-/* playlist.js — interaksi halaman Koleksi Belajar (menu, dialog, konfirmasi, toast) */
-(function () {
-    'use strict';
+document.addEventListener("DOMContentLoaded", function () {
+    /* ---------- Sidebar Navigasi ---------- */
+    var menuToggle = document.getElementById("menuToggle");
+    var closeSidebar = document.getElementById("closeSidebar");
+    var sidebar = document.getElementById("sidebar");
+    var overlay = document.getElementById("sidebarOverlay");
 
-    /* ---------- Menu hamburger (HP / tablet) ---------- */
-    var tombolMenu = document.getElementById('tombol-menu');
-    var tombolTutup = document.getElementById('tutup-menu');
-    var overlay = document.getElementById('overlay');
-
-    function bukaMenu() {
-        document.body.classList.add('menu-terbuka');
-        tombolMenu.setAttribute('aria-expanded', 'true');
-        tombolTutup.focus();
+    function openMenu() {
+        if (sidebar) sidebar.classList.add("active");
+        if (overlay) overlay.classList.add("active");
     }
 
-    function tutupMenuFn(kembaliFokus) {
-        document.body.classList.remove('menu-terbuka');
-        tombolMenu.setAttribute('aria-expanded', 'false');
-        if (kembaliFokus) { tombolMenu.focus(); }
+    function closeMenu() {
+        if (sidebar) sidebar.classList.remove("active");
+        if (overlay) overlay.classList.remove("active");
     }
 
-    tombolMenu.addEventListener('click', bukaMenu);
-    tombolTutup.addEventListener('click', function () { tutupMenuFn(true); });
-    overlay.addEventListener('click', function () { tutupMenuFn(true); });
+    if (menuToggle) menuToggle.addEventListener("click", openMenu);
+    if (closeSidebar) closeSidebar.addEventListener("click", closeMenu);
+    if (overlay) overlay.addEventListener("click", closeMenu);
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && document.body.classList.contains('menu-terbuka')) { tutupMenuFn(true); }
-    });
-
-    /* Layar melebar ke desktop: tutup laci otomatis */
-    window.matchMedia('(min-width: 1025px)').addEventListener('change', function (e) {
-        if (e.matches) { tutupMenuFn(false); }
-    });
-
-    /* ---------- Toast dari server (setelah simpan / hapus) ---------- */
+    /* ---------- Auto Hide Toast ---------- */
     function pasangAutoHide(el, ms) {
         setTimeout(function () {
             el.classList.add('sembunyi');
@@ -40,14 +27,16 @@
         }, ms);
     }
 
-    document.querySelectorAll('.toast').forEach(function (el) { pasangAutoHide(el, 4000); });
+    document.querySelectorAll('.toast').forEach(function (el) { 
+        pasangAutoHide(el, 4000); 
+    });
 
-    /* ---------- Menu titik tiga di kartu folder ---------- */
+    /* ---------- Menu Titik Tiga (Opsi Folder) ---------- */
     function tutupMenuFolder(kecuali) {
         document.querySelectorAll('.menu-titik[aria-expanded="true"]').forEach(function (b) {
             if (b !== kecuali) {
                 b.setAttribute('aria-expanded', 'false');
-                b.nextElementSibling.hidden = true;
+                if (b.nextElementSibling) b.nextElementSibling.hidden = true;
             }
         });
     }
@@ -58,26 +47,27 @@
             var akanBuka = tombol.getAttribute('aria-expanded') !== 'true';
             tutupMenuFolder(tombol);
             tombol.setAttribute('aria-expanded', String(akanBuka));
-            tombol.nextElementSibling.hidden = !akanBuka;
+            if (tombol.nextElementSibling) tombol.nextElementSibling.hidden = !akanBuka;
             return;
         }
-        /* Klik di mana pun (termasuk memilih item menu) menutup menu */
         tutupMenuFolder(null);
     });
 
     document.addEventListener('keydown', function (e) {
-        if (e.key !== 'Escape') { return; }
+        if (e.key !== 'Escape') return;
         var terbuka = document.querySelector('.menu-titik[aria-expanded="true"]');
-        if (terbuka) { tutupMenuFolder(null); terbuka.focus(); }
+        if (terbuka) { 
+            tutupMenuFolder(null); 
+            terbuka.focus(); 
+        }
     });
 
-    /* ---------- Dialog: buka / tutup ---------- */
+    /* ---------- Modal Dialog ---------- */
     document.addEventListener('click', function (e) {
         var buka = e.target.closest('[data-buka]');
         if (buka) {
             var dlg = document.getElementById(buka.dataset.buka);
             if (dlg && typeof dlg.showModal === 'function') {
-                /* Isi dialog sesuai folder yang menunya diklik */
                 if (buka.dataset.folderId) {
                     var idInput = dlg.querySelector('input[name="folder_id"]');
                     if (idInput) { idInput.value = buka.dataset.folderId; }
@@ -97,17 +87,21 @@
         }
 
         if (e.target.closest('[data-tutup]')) {
-            e.target.closest('dialog').close();
+            var dialog = e.target.closest('dialog');
+            if (dialog) dialog.close();
             return;
         }
 
-        /* Klik di area gelap (backdrop) menutup dialog */
-        if (e.target instanceof HTMLDialogElement) { e.target.close(); }
+        if (e.target instanceof HTMLDialogElement) { 
+            e.target.close(); 
+        }
     });
 
-    /* ---------- Konfirmasi sebelum mengeluarkan catatan ---------- */
+    /* ---------- Konfirmasi Form ---------- */
     document.addEventListener('submit', function (e) {
         var pesan = e.target.dataset ? e.target.dataset.konfirm : '';
-        if (pesan && !window.confirm(pesan)) { e.preventDefault(); }
+        if (pesan && !window.confirm(pesan)) { 
+            e.preventDefault(); 
+        }
     });
-})();
+});
