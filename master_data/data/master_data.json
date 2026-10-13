@@ -1,0 +1,59 @@
+{
+    "jurusan": [
+        {
+            "id": "j1",
+            "kode": "TIF",
+            "nama": "Informatika",
+            "status": false,
+            "pengguna": "42 Catatan"
+        },
+        {
+            "id": "j2",
+            "kode": "SI",
+            "nama": "Sistem Informasi",
+            "status": true,
+            "pengguna": "0 Catatan"
+        },
+        {
+            "id": "j3",
+            "kode": "TEKOM",
+            "nama": "Teknik Komputer",
+            "status": true,
+            "pengguna": "12 Catatan"
+        }
+    ],
+    "matakuliah": [
+        {
+            "id": "m1",
+            "kode": "MK01",
+            "nama": "Pemrograman Web",
+            "jurusan": "Informatika",
+            "status": false,
+            "pengguna": "25 Catatan"
+        },
+        {
+            "id": "m2",
+            "kode": "MK02",
+            "nama": "Basis Data",
+            "jurusan": "Sistem Informasi",
+            "status": true,
+            "pengguna": "18 Catatan"
+        }
+    ],
+    "kategori": [
+        {
+            "id": "k1",
+            "kode": "KAT01",
+            "nama": "Rangkuman Materi",
+            "status": true,
+            "pengguna": "50 Catatan"
+        },
+        {
+            "id": "k2",
+            "kode": "KAT02",
+            "nama": "Latihan Soal",
+            "status": true,
+            "pengguna": "30 Catatan"
+        }
+    ]
+}

@@ -1,84 +1,105 @@
 <?php
 session_start();
 
-
-// Proteksi halaman: Wajib login dan harus role 'admin'
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
+if (!isset($_SESSION['role'])) {
+    header("Location: ../auth/login.php");
     exit();
 }
 
-// Inisialisasi Data Dummy Jurusan
-if (!isset($_SESSION['data_jurusan'])) {
-    $_SESSION['data_jurusan'] = [
-        ['kode' => 'TIF', 'nama' => 'Informatika', 'status' => 'Aktif'],
-        ['kode' => 'SIF', 'nama' => 'Sistem Informasi', 'status' => 'Aktif'],
-        ['kode' => 'TE',  'nama' => 'Elektro', 'status' => 'Aktif']
-    ];
+if ($_SESSION['role'] !== 'admin') {
+    header("Location: ../dashboard_user/dashboard.php");
+    exit();
 }
 
-// Inisialisasi Data Dummy Mata Kuliah
-if (!isset($_SESSION['data_matkul'])) {
-    $_SESSION['data_matkul'] = [
-        ['kode' => 'MK01', 'nama' => 'Pemrograman Web', 'status' => 'Aktif'],
-        ['kode' => 'MK02', 'nama' => 'Basis Data', 'status' => 'Aktif'],
-        ['kode' => 'MK03', 'nama' => 'Algoritma & Struktur Data', 'status' => 'Aktif']
-    ];
+$data_dir  = __DIR__ . "/data";
+$data_file = $data_dir . "/master_data.json";
+
+if (!is_dir($data_dir)) {
+    mkdir($data_dir, 0777, true);
 }
 
-// Inisialisasi Data Dummy Kategori Dokumen
-if (!isset($_SESSION['data_kategori'])) {
-    $_SESSION['data_kategori'] = [
-        ['kode' => 'KAT01', 'nama' => 'Rangkuman / Catatan', 'status' => 'Aktif'],
-        ['kode' => 'KAT02', 'nama' => 'Modul Praktikum', 'status' => 'Aktif'],
-        ['kode' => 'KAT03', 'nama' => 'Latihan / Bank Soal', 'status' => 'Aktif']
+if (!file_exists($data_file)) {
+    $initial_data = [
+        "jurusan" => [
+            ["id" => "j1", "kode" => "TIF", "nama" => "Informatika", "status" => true, "pengguna" => "42 Catatan"],
+            ["id" => "j2", "kode" => "SI", "nama" => "Sistem Informasi", "status" => true, "pengguna" => "0 Catatan"],
+            ["id" => "j3", "kode" => "TEKOM", "nama" => "Teknik Komputer", "status" => false, "pengguna" => "12 Catatan"]
+        ],
+        "matakuliah" => [
+            ["id" => "m1", "kode" => "MK01", "nama" => "Pemrograman Web", "jurusan" => "Informatika", "status" => true, "pengguna" => "25 Catatan"],
+            ["id" => "m2", "kode" => "MK02", "nama" => "Basis Data", "jurusan" => "Sistem Informasi", "status" => true, "pengguna" => "0 Catatan"]
+        ],
+        "kategori" => [
+            ["id" => "k1", "kode" => "KAT01", "nama" => "Rangkuman Materi", "status" => true, "pengguna" => "50 Catatan"],
+            ["id" => "k2", "kode" => "KAT02", "nama" => "Latihan Soal", "status" => false, "pengguna" => "0 Catatan"]
+        ]
     ];
+    file_put_contents($data_file, json_encode($initial_data, JSON_PRETTY_PRINT));
 }
 
-// Logika Tambah Data Baru (CREATE)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'tambah') {
-    $tab_active = $_POST['tab_type'] ?? 'jurusan';
-    $nama_baru  = trim($_POST['nama_baru'] ?? '');
+$master_data = json_decode(file_get_contents($data_file), true);
 
-    if (!empty($nama_baru)) {
-        if ($tab_active === 'jurusan') {
-            $words = explode(" ", $nama_baru);
-            $kode_baru = strtoupper(substr($words[0], 0, 3));
-            $_SESSION['data_jurusan'][] = ['kode' => $kode_baru, 'nama' => $nama_baru, 'status' => 'Aktif'];
-        } elseif ($tab_active === 'matkul') {
-            $kode_baru = 'MK' . str_pad(count($_SESSION['data_matkul']) + 1, 2, '0', STR_PAD_LEFT);
-            $_SESSION['data_matkul'][] = ['kode' => $kode_baru, 'nama' => $nama_baru, 'status' => 'Aktif'];
-        } elseif ($tab_active === 'kategori') {
-            $kode_baru = 'KAT' . str_pad(count($_SESSION['data_kategori']) + 1, 2, '0', STR_PAD_LEFT);
-            $_SESSION['data_kategori'][] = ['kode' => $kode_baru, 'nama' => $nama_baru, 'status' => 'Aktif'];
+$active_tab = $_GET['tab'] ?? $_SESSION['active_tab'] ?? 'jurusan';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    $tab    = $_POST['tab'] ?? 'jurusan';
+
+    if ($action === 'save') {
+        $id     = $_POST['id'] ?? '';
+        $kode   = trim($_POST['kode'] ?? '');
+        $nama   = trim($_POST['nama'] ?? '');
+        $extra  = trim($_POST['extra'] ?? '');
+
+        if ($id === '') {
+            $new_item = [
+                "id"       => uniqid(),
+                "kode"     => strtoupper($kode),
+                "nama"     => $nama,
+                "status"   => true,
+                "pengguna" => "0 Catatan"
+            ];
+            if ($tab === 'matakuliah') {
+                $new_item['jurusan'] = $extra;
+            }
+            $master_data[$tab][] = $new_item;
+        } else {
+            foreach ($master_data[$tab] as &$item) {
+                if ($item['id'] === $id) {
+                    $item['kode'] = strtoupper($kode);
+                    $item['nama'] = $nama;
+                    if ($tab === 'matakuliah') {
+                        $item['jurusan'] = $extra;
+                    }
+                    break;
+                }
+            }
+        }
+    } elseif ($action === 'toggle_status') {
+        $id = $_POST['id'] ?? '';
+        foreach ($master_data[$tab] as &$item) {
+            if ($item['id'] === $id) {
+                $item['status'] = !$item['status'];
+                break;
+            }
+        }
+    } elseif ($action === 'delete') {
+        $id = $_POST['id'] ?? '';
+        foreach ($master_data[$tab] as $index => $item) {
+            if ($item['id'] === $id) {
+                $count = (int) preg_replace('/[^0-9]/', '', $item['pengguna'] ?? '0');
+                if ($count === 0) {
+                    array_splice($master_data[$tab], $index, 1);
+                }
+                break;
+            }
         }
     }
-    header("Location: index.php?tab=" . $tab_active);
+
+    file_put_contents($data_file, json_encode($master_data, JSON_PRETTY_PRINT));
+    header("Location: index.php?tab=" . $tab);
     exit();
 }
-
-// Logika Toggle Status / Nonaktifkan (DELETE / SOFT DELETE)
-if (isset($_GET['action']) && $_GET['action'] === 'toggle_status') {
-    $tab_target   = $_GET['tab'] ?? 'jurusan';
-    $index_target = (int)$_GET['id'];
-
-    if ($tab_target === 'jurusan' && isset($_SESSION['data_jurusan'][$index_target])) {
-        $st = $_SESSION['data_jurusan'][$index_target]['status'];
-        $_SESSION['data_jurusan'][$index_target]['status'] = ($st === 'Aktif') ? 'Nonaktif' : 'Aktif';
-    } elseif ($tab_target === 'matkul' && isset($_SESSION['data_matkul'][$index_target])) {
-        $st = $_SESSION['data_matkul'][$index_target]['status'];
-        $_SESSION['data_matkul'][$index_target]['status'] = ($st === 'Aktif') ? 'Nonaktif' : 'Aktif';
-    } elseif ($tab_target === 'kategori' && isset($_SESSION['data_kategori'][$index_target])) {
-        $st = $_SESSION['data_kategori'][$index_target]['status'];
-        $_SESSION['data_kategori'][$index_target]['status'] = ($st === 'Aktif') ? 'Nonaktif' : 'Aktif';
-    }
-
-    header("Location: index.php?tab=" . $tab_target);
-    exit();
-}
-
-// Tentukan Tab Aktif
-$current_tab = $_GET['tab'] ?? 'jurusan';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -86,18 +107,15 @@ $current_tab = $_GET['tab'] ?? 'jurusan';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CatatIn - Master Data Admin</title>
+    <title>Master Data - CatatIn</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
 
     <div class="admin-wrapper">
-        <!-- Sidebar Overlay (untuk menutup menu saat diklik di luar area pada mobile) -->
-        <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="brand-logo">
@@ -107,207 +125,124 @@ $current_tab = $_GET['tab'] ?? 'jurusan';
                     </svg>
                     <span>CatatIn</span>
                 </div>
-
-                <!-- Tombol Close Sidebar untuk Mobile -->
-                <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Tutup Menu">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
+                <button class="sidebar-close-btn" id="sidebar-close">&times;</button>
             </div>
 
             <nav class="sidebar-nav">
-
-                <a href="../dashboard_admin/dashboard.php" class="nav-item">
-                    Dashboard
-                </a>
-
-                <a href="../kelola_catatan/catatan.php" class="nav-item">
-                    Kelola Catatan
-                </a>
-
-                <a href="../kelola_pengguna/pengguna.php" class="nav-item">
-                    Kelola Pengguna
-                </a>
-
-                <a href="../master_data/index.php" class="nav-item active">
-                    Master Data
-                </a>
-
-                <a href="../report/report_admin.php" class="nav-item">
-                    Kelola Laporan
-                </a>
-
-                <a href="../logout.php" class="nav-item btn-logout"
-                    onclick="return confirm('Apakah Anda yakin ingin keluar?');">
-                    Keluar
-                </a>
-
+                <a href="../dashboard_admin/dashboard.php" class="nav-item">Dashboard</a>
+                <a href="../kelola_catatan/catatan.php" class="nav-item">Kelola Catatan</a>
+                <a href="../kelola_pengguna/pengguna.php" class="nav-item">Kelola Pengguna</a>
+                <a href="index.php" class="nav-item active">Master Data</a>
+                <a href="../report/report_admin.php" class="nav-item">Kelola Laporan</a>
+                <a href="../logout.php" class="nav-item btn-logout">Keluar</a>
             </nav>
         </aside>
 
-        <!-- Main Content -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
         <main class="main-content">
             <header class="top-header">
                 <div class="header-left">
-                    <!-- Tombol Hamburger Menu (Mobile Only) -->
-                    <button type="button" class="hamburger-btn" id="hamburger-btn" aria-label="Buka Menu">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
-                    </button>
-                    <h1 class="page-title">Master data</h1>
+                    <button class="hamburger-btn" id="hamburger-btn">☰</button>
+                    <h1 class="page-title">Master Data</h1>
                 </div>
-
-                <!-- Profil User: Nama, Role, & Avatar -->
                 <div class="user-profile">
                     <div class="user-info">
-                        <span class="user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Administrator'); ?></span>
-                        <span class="user-role"><?php echo ucfirst($_SESSION['role'] ?? 'Admin'); ?></span>
+                        <span class="user-name">Administrator 1</span>
+                        <span class="user-role">Admin</span>
                     </div>
-                    <div class="user-avatar" title="Profil Admin">
-                        <?php echo strtoupper(substr($_SESSION['user_name'] ?? 'A', 0, 1)); ?>
-                    </div>
+                    <div class="user-avatar">A</div>
                 </div>
             </header>
 
-            <!-- Tab Switcher Navigation -->
-            <div class="tab-switcher">
-                <button type="button" class="tab-button <?php echo ($current_tab === 'jurusan') ? 'active' : ''; ?>" id="tab-jurusan-btn">Jurusan</button>
-                <button type="button" class="tab-button <?php echo ($current_tab === 'matkul') ? 'active' : ''; ?>" id="tab-matkul-btn">Mata Kuliah</button>
-                <button type="button" class="tab-button <?php echo ($current_tab === 'kategori') ? 'active' : ''; ?>" id="tab-kategori-btn">Kategori Dokumen</button>
-            </div>
-
-            <!-- ACTION BAR: Search di KIRI, Form Tambah di KANAN -->
-            <div class="action-bar">
-                <div class="search-box">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" id="search-input" placeholder="Cari data..." autocomplete="off">
+            <!-- Isi Halaman Utama -->
+            <div class="content-body">
+                <!-- Switcher Tab -->
+                <div class="tab-switcher">
+                    <button class="tab-btn <?php echo $active_tab === 'jurusan' ? 'active' : ''; ?>" data-tab="jurusan">Jurusan</button>
+                    <button class="tab-btn <?php echo $active_tab === 'matakuliah' ? 'active' : ''; ?>" data-tab="matakuliah">Mata Kuliah</button>
+                    <button class="tab-btn <?php echo $active_tab === 'kategori' ? 'active' : ''; ?>" data-tab="kategori">Kategori Dokumen</button>
                 </div>
 
-                <form action="index.php" method="POST" class="add-form" id="main-add-form">
-                    <input type="hidden" name="action" value="tambah">
-                    <input type="hidden" name="tab_type" id="tab_type_input" value="<?php echo htmlspecialchars($current_tab); ?>">
-                    <input type="text" name="nama_baru" id="input-nama-baru" placeholder="Ketik nama baru & tekan Enter..." required autocomplete="off">
-                    <button type="submit" class="btn-add">+ Tambah</button>
-                </form>
-            </div>
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <div class="search-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Cari Data...">
+                    </div>
+                    <button type="button" class="btn-primary" id="btn-tambah">+ Tambah</button>
+                </div>
 
-            <!-- TAB 1: JURUSAN -->
-            <div class="tab-content <?php echo ($current_tab === 'jurusan') ? 'active' : ''; ?>" id="tab-jurusan-content">
-                <div class="table-responsive">
-                    <table class="data-table" id="table-jurusan">
-                        <thead>
-                            <tr>
-                                <th>Kode</th>
-                                <th>Nama Jurusan</th>
-                                <th>Status</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($_SESSION['data_jurusan'] as $index => $item): ?>
-                                <tr>
-                                    <td class="font-bold cell-kode"><?php echo htmlspecialchars($item['kode']); ?></td>
-                                    <td class="cell-nama"><?php echo htmlspecialchars($item['nama']); ?></td>
-                                    <td>
-                                        <span class="badge <?php echo ($item['status'] === 'Aktif') ? 'badge-success' : 'badge-danger'; ?>">
-                                            <?php echo htmlspecialchars($item['status']); ?>
-                                        </span>
-                                    </td>
-                                    <td class="text-center actions-cell">
-                                        <button type="button" class="btn-action btn-edit" onclick="editData('jurusan', '<?php echo addslashes($item['nama']); ?>')">Edit</button>
-                                        <a href="index.php?action=toggle_status&tab=jurusan&id=<?php echo $index; ?>" class="btn-action btn-toggle">
-                                            <?php echo ($item['status'] === 'Aktif') ? 'Nonaktifkan' : 'Aktifkan'; ?>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                <!-- Kartu Tabel Data -->
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr id="table-headers"></tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <!-- TAB 2: MATA KULIAH -->
-            <div class="tab-content <?php echo ($current_tab === 'matkul') ? 'active' : ''; ?>" id="tab-matkul-content">
-                <div class="table-responsive">
-                    <table class="data-table" id="table-matkul">
-                        <thead>
-                            <tr>
-                                <th>Kode</th>
-                                <th>Nama Mata Kuliah</th>
-                                <th>Status</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($_SESSION['data_matkul'] as $index => $item): ?>
-                                <tr>
-                                    <td class="font-bold cell-kode"><?php echo htmlspecialchars($item['kode']); ?></td>
-                                    <td class="cell-nama"><?php echo htmlspecialchars($item['nama']); ?></td>
-                                    <td>
-                                        <span class="badge <?php echo ($item['status'] === 'Aktif') ? 'badge-success' : 'badge-danger'; ?>">
-                                            <?php echo htmlspecialchars($item['status']); ?>
-                                        </span>
-                                    </td>
-                                    <td class="text-center actions-cell">
-                                        <button type="button" class="btn-action btn-edit" onclick="editData('matkul', '<?php echo addslashes($item['nama']); ?>')">Edit</button>
-                                        <a href="index.php?action=toggle_status&tab=matkul&id=<?php echo $index; ?>" class="btn-action btn-toggle">
-                                            <?php echo ($item['status'] === 'Aktif') ? 'Nonaktifkan' : 'Aktifkan'; ?>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- TAB 3: KATEGORI DOKUMEN -->
-            <div class="tab-content <?php echo ($current_tab === 'kategori') ? 'active' : ''; ?>" id="tab-kategori-content">
-                <div class="table-responsive">
-                    <table class="data-table" id="table-kategori">
-                        <thead>
-                            <tr>
-                                <th>Kode</th>
-                                <th>Nama Kategori</th>
-                                <th>Status</th>
-                                <th class="text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($_SESSION['data_kategori'] as $index => $item): ?>
-                                <tr>
-                                    <td class="font-bold cell-kode"><?php echo htmlspecialchars($item['kode']); ?></td>
-                                    <td class="cell-nama"><?php echo htmlspecialchars($item['nama']); ?></td>
-                                    <td>
-                                        <span class="badge <?php echo ($item['status'] === 'Aktif') ? 'badge-success' : 'badge-danger'; ?>">
-                                            <?php echo htmlspecialchars($item['status']); ?>
-                                        </span>
-                                    </td>
-                                    <td class="text-center actions-cell">
-                                        <button type="button" class="btn-action btn-edit" onclick="editData('kategori', '<?php echo addslashes($item['nama']); ?>')">Edit</button>
-                                        <a href="index.php?action=toggle_status&tab=kategori&id=<?php echo $index; ?>" class="btn-action btn-toggle">
-                                            <?php echo ($item['status'] === 'Aktif') ? 'Nonaktifkan' : 'Aktifkan'; ?>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Modal Form Pop-up -->
+    <div class="modal-overlay" id="modal-form">
+        <div class="modal">
+            <button type="button" class="modal-close" id="btn-close-modal">&times;</button>
+            <h2 id="modal-title">Tambah Data</h2>
+
+            <form action="index.php" method="POST" id="form-master">
+                <input type="hidden" name="action" value="save">
+                <input type="hidden" name="tab" id="modal-tab" value="<?php echo $active_tab; ?>">
+                <input type="hidden" name="id" id="modal-id" value="">
+
+                <div class="form-body">
+                    <div class="form-group">
+                        <label for="input-kode" id="label-kode">Kode</label>
+                        <input type="text" id="input-kode" name="kode" required placeholder="Masukkan kode">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-nama" id="label-nama">Nama Jurusan <span class="required">*</span></label>
+                        <input type="text" id="input-nama" name="nama" required placeholder="Masukkan nama">
+                    </div>
+
+                    <div class="form-group hidden" id="group-extra">
+                        <label for="input-extra">Jurusan</label>
+                        <select id="input-extra" name="extra">
+                            <?php foreach ($master_data['jurusan'] as $j): ?>
+                                <option value="<?php echo htmlspecialchars($j['nama']); ?>"><?php echo htmlspecialchars($j['nama']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="secondary-button" id="btn-batal">Batal</button>
+                    <button type="submit" class="primary-button">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Form Hidden Aksi Nonaktif/Hapus -->
+    <form id="action-form" action="index.php" method="POST" style="display:none;">
+        <input type="hidden" name="action" id="action-type">
+        <input type="hidden" name="tab" id="action-tab" value="<?php echo $active_tab; ?>">
+        <input type="hidden" name="id" id="action-id">
+    </form>
+
+    <script>
+        const initialMasterData = <?php echo json_encode($master_data); ?>;
+        const initialActiveTab = "<?php echo $active_tab; ?>";
+    </script>
+    <script src="script.js?v=<?php echo time(); ?>"></script>
 </body>
 
 </html>
