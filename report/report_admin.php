@@ -1,192 +1,190 @@
 <?php
 session_start();
 
-$menu = [
-    'Dashboard'       => 'admin-dashboard.php',
-    'Kelola Catatan'  => 'kelola-catatan.php',
-    'Kelola Pengguna' => 'kelola-pengguna.php',
-    'Master Data'     => 'master-data.php',
-    'Kelola Laporan'  => 'kelola-laporan.php',
-    'Keluar'          => 'logout.php',
+$userName = $_SESSION['user_name'] ?? 'Administrator 1';
+$userRole = ucfirst($_SESSION['role'] ?? 'Admin');
+$userInit = strtoupper(substr($userName, 0, 1));
+
+$laporan = [
+    [
+        'id'       => 1,
+        'catatan'  => 'Catatan UAS Basis Data',
+        'pelapor'  => 'Nazma F',
+        'alasan'   => 'File Rusak',
+        'status'   => 'diproses',
+        'tanggal'  => '2026-10-10',
+        'deskripsi'=> 'File PDF tidak bisa dibuka dan menampilkan pesan error saat diunduh.'
+    ],
+    [
+        'id'       => 2,
+        'catatan'  => 'Rangkuman Statistika',
+        'pelapor'  => 'Nazma F',
+        'alasan'   => 'Salah Matkul',
+        'status'   => 'menunggu',
+        'tanggal'  => '2026-10-11',
+        'deskripsi'=> 'Catatan ini seharusnya berada di mata kuliah Probabilitas, bukan Statistika.'
+    ],
+    [
+        'id'       => 3,
+        'catatan'  => 'Modul Jaringan Komputer',
+        'pelapor'  => 'Nazma F',
+        'alasan'   => 'Spam',
+        'status'   => 'selesai',
+        'tanggal'  => '2026-10-12',
+        'deskripsi'=> 'Isi catatan berisi promosi yang tidak berkaitan dengan materi kuliah.'
+    ],
 ];
-$menuAktif  = 'Kelola Laporan';
-$statusList = ['Menunggu', 'Diproses', 'Selesai'];
-$filterList = ['Semua', 'Menunggu', 'Diproses', 'Selesai'];
-
-// Catatan: tambahkan pengecekan role admin di sini pada aplikasi sungguhan.
-
-if (!isset($_SESSION['laporan_admin'])) {
-    $_SESSION['laporan_admin'] = [
-        1 => ['catatan' => 'Soal UAS Basis Data 2025', 'pelapor' => 'Sarah F.', 'alasan' => 'File Rusak',        'status' => 'Diproses', 'keterangan' => 'Tautan file tidak bisa dibuka.'],
-        2 => ['catatan' => 'Rangkuman Fisika Dasar',   'pelapor' => 'Naswa S.', 'alasan' => 'Salah Matkul',      'status' => 'Menunggu', 'keterangan' => 'Isinya materi Kimia, bukan Fisika.'],
-        3 => ['catatan' => 'Modul Jaringan Komputer',  'pelapor' => 'Nazma F.', 'alasan' => 'Spam',              'status' => 'Selesai',  'keterangan' => 'Berisi iklan di setiap halaman.'],
-    ];
-}
-
-if (empty($_SESSION['token'])) {
-    $_SESSION['token'] = bin2hex(random_bytes(16));
-}
-
-function e(string $teks): string
-{
-    return htmlspecialchars($teks, ENT_QUOTES, 'UTF-8');
-}
-
-// Permintaan AJAX: ubah status / hapus laporan
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Content-Type: application/json; charset=utf-8');
-
-    $ok = false;
-    $id = (int) ($_POST['id'] ?? 0);
-
-    if (hash_equals($_SESSION['token'], $_POST['token'] ?? '') && isset($_SESSION['laporan_admin'][$id])) {
-        $aksi = $_POST['aksi'] ?? '';
-
-        if ($aksi === 'status' && in_array($_POST['status'] ?? '', $statusList, true)) {
-            $_SESSION['laporan_admin'][$id]['status'] = $_POST['status'];
-            $ok = true;
-        } elseif ($aksi === 'hapus' && $_SESSION['laporan_admin'][$id]['status'] === 'Selesai') {
-            unset($_SESSION['laporan_admin'][$id]);
-            $ok = true;
-        }
-    }
-
-    echo json_encode(['ok' => $ok]);
-    exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="token" content="<?= e($_SESSION['token']) ?>">
-    <title>Laporan Report</title>
-
-    <!-- Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CatatIn - Kelola Laporan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="report_admin.css">
 </head>
-
 <body>
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <header class="logo">
-            <svg width="13" height="15" viewBox="0 0 13 15" aria-hidden="true">
-                <path d="M6.5 0 0 2.2v5c0 3.6 2.6 6.2 6.5 7.8C10.4 13.4 13 10.8 13 7.2v-5L6.5 0z" fill="#4a90e2" />
-            </svg>
-            <strong>Admin Panel</strong>
-        </header>
-        <nav class="sidebar-nav">
 
-            <a href="../dashboard_admin/dashboard.php" class="nav-item">
-                Dashboard
-            </a>
+    <div class="admin-wrapper">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-            <a href="../kelola_catatan/catatan.php" class="nav-item">
-                Kelola Catatan
-            </a>
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>CatatIn</span>
+                </div>
 
-            <a href="../kelola_pengguna/pengguna.php" class="nav-item">
-                Kelola Pengguna
-            </a>
+                <!-- Tombol Close Sidebar untuk Mobile -->
+                <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Tutup Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
 
-            <a href="../master_data/index.php" class="nav-item">
-                Master Data
-            </a>
+            <nav class="sidebar-nav">
+                <a href="../admin/admin.php" class="nav-item">Dashboard</a>
+                <a href="../" class="nav-item">Kelola Catatan</a>
+                <a href="#" class="nav-item">Kelola Pengguna</a>
+                <a href="#" class="nav-item">Master Data</a>
+                <a href="laporan.php" class="nav-item active">Kelola Laporan</a>
+                <a href="#" class="nav-item">Profil</a>
+                <a href="logout.php" class="nav-item btn-logout" onclick="return confirm('Apakah Anda yakin ingin keluar?');">Keluar</a>
+            </nav>
+        </aside>
 
-            <a href="../report/report_admin.php" class="nav-item active">
-                Kelola Laporan
-            </a>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <!-- Tombol Hamburger Menu (Mobile Only) -->
+                    <button type="button" class="hamburger-btn" id="hamburger-btn" aria-label="Buka Menu">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <h1 class="page-title">Laporan Masuk</h1>
+                </div>
 
-            <a href="../logout.php" class="nav-item btn-logout"
-                onclick="return confirm('Apakah Anda yakin ingin keluar?');">
-                Keluar
-            </a>
+                <!-- Profil User: Nama, Role, & Avatar -->
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="user-name"><?php echo htmlspecialchars($userName); ?></span>
+                        <span class="user-role"><?php echo htmlspecialchars($userRole); ?></span>
+                    </div>
+                    <div class="user-avatar" title="Profil Admin">
+                        <?php echo htmlspecialchars($userInit); ?>
+                    </div>
+                </div>
+            </header>
 
-        </nav>
-    </aside>
+            <!-- ISI KONTEN -->
 
-    <!-- KONTEN UTAMA -->
-    <main class="konten">
-        <header class="topbar">
-            <h1>Laporan masuk</h1>
-            <span class="avatar">A</span>
-        </header>
+            <!-- Tab Filter Status -->
+            <div class="filter-tabs" id="filter-tabs" role="tablist">
+                <button type="button" class="tab-btn active" data-filter="semua" role="tab">Semua</button>
+                <button type="button" class="tab-btn" data-filter="menunggu" role="tab">Menunggu</button>
+                <button type="button" class="tab-btn" data-filter="diproses" role="tab">Diproses</button>
+                <button type="button" class="tab-btn" data-filter="selesai" role="tab">Selesai</button>
+            </div>
 
-        <!-- FILTER -->
-        <nav class="filter" aria-label="Filter status">
-            <?php foreach ($filterList as $i => $f): ?>
-                <button type="button" class="chip<?= $i === 0 ? ' aktif' : '' ?>" data-filter="<?= e($f) ?>"><?= e($f) ?></button>
-            <?php endforeach; ?>
-        </nav>
+            <!-- Tabel Laporan -->
+            <section class="table-card">
+                <div class="table-scroll">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th class="col-catatan">Catatan</th>
+                                <th class="col-center">Pelapor</th>
+                                <th class="col-center">Alasan</th>
+                                <th class="col-center">Status</th>
+                                <th class="col-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
 
-        <!-- TABEL LAPORAN -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Catatan</th>
-                    <th>Pelapor</th>
-                    <th>Alasan</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="daftarLaporan">
-                <?php foreach ($_SESSION['laporan_admin'] as $id => $lap): ?>
-                    <tr data-id="<?= $id ?>" data-status="<?= e($lap['status']) ?>" data-keterangan="<?= e($lap['keterangan']) ?>">
-                        <td><?= e($lap['catatan']) ?></td>
-                        <td><?= e($lap['pelapor']) ?></td>
-                        <td><?= e($lap['alasan']) ?></td>
-                        <td>
-                            <span class="status <?= strtolower($lap['status']) ?>">
-                                <select class="pilih-status" aria-label="Ubah status">
-                                    <?php foreach ($statusList as $s): ?>
-                                        <option value="<?= e($s) ?>" <?= $s === $lap['status'] ? ' selected' : '' ?>><?= e($s) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </span>
-                        </td>
-                        <td class="aksi">
-                            <a href="#" class="detail">Detail</a>
-                            <a href="#" class="hapus">Hapus</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                <tr class="kosong" hidden>
-                    <td colspan="5">Tidak ada laporan.</td>
-                </tr>
-            </tbody>
-        </table>
-    </main>
+    <!-- Dropdown Status (satu instance, dipindah posisinya via JS) -->
+    <div class="status-menu" id="status-menu" role="menu" hidden>
+        <button type="button" class="status-option opt-menunggu" data-status="menunggu" role="menuitem">Menunggu</button>
+        <button type="button" class="status-option opt-diproses" data-status="diproses" role="menuitem">Diproses</button>
+        <button type="button" class="status-option opt-selesai" data-status="selesai" role="menuitem">Selesai</button>
+    </div>
 
-    <!-- DETAIL LAPORAN -->
-    <dialog id="dialogDetail">
-        <h2>Detail laporan</h2>
-        <dl>
-            <dt>Catatan</dt>
-            <dd id="dCatatan"></dd>
-            <dt>Pelapor</dt>
-            <dd id="dPelapor"></dd>
-            <dt>Alasan</dt>
-            <dd id="dAlasan"></dd>
-            <dt>Status</dt>
-            <dd id="dStatus"></dd>
-            <dt>Keterangan</dt>
-            <dd id="dKeterangan"></dd>
-        </dl>
-        <form method="dialog">
-            <button class="tutup">Tutup</button>
-        </form>
-    </dialog>
+    <!-- Modal Detail -->
+    <div class="modal-backdrop" id="detail-modal" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+            <div class="modal-header">
+                <h2 id="detail-title">Detail Laporan</h2>
+                <button type="button" class="modal-close" data-close aria-label="Tutup">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="detail-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-close>Tutup</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- JAVASCRIPT -->
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal-backdrop" id="delete-modal" aria-hidden="true">
+        <div class="modal modal-sm" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
+            <div class="modal-header">
+                <h2 id="delete-title">Hapus Laporan?</h2>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-text" id="delete-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-close>Batal</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        window.LAPORAN_DATA = <?php echo json_encode($laporan, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+    </script>
     <script src="report_admin.js"></script>
 </body>
-
 </html>
