@@ -26,7 +26,7 @@ unset($_SESSION['active_tab']);
 // Jika pengguna sudah login
 if (isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'admin') {
-        header("Location: ../admin/admin.php");
+        header("Location: ../dashboard_admin/dashboard.php");
     } else {
         header("Location: ../dashboard_user/dashboard.php");
     }
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION["role"]         = $found_user["role"];
 
                     if ($found_user["role"] === "admin") {
-                        header("Location: ../admin/admin.php");
+                        header("Location: ../dashboard_admin/dashboard.php");
                     } else {
                         header("Location: ../dashboard_user/dashboard.php");
                     }
@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="inline-error">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="8" x2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
                                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
                             </svg>
                             <span><?php echo htmlspecialchars($err); ?></span>
@@ -252,8 +252,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="hidden" name="action" value="login">
 
                     <div class="input-group">
-                        <label for="login-email">Email / NIM</label>
-                        <input type="text" id="login-email" name="email" placeholder="Masukkan email atau NIM" required>
+                        <label for="login-email">Email</label>
+                        <input type="text" id="login-email" name="email" placeholder="Masukkan email" required>
                     </div>
 
                     <div class="input-group">

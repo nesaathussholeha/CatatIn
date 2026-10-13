@@ -160,7 +160,11 @@ $modeEdit = $idForm > 0;
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<<<<<<< HEAD
     <link rel="stylesheet" href="upload.css">
+=======
+    <link rel="stylesheet" href="dashboard.css">
+>>>>>>> f5b8cfae08b6bc01ee6b10a9416874d5f17ab428
 </head>
 <body>
 <div class="app">
@@ -183,8 +187,11 @@ $modeEdit = $idForm > 0;
                 <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="upload.php" aria-current="page">Unggah Catatan</a></li>
                 <li><a href="catatan_saya.php">Catatan Saya</a></li>
+<<<<<<< HEAD
                 <li><a href="#">Koleksi Belajar</a><li>
                 <li><a href="#">Tugas Belajar</a><li>
+=======
+>>>>>>> f5b8cfae08b6bc01ee6b10a9416874d5f17ab428
                 <li><a href="#">Profil</a></li>
             </ul>
         </nav>
@@ -278,6 +285,12 @@ $modeEdit = $idForm > 0;
     </main>
 </div>
 
+<<<<<<< HEAD
 <script src="upload.js"></script>
 </body>
 </html>
+=======
+<script src="dashboard.js"></script>
+</body>
+</html>
+>>>>>>> f5b8cfae08b6bc01ee6b10a9416874d5f17ab428
