@@ -66,7 +66,7 @@ $catatanSaya = $_SESSION['catatan'];
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="catatan_saya.css">
 </head>
 <body>
 <div class="app">
@@ -89,6 +89,8 @@ $catatanSaya = $_SESSION['catatan'];
                 <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="upload.php">Unggah Catatan</a></li>
                 <li><a href="catatan_saya.php" aria-current="page">Catatan Saya</a></li>
+                <li><a href="#">Koleksi Belajar</a><li>
+                <li><a href="#">Tugas Belajar</a><li>
                 <li><a href="#">Profil</a></li>
             </ul>
         </nav>
@@ -150,6 +152,6 @@ $catatanSaya = $_SESSION['catatan'];
     </main>
 </div>
 
-<script src="dashboard.js"></script>
+<script src="catatan_saya.js"></script>
 </body>
 </html>
