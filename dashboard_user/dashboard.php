@@ -75,7 +75,7 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
     </nav>
 
     <div class="sidebar-bawah">
-        <a href="../auth/login.php" class="menu-keluar">Keluar</a>
+        <a href="../logout.php" class="menu-keluar">Keluar</a>
     </div>
 </aside>
 

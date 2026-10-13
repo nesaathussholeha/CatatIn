@@ -5,7 +5,7 @@
 }
 
 :root {
-    --page-px: 45px;
+    --page-px: 38px;
 }
 
 body {
@@ -33,6 +33,7 @@ body {
     font-family: "Plus Jakarta Sans", "Inter", sans-serif;
 }
 
+/* LOGO (tidak diubah) */
 .logo {
     display: flex;
     align-items: center;
@@ -53,16 +54,16 @@ body {
 .navigation {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
 }
 
 .nav-item {
     display: block;
-    padding: 13px 20px;
-    border-radius: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
     color: #a8b5e8;
     text-decoration: none;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 500;
     transition: 0.2s;
 }
@@ -152,7 +153,6 @@ body.sidebar-open {
 ===================================== */
 
 .main-content {
-    position: relative;          /* tambahan: acuan posisi topbar */
     min-height: 100vh;
     margin-left: 230px;
     background-color: #f8f9fd;
@@ -163,11 +163,11 @@ body.sidebar-open {
     top: 0;
     z-index: 10;
     width: 100%;
-    height: 48px;               /* tadinya 56px */
+    height: 48px;
     padding: 0 var(--page-px);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     background-color: #f8f9fd;
     border-bottom: none;
 }
@@ -178,6 +178,7 @@ body.sidebar-open {
 }
 
 .top-avatar {
+    margin-left: auto;
     position: static;
     transform: none;
     width: 34px;
@@ -188,21 +189,20 @@ body.sidebar-open {
     border-radius: 50%;
     background-color: #4c5fe0;
     color: white;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
 }
 
-
 .content {
     width: 100%;
-    padding: 4px var(--page-px) 60px;   /* tadinya 32px di atas */
+    padding: 0 var(--page-px) 40px;
 }
 
 .content h1 {
-    margin-bottom: 20px;        /* tadinya 24px */
+    margin-bottom: 16px;
     line-height: 1.2;
     font-family: "Poppins", sans-serif;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
     color: #171a3d;
 }
@@ -215,10 +215,10 @@ body.sidebar-open {
 .error-message {
     width: 100%;
     max-width: 100%;
-    margin-bottom: 20px;
-    padding: 12px 16px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .success-message {
@@ -242,16 +242,16 @@ body.sidebar-open {
     max-width: 100%;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 16px;
 }
 
 .stat-card {
-    min-height: 115px;
+    min-height: 88px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 22px;
+    padding: 16px 18px;
     background-color: white;
     border: 1px solid #e1e4f2;
     border-radius: 10px;
@@ -259,23 +259,23 @@ body.sidebar-open {
 }
 
 .stat-number {
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     font-family: "Poppins", sans-serif;
-    font-size: 27px;
+    font-size: 22px;
     font-weight: 700;
     color: #171a3d;
 }
 
 .stat-label {
     color: #64748b;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.5;
 }
 
 .badge-title {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-family: "Poppins", sans-serif;
-    font-size: 21px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1.2;
     color: #171a3d;
@@ -288,7 +288,7 @@ body.sidebar-open {
 .profile-card {
     width: 100%;
     max-width: 100%;
-    padding: 28px;
+    padding: 20px;
     background-color: white;
     border: 1px solid #e1e4f2;
     border-radius: 10px;
@@ -298,15 +298,15 @@ body.sidebar-open {
 .profile-card-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-    padding-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
     border-bottom: 1px solid #e1e4f2;
 }
 
 .profile-avatar-lg {
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -315,22 +315,22 @@ body.sidebar-open {
     background-color: #4c5fe0;
     color: white;
     font-family: "Poppins", sans-serif;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 600;
 }
 
 .profile-name {
     display: block;
     font-family: "Poppins", sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #171a3d;
 }
 
 .profile-sub {
     display: block;
-    margin-top: 3px;
-    font-size: 13px;
+    margin-top: 2px;
+    font-size: 12px;
     color: #64748b;
 }
 
@@ -341,11 +341,11 @@ body.sidebar-open {
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0 20px;
+    gap: 0 16px;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 }
 
 .form-group-full {
@@ -354,24 +354,24 @@ body.sidebar-open {
 
 .form-group label {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 5px;
     font-family: "Poppins", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: #171a3d;
 }
 
 .form-group input {
     width: 100%;
-    height: 44px;
-    padding: 0 14px;
+    height: 38px;
+    padding: 0 12px;
     outline: none;
     border: 1px solid #e1e4f2;
     border-radius: 8px;
     background-color: white;
     color: #171a3d;
     font-family: "Inter", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     transition: 0.2s;
 }
 
@@ -390,7 +390,7 @@ body.sidebar-open {
 }
 
 .password-wrapper input {
-    padding-right: 45px;
+    padding-right: 42px;
 }
 
 .show-password {
@@ -401,7 +401,7 @@ body.sidebar-open {
     border: none;
     background: transparent;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 14px;
     opacity: 0.55;
     transition: 0.2s;
 }
@@ -413,15 +413,15 @@ body.sidebar-open {
 .button-group {
     display: flex;
     gap: 10px;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 
 .btn {
-    min-height: 40px;
-    padding: 0 18px;
+    min-height: 36px;
+    padding: 0 16px;
     border-radius: 8px;
     font-family: "Inter", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
@@ -470,28 +470,28 @@ body.sidebar-open {
 
 .form-group input[type="file"] {
     height: auto;
-    padding: 10px 14px;
+    padding: 8px 12px;
 }
 
 .field-hint {
     display: block;
-    margin-top: 6px;
-    font-size: 12px;
+    margin-top: 5px;
+    font-size: 11px;
     color: #64748b;
 }
 
 .field-error {
     display: block;
-    margin-top: 6px;
-    font-size: 12px;
+    margin-top: 5px;
+    font-size: 11px;
     color: #ef4444;
 }
 
 .photo-preview {
     display: block;
-    margin-top: 12px;
-    width: 96px;
-    height: 96px;
+    margin-top: 10px;
+    width: 84px;
+    height: 84px;
     object-fit: cover;
     border-radius: 50%;
     border: 1px solid #e1e4f2;
@@ -503,9 +503,9 @@ body.sidebar-open {
 }
 
 .btn-small {
-    min-height: 34px;
-    margin-top: 10px;
-    padding: 0 14px;
+    min-height: 30px;
+    margin-top: 8px;
+    padding: 0 12px;
 }
 
 /* =====================================
@@ -514,14 +514,14 @@ body.sidebar-open {
 
 @media (min-width: 1400px) {
     :root {
-        --page-px: 50px;
+        --page-px: 40px;
     }
 }
 
 /* Tablet & HP: sidebar jadi off-canvas */
 @media (max-width: 1000px) {
     :root {
-        --page-px: 30px;
+        --page-px: 28px;
     }
 
     .sidebar {
@@ -554,12 +554,12 @@ body.sidebar-open {
     }
 
     .content {
-        padding-top: 25px;
-        padding-bottom: 25px;
+        padding-top: 16px;
+        padding-bottom: 24px;
     }
 
     .content h1 {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     .statistics {
@@ -567,7 +567,7 @@ body.sidebar-open {
     }
 
     .profile-card {
-        padding: 20px;
+        padding: 16px;
     }
 
     .form-grid {
