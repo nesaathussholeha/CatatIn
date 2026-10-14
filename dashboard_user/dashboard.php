@@ -220,7 +220,7 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
                                     <span aria-hidden="true">▲</span>
                                     <span class="jumlah"><?= (int) $n['upvote'] ?></span> upvote
                                 </button>
-                                <a class="detail" href="#">Lihat detail</a>
+                                <a class="detail" href="../report/report_user.php">Lihat detail</a>
                             </div>
                         </article>
                     <?php endforeach; ?>
