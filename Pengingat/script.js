@@ -1,4 +1,26 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    /* ===== Sidebar (menu hamburger) ===== */
+    const menuToggle   = document.getElementById('menuToggle');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const sidebar      = document.getElementById('sidebar');
+    const overlay      = document.getElementById('sidebarOverlay');
+
+    function bukaMenu() {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+    }
+
+    function tutupMenu() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    }
+
+    if (menuToggle)   menuToggle.addEventListener('click', bukaMenu);
+    if (closeSidebar) closeSidebar.addEventListener('click', tutupMenu);
+    if (overlay)      overlay.addEventListener('click', tutupMenu);
+
+    /* ===== Modal tambah / edit tugas ===== */
     const modal      = document.getElementById('modalTugas');
     const modalJudul = document.getElementById('modalJudul');
     const inputAksi  = document.getElementById('inputAksi');
@@ -47,8 +69,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') tutupModal();
+        if (e.key === 'Escape') {
+            tutupModal();
+            tutupMenu();
+        }
     });
+
+    /* ===== Aksi daftar tugas ===== */
 
     // Centang tugas -> langsung kirim form toggle
     document.querySelectorAll('.cek-tugas').forEach(function (cek) {
