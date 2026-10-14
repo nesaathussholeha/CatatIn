@@ -70,13 +70,12 @@ $laporan = [
             </div>
 
             <nav class="sidebar-nav">
-                <a href="../admin/admin.php" class="nav-item">Dashboard</a>
-                <a href="../" class="nav-item">Kelola Catatan</a>
-                <a href="#" class="nav-item">Kelola Pengguna</a>
-                <a href="#" class="nav-item">Master Data</a>
-                <a href="laporan.php" class="nav-item active">Kelola Laporan</a>
-                <a href="#" class="nav-item">Profil</a>
-                <a href="logout.php" class="nav-item btn-logout" onclick="return confirm('Apakah Anda yakin ingin keluar?');">Keluar</a>
+                <a href="../dashboard_admin/dashboard.php" class="nav-item">Dashboard</a>
+                <a href="../kelola_catatan/catatan.php"class="nav-item">Kelola Catatan</a>
+                <a href="../kelola_pengguna/pengguna.php" class="nav-item">Kelola Pengguna</a>
+                <a href="../master_data/index.php" class="nav-item">Master Data</a>
+                <a href="..report_admin.php" class="nav-item active">Kelola Laporan</a>
+                <a href="../logout.php" class="nav-item btn-logout" onclick="return confirm('Apakah Anda yakin ingin keluar?');">Keluar</a>
             </nav>
         </aside>
 
