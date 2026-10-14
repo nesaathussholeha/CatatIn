@@ -263,7 +263,7 @@ unset($_SESSION['flash']);
             </div>
 
             <div>
-                <a href=".../login.php" class="nav-link logout">
+                <a href="../logout.php" class="nav-link logout">
                     <iconify-icon icon="hugeicons:logout-square-01"></iconify-icon> Keluar
                 </a>
             </div>
