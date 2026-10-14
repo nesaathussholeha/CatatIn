@@ -99,13 +99,14 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
         <!-- Sidebar Navigasi -->
         <aside class="sidebar" id="sidebar">
             <div>
+                <!-- Header Sidebar + Tombol Close (X) -->
                 <div class="sidebar-header">
                     <div class="brand">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                         </svg>
-                        <span><?= APP_NAME ?></span>
+                        <span>CatatIn</span>
                     </div>
                     <button class="close-sidebar-btn" id="closeSidebar" aria-label="Tutup Menu">
                         <iconify-icon icon="lucide:x"></iconify-icon>
@@ -114,17 +115,17 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
 
                 <ul class="nav-list">
                     <li>
-                        <a href="../dashboard_user/dashboard.php" class="nav-link <?= ($active_menu == 'dashboard') ? 'active' : ''; ?>">
+                        <a href="dashboard.php" class="nav-link <?= ($active_menu == 'dashboard') ? 'active' : ''; ?>">
                             <iconify-icon icon="akar-icons:dashboard"></iconify-icon> Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="upload.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
+                        <a href="../upload/upload.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
                             <iconify-icon icon="reicon:document-upload"></iconify-icon> Unggah Catatan
                         </a>
                     </li>
                     <li>
-                        <a href="catatan_saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
+                        <a href="../catatan saya/catatan_saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
                             <iconify-icon icon="hugeicons:note"></iconify-icon> Catatan Saya
                         </a>
                     </li>
@@ -139,7 +140,7 @@ usort($catatan, static fn(array $a, array $b): int => strcmp($b['tanggal'], $a['
                         </a>
                     </li>
                     <li>
-                        <a href="../profile.php" class="nav-link <?= ($active_menu == 'profil') ? 'active' : ''; ?>">
+                        <a href="../profile/profile.php" class="nav-link <?= ($active_menu == 'profil') ? 'active' : ''; ?>">
                             <iconify-icon icon="iconamoon:profile-circle"></iconify-icon> Profil
                         </a>
                     </li>

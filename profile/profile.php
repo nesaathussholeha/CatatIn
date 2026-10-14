@@ -174,27 +174,27 @@ function field($errs, $key) {
 
                 <ul class="nav-list">
                     <li>
-                        <a href="dashboard.php" class="nav-link <?= ($active_menu == 'dashboard') ? 'active' : ''; ?>">
+                        <a href="../dashboard_user/dashboard.php" class="nav-link <?= ($active_menu == 'dashboard') ? 'active' : ''; ?>">
                             <iconify-icon icon="akar-icons:dashboard"></iconify-icon> Dashboard
                         </a>
                     </li>
                     <li>
-                        <a href="unggah-catatan.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
+                        <a href="../upload/upload.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
                             <iconify-icon icon="reicon:document-upload"></iconify-icon> Unggah Catatan
                         </a>
                     </li>
                     <li>
-                        <a href="catatan-saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
+                        <a href="../catatan saya/catatan_saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
                             <iconify-icon icon="hugeicons:note"></iconify-icon> Catatan Saya
                         </a>
                     </li>
                     <li>
-                        <a href="koleksi.php" class="nav-link <?= ($active_menu == 'koleksi') ? 'active' : ''; ?>">
+                        <a href="../playlist/playlist.php" class="nav-link <?= ($active_menu == 'koleksi') ? 'active' : ''; ?>">
                             <iconify-icon icon="codicon:folder-opened-compact"></iconify-icon> Koleksi
                         </a>
                     </li>
                     <li>
-                        <a href="tugas.php" class="nav-link <?= ($active_menu == 'tugas') ? 'active' : ''; ?>">
+                        <a href="../Pengingat/tugas.php" class="nav-link <?= ($active_menu == 'tugas') ? 'active' : ''; ?>">
                             <iconify-icon icon="hugeicons:sticky-note-02"></iconify-icon> Tugas
                         </a>
                     </li>
@@ -207,7 +207,7 @@ function field($errs, $key) {
             </div>
 
             <div>
-                <a href="logout.php" class="nav-link logout">
+                <a href="../logout.php" class="nav-link logout">
                     <iconify-icon icon="hugeicons:logout-square-01"></iconify-icon> Keluar
                 </a>
             </div>

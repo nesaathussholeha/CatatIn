@@ -164,12 +164,12 @@ $user_initial = strtoupper(substr($user_name, 0, 1));
                         </a>
                     </li>
                     <li>
-                        <a href="../dashboard_user/upload.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
+                        <a href="../upload/upload.php" class="nav-link <?= ($active_menu == 'unggah') ? 'active' : ''; ?>">
                             <iconify-icon icon="reicon:document-upload"></iconify-icon> Unggah Catatan
                         </a>
                     </li>
                     <li>
-                        <a href="../dashboard_user/catatan_saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
+                        <a href="../catatan saya/catatan_saya.php" class="nav-link <?= ($active_menu == 'catatan_saya') ? 'active' : ''; ?>">
                             <iconify-icon icon="hugeicons:note"></iconify-icon> Catatan Saya
                         </a>
                     </li>
@@ -184,7 +184,7 @@ $user_initial = strtoupper(substr($user_name, 0, 1));
                         </a>
                     </li>
                     <li>
-                         <a href="../profile.php" class="nav-link <?= ($active_menu == 'profil') ? 'active' : ''; ?>">
+                         <a href="../profile/profile.php" class="nav-link <?= ($active_menu == 'profil') ? 'active' : ''; ?>">
                             <iconify-icon icon="iconamoon:profile-circle"></iconify-icon> Profil
                         </a>
                     </li>
