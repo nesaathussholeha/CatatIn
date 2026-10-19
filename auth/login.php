@@ -1,29 +1,21 @@
 <?php
 session_start();
 
-// Directory & File Data Pengguna JSON
-$data_dir  = __DIR__ . "/data";
-$data_file = $data_dir . "/users.json";
-
-if (!is_dir($data_dir)) {
-    mkdir($data_dir, 0777, true);
-}
-if (!file_exists($data_file)) {
-    file_put_contents($data_file, json_encode([]));
-}
+// 1. Panggil koneksi database
+require_once __DIR__ . '/koneksi.php';
 
 // Ambil error & success dari SESSION (Flash Message)
 $error_messages  = $_SESSION['error_messages'] ?? [];
 $success_message = $_SESSION['success_message'] ?? '';
 
-// LANGSUNG UNSET agar hilang saat halaman di-refresh / dimuat ulang
+// Langsung unset agar hilang saat halaman dimuat ulang
 unset($_SESSION['error_messages'], $_SESSION['success_message']);
 
 // Tab mana yang aktif pertama kali (default: masuk)
 $active_tab = $_SESSION['active_tab'] ?? 'masuk';
 unset($_SESSION['active_tab']);
 
-// Jika pengguna sudah login
+// Jika pengguna sudah login, redirect sesuai role
 if (isset($_SESSION['role'])) {
     if ($_SESSION['role'] === 'admin') {
         header("Location: ../dashboard_admin/dashboard.php");
@@ -40,39 +32,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // LOGIKA LOGIN / MASUK
     if ($action === 'login') {
-        $identifier = trim($_POST['email'] ?? '');
+        $identifier = trim($_POST['email'] ?? ''); // Bisa berupa email atau NIM
         $password   = $_POST['password'] ?? '';
 
         if (empty($identifier) || empty($password)) {
             $errors[] = "Email/NIM dan Password wajib diisi.";
         } else {
-            $users = json_decode(file_get_contents($data_file), true) ?: [];
-            $found_user = null;
+            try {
+                // Cari pengguna berdasarkan Email ATAU NIM menggunakan PDO Prepared Statement
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :identifier OR nim = :identifier");
+                $stmt->execute(['identifier' => $identifier]);
+                $found_user = $stmt->fetch();
 
-            foreach ($users as $u) {
-                if ($u["email"] === $identifier || $u["nim"] === $identifier) {
-                    $found_user = $u;
-                    break;
-                }
-            }
-
-            if ($found_user && password_verify($password, $found_user["password"])) {
-                if (isset($found_user["is_active"]) && !$found_user["is_active"]) {
-                    $errors[] = "Akun Anda sedang dinonaktifkan.";
-                } else {
-                    $_SESSION["user_id"]      = $found_user["id"];
-                    $_SESSION["nama_lengkap"] = $found_user["nama_lengkap"];
-                    $_SESSION["role"]         = $found_user["role"];
-
-                    if ($found_user["role"] === "admin") {
-                        header("Location: ../dashboard_admin/dashboard.php");
+                if ($found_user && password_verify($password, $found_user["password"])) {
+                    if (isset($found_user["is_active"]) && !$found_user["is_active"]) {
+                        $errors[] = "Akun Anda sedang dinonaktifkan.";
                     } else {
-                        header("Location: ../dashboard_user/dashboard.php");
+                        $_SESSION["user_id"]      = $found_user["id"];
+                        $_SESSION["nama_lengkap"] = $found_user["nama_lengkap"];
+                        $_SESSION["role"]         = $found_user["role"];
+
+                        if ($found_user["role"] === "admin") {
+                            header("Location: ../dashboard_admin/dashboard.php");
+                        } else {
+                            header("Location: ../dashboard_user/dashboard.php");
+                        }
+                        exit();
                     }
-                    exit();
+                } else {
+                    $errors[] = "Email/NIM atau Password salah.";
                 }
-            } else {
-                $errors[] = "Email/NIM atau Password salah.";
+            } catch (PDOException $e) {
+                error_log($e->getMessage());
+                $errors[] = "Terjadi kesalahan sistem. Silakan coba lagi.";
             }
         }
 
@@ -113,43 +105,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = "Kamu harus menyetujui ketentuan penggunaan.";
         }
 
-        // Cek Duplikasi NIM / Email
+        // Cek Duplikasi NIM / Email di Database
         if (empty($errors)) {
-            $users = json_decode(file_get_contents($data_file), true) ?: [];
+            try {
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE nim = :nim OR email = :email");
+                $stmt->execute(['nim' => $nim, 'email' => $email]);
 
-            foreach ($users as $u) {
-                if ($u["nim"] === $nim || $u["email"] === $email) {
+                if ($stmt->fetch()) {
                     $errors[] = "NIM atau email sudah terdaftar. Silakan login.";
-                    break;
                 }
+            } catch (PDOException $e) {
+                error_log($e->getMessage());
+                $errors[] = "Gagal memverifikasi data pengguna.";
             }
         }
 
-        // Simpan Data jika Validasi Lolos
+        // Simpan Data ke Database jika Validasi Lolos
         if (empty($errors)) {
-            $users[] = [
-                "id"           => uniqid(),
-                "nama_lengkap" => $nama,
-                "nim"          => $nim,
-                "email"        => $email,
-                "password"     => password_hash($password, PASSWORD_DEFAULT),
-                "role"         => "mahasiswa",
-                "total_upvote" => 0,
-                "badge"        => null,
-                "is_active"    => true,
-                "created_at"   => date("Y-m-d H:i:s"),
-            ];
+            try {
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            file_put_contents($data_file, json_encode($users, JSON_PRETTY_PRINT));
+                $sql = "INSERT INTO users (nama_lengkap, nim, email, password, role, total_upvote, badge, is_active, created_at) 
+                        VALUES (:nama, :nim, :email, :password, 'mahasiswa', 0, NULL, 1, NOW())";
 
-            $_SESSION['success_message'] = "Pendaftaran berhasil! Silakan masuk ke akun Anda.";
-            $_SESSION['active_tab']      = 'masuk';
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    'nama'     => $nama,
+                    'nim'      => $nim,
+                    'email'    => $email,
+                    'password' => $hashedPassword
+                ]);
+
+                $_SESSION['success_message'] = "Pendaftaran berhasil! Silakan masuk ke akun Anda.";
+                $_SESSION['active_tab']      = 'masuk';
+            } catch (PDOException $e) {
+                error_log($e->getMessage());
+                $_SESSION['error_messages'] = ["Gagal mendaftarkan akun. Silakan coba lagi."];
+                $_SESSION['active_tab']     = 'daftar';
+            }
         } else {
             $_SESSION['error_messages'] = $errors;
             $_SESSION['active_tab']     = 'daftar';
         }
 
-        // SELALU REDIRECT SETELAH POST UNTUK MENCEGAH RESUBMISSION SAAT REFRESH
+        // Redirect setelah POST
         header("Location: login.php");
         exit();
     }
