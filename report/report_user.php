@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['aksi'] ?? '') === 'kirim-la
             <main class="content-area">
                 <div class="detail-page">
 
-                    <a href="koleksi.php" class="back-link">
+                    <a href="../dashboard_user/dashboard.php" class="back-link">
                         <iconify-icon icon="lucide:arrow-left"></iconify-icon>
                         Kembali ke Jelajahi Catatan
                     </a>
@@ -342,7 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['aksi'] ?? '') === 'kirim-la
                                     </div>
                                 </div>
                                 <p class="side-note">Catatan kuliah ini disusun supaya teman belajar lebih mudah memahami materi.</p>
-                                <a href="profil.php" class="side-link">
+                                <a href="../profile_penyusun/index.php" class="side-link">
                                     Lihat profil
                                     <iconify-icon icon="lucide:arrow-right"></iconify-icon>
                                 </a>
