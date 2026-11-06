@@ -1,9 +1,9 @@
 <?php
-$page_title  = "Judul Halaman";
-$active_menu = "koleksi"; // Pilihan: 'dashboard', 'unggah', 'catatan_saya', 'koleksi', 'tugas', 'profil'
-
-$user_name   = "Username";
-$user_role   = "Role";
+// Nilai default jika halaman lupa mendefinisikannya
+$page_title  = isset($page_title) ? $page_title : "CatatIn";
+$active_menu = isset($active_menu) ? $active_menu : "dashboard";
+$user_name   = isset($user_name) ? $user_name : "Username";
+$user_role   = isset($user_role) ? $user_role : "Role";
 $user_initial = strtoupper(substr($user_name, 0, 1));
 ?>
 <!DOCTYPE html>
@@ -16,11 +16,10 @@ $user_initial = strtoupper(substr($user_name, 0, 1));
 
     <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
-
     <!-- Iconify CDN -->
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-
     <link rel="stylesheet" href="../layout_user/style.css">
+    <link rel="stylesheet" href="../profile_penyusun/style.css">
 </head>
 
 <body>
@@ -31,7 +30,6 @@ $user_initial = strtoupper(substr($user_name, 0, 1));
         <!-- Sidebar Navigasi -->
         <aside class="sidebar" id="sidebar">
             <div>
-                <!-- Header Sidebar + Tombol Close (X) -->
                 <div class="sidebar-header">
                     <div class="brand">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -107,16 +105,23 @@ $user_initial = strtoupper(substr($user_name, 0, 1));
                 </div>
             </header>
 
-            <!-- Area Konten Utama -->
+            <!-- Area Konten Utama Mulai Di sini -->
+            <!-- Di dalam file layout_user/index.php -->
             <main class="content-area">
                 <div>
-                    <!-- Elemen HTML / PHP halaman dimasukkan di sini -->
+                    <?php
+                    // Cetak konten dari halaman yang memanggilnya
+                    if (isset($content)) {
+                        echo $content;
+                    }
+                    ?>
                 </div>
             </main>
         </div>
     </div>
 
     <script src="../layout_user/script.js"></script>
+    <script src="../profile_penyusun/script.js"></script>
 </body>
 
 </html>
