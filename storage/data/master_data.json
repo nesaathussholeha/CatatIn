@@ -4,7 +4,7 @@
             "id": "j1",
             "kode": "TIF",
             "nama": "Informatika",
-            "status": false,
+            "status": true,
             "pengguna": "42 Catatan"
         },
         {
@@ -18,7 +18,7 @@
             "id": "j3",
             "kode": "TEKOM",
             "nama": "Teknik Komputer",
-            "status": true,
+            "status": false,
             "pengguna": "12 Catatan"
         }
     ],
@@ -28,7 +28,7 @@
             "kode": "MK01",
             "nama": "Pemrograman Web",
             "jurusan": "Informatika",
-            "status": false,
+            "status": true,
             "pengguna": "25 Catatan"
         },
         {
@@ -37,7 +37,7 @@
             "nama": "Basis Data",
             "jurusan": "Sistem Informasi",
             "status": true,
-            "pengguna": "18 Catatan"
+            "pengguna": "0 Catatan"
         }
     ],
     "kategori": [
@@ -52,8 +52,8 @@
             "id": "k2",
             "kode": "KAT02",
             "nama": "Latihan Soal",
-            "status": true,
-            "pengguna": "30 Catatan"
+            "status": false,
+            "pengguna": "0 Catatan"
         }
     ]
 }
