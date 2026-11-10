@@ -61,10 +61,13 @@ switch ($page) {
 
     // USER DASHBOARD
     case 'dashboard':
+        require_once ROOT_PATH . '/app/Controllers/UserDashboardController.php';
+        (new UserDashboardController())->index();
+        break;
 
-        $controller = new UserDashboardController();
-        $controller->index();
-
+    case 'koleksi':
+        require_once ROOT_PATH . '/app/Controllers/PlaylistController.php';
+        (new PlaylistController())->index();
         break;
 
 
