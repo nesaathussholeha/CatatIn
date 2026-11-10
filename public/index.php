@@ -24,6 +24,7 @@ require_once ROOT_PATH . '/app/Controllers/AdminUserController.php';
 
 // Controller Kelola Catatan
 require_once ROOT_PATH . '/app/Controllers/PengelolaCatatanController.php';
+require_once ROOT_PATH . '/app/Controllers/AdminProfileController.php';
 
 
 // Halaman default adalah login
@@ -100,6 +101,11 @@ switch ($page) {
 
         break;
 
+    case 'profil-admin':
+        $controller = new AdminProfileController();
+        $controller->index();
+        break;
+
 
     // FITUR REPORT USER
     case 'report-user':
@@ -158,7 +164,7 @@ switch ($page) {
         exit;
 
 
-    // HALAMAN TIDAK DIKENAL
+        // HALAMAN TIDAK DIKENAL
     default:
 
         header('Location: ?page=login');
