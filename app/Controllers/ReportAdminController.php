@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../Models/ReportAdminModel.php';
+require_once ROOT_PATH . '/app/Models/ReportAdminModel.php';
 
 class ReportAdminController {
     private $reportAdminModel;
@@ -13,7 +13,7 @@ class ReportAdminController {
     }
 
     public function index() {
-        // Handling API Endpoint/AJAX request
+        // Handling AJAX Actions (Status / Hapus)
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['aksi'])) {
             header('Content-Type: application/json; charset=utf-8');
             $aksi = $_GET['aksi'];
@@ -34,18 +34,25 @@ class ReportAdminController {
             }
         }
 
-        // Variable yang dikirim ke View
-        $pageTitle  = "Kelola Laporan";
-        $activeMenu = "laporan";
+        // Variable untuk Layout main.php (Sistem otomatis mengenali role Admin)
+        $page_title  = "Kelola Laporan";
+        $active_menu = "laporan";
+        $user_name   = $_SESSION['user_name'] ?? 'Administrator 1';
+        $user_role   = $_SESSION['role'] ?? 'Admin'; // Role Admin
+        $user_initial = strtoupper(substr($user_name, 0, 1));
 
-        $userName = $_SESSION['user_name'] ?? 'Administrator 1';
-        $userRole = ucfirst($_SESSION['role'] ?? 'Admin');
-        $userInit = strtoupper(substr($userName, 0, 1));
+        $page_css = "report_admin.css";
+        $page_js  = "report_admin.js";
 
-        // Mengambil data dari Model
+        // Mengambil data laporan
         $laporan = $this->reportAdminModel->getAllReports();
 
-        // Panggil View Admin
-        require_once __DIR__ . '/../Views/admin/report_admin.php';
+        // Tangkap output dari app/Views/admin/report_admin.php ke dalam variabel $content
+        ob_start();
+        require VIEW_PATH . '/admin/report_admin.php';
+        $content = ob_get_clean();
+
+        // Render Layout Utama
+        require VIEW_PATH . '/layouts/main.php';
     }
 }

@@ -5,7 +5,7 @@
         Kembali ke Jelajahi Catatan
     </a>
 
-    <!-- Kepala Catatan -->
+    <!-- Kepala catatan -->
     <section class="note-head">
         <div class="note-head-info">
             <div class="tag-row">
@@ -50,7 +50,40 @@
 
                     <div class="paper-section">
                         <h4>01 Mengenal struktur data</h4>
-                        <p>Struktur data adalah cara menyimpan, mengatur, dan mengelola data dalam komputer agar dapat diakses dan dimodifikasi secara efisien.</p>
+                        <p>Struktur data adalah cara menyimpan, mengatur, dan mengelola data dalam komputer agar dapat diakses dan dimodifikasi secara efisien. Pemilihan struktur yang tepat sangat memengaruhi performa program.</p>
+                    </div>
+
+                    <div class="paper-section">
+                        <h4>02 Array &amp; linked list</h4>
+                        <p>Array menyimpan elemen pada blok memori yang berurutan sehingga akses lewat indeks sangat cepat. Linked list menyimpan data dalam node; setiap node menunjuk ke node berikutnya.</p>
+                        <div class="paper-diagram">
+                            <span class="node">data</span><span class="arrow">→</span>
+                            <span class="node">next</span><span class="arrow">→</span>
+                            <span class="node">null</span>
+                        </div>
+                    </div>
+
+                    <div class="paper-section">
+                        <h4>03 Stack &amp; queue</h4>
+                        <p>Stack menggunakan prinsip Last In, First Out (LIFO), sedangkan queue menggunakan First In, First Out (FIFO).</p>
+
+                        <div class="table-wrap">
+                            <table class="paper-table">
+                                <thead>
+                                    <tr>
+                                        <th>Struktur</th>
+                                        <th>Karakteristik</th>
+                                        <th>Contoh penggunaan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Array</td><td>Indeks acak</td><td>Daftar nilai</td></tr>
+                                    <tr><td>Linked list</td><td>Node berantai</td><td>Playlist musik</td></tr>
+                                    <tr><td>Stack</td><td>LIFO (terakhir masuk)</td><td>Undo, riwayat operasi</td></tr>
+                                    <tr><td>Queue</td><td>FIFO (pertama masuk)</td><td>Antrean pemrosesan</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="paper-footer">
@@ -103,6 +136,26 @@
                         <div class="author-role"><?= htmlspecialchars($catatan['penulis_role']); ?></div>
                     </div>
                 </div>
+                <p class="side-note">Catatan kuliah ini disusun supaya teman belajar lebih mudah memahami materi.</p>
+                <a href="index.php?page=profil_penyusun" class="side-link">
+                    Lihat profil
+                    <iconify-icon icon="lucide:arrow-right"></iconify-icon>
+                </a>
+            </div>
+
+            <div class="side-card">
+                <h5 class="side-title">Info Catatan</h5>
+                <dl class="info-list">
+                    <div><dt>Mata Kuliah</dt><dd><?= htmlspecialchars($catatan['mata_kuliah']); ?></dd></div>
+                    <div><dt>Jurusan</dt><dd><?= htmlspecialchars($catatan['jurusan']); ?></dd></div>
+                    <div><dt>Kategori</dt><dd><?= htmlspecialchars($catatan['kategori']); ?></dd></div>
+                    <div><dt>Format</dt><dd><?= htmlspecialchars($catatan['format']); ?></dd></div>
+                    <div><dt>Ukuran</dt><dd><?= htmlspecialchars($catatan['ukuran']); ?></dd></div>
+                </dl>
+                <div class="verified">
+                    <iconify-icon icon="lucide:check-circle-2"></iconify-icon>
+                    Dinilai berguna oleh teman belajar
+                </div>
             </div>
 
             <div class="side-card">
@@ -141,6 +194,7 @@
         <form id="formLaporan" class="modal-body" novalidate>
             <input type="hidden" name="catatan_id" value="<?= (int) $catatan['id']; ?>">
 
+            <!-- Judul -->
             <div class="field" data-field="judul">
                 <label for="inputJudul">Judul Laporan <span class="req">*</span></label>
                 <input type="text" id="inputJudul" name="judul" maxlength="100" placeholder="Contoh : Catatan UAS Basis Data" autocomplete="off">
@@ -150,6 +204,7 @@
                 </div>
             </div>
 
+            <!-- Jenis -->
             <div class="field" data-field="jenis">
                 <label>Jenis File <span class="req">*</span></label>
                 <div class="chip-group" id="chipGroup" role="radiogroup" aria-label="Jenis laporan">
@@ -168,15 +223,17 @@
                 </div>
             </div>
 
+            <!-- Deskripsi -->
             <div class="field" data-field="deskripsi">
                 <label for="inputDeskripsi">Deskripsi / Catatan <span class="opt">(Opsional)</span></label>
-                <textarea id="inputDeskripsi" name="deskripsi" maxlength="500" rows="4" placeholder="Jelaskan secara singkat isi laporan..."></textarea>
+                <textarea id="inputDeskripsi" name="deskripsi" maxlength="500" rows="4" placeholder="Jelaskan secara singkat isi laporan atau alasan pelaporan..."></textarea>
                 <div class="field-foot">
                     <span class="error-text" data-error="deskripsi"></span>
                     <span class="counter" id="counterDeskripsi">0/500</span>
                 </div>
             </div>
 
+            <!-- Unggah file -->
             <div class="field" data-field="file">
                 <label>Unggah File <span class="opt">(Opsional)</span></label>
                 <input type="file" id="inputFile" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx" hidden>
@@ -184,6 +241,7 @@
                 <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Unggah file">
                     <iconify-icon icon="lucide:upload-cloud" class="dz-icon"></iconify-icon>
                     <p class="dz-title">Klik untuk menggunakan file atau tarik dan lepas</p>
+                    <p class="dz-sub">Format : PDF, DOC, DOCX, XLS, XLSX (maks. 10 MB)</p>
                 </div>
 
                 <div class="file-preview" id="filePreview" hidden>
@@ -196,7 +254,10 @@
                         <iconify-icon icon="lucide:trash-2"></iconify-icon>
                     </button>
                 </div>
-                <div class="field-foot"><span class="error-text" data-error="file"></span></div>
+
+                <div class="field-foot">
+                    <span class="error-text" data-error="file"></span>
+                </div>
             </div>
 
             <div class="modal-foot">
@@ -210,4 +271,5 @@
     </div>
 </div>
 
+<!-- Toast Notification -->
 <div class="toast-stack" id="toastStack" aria-live="polite"></div>

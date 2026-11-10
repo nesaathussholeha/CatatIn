@@ -1,17 +1,19 @@
 <?php
 
-require_once __DIR__ . '/../Models/ReportUserModel.php';
+require_once ROOT_PATH . '/app/Models/ReportUserModel.php';
 
 class ReportUserController {
     private $reportUserModel;
 
     public function __construct() {
-        // Inisialisasi Model ReportUser
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $this->reportUserModel = new ReportUserModel();
     }
 
     public function index() {
-        // Respon AJAX submit laporan
+        // Handle Request POST / AJAX Kirim Laporan
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['aksi'] ?? '') === 'kirim-laporan') {
             header('Content-Type: application/json; charset=utf-8');
             
@@ -25,11 +27,11 @@ class ReportUserController {
             exit;
         }
 
-        // Data dummy untuk View
-        $pageTitle  = "Detail Catatan";
-        $activeMenu = "dashboard";
-        $userName   = "Username";
-        $userRole   = "Role";
+        // Variable yang dikirim ke Layout & View
+        $pageTitle   = "Detail Catatan";
+        $activeMenu  = "dashboard";
+        $userName    = $_SESSION['user_name'] ?? "Username";
+        $userRole    = $_SESSION['role'] ?? "Role";
         $userInitial = strtoupper(substr($userName, 0, 1));
 
         $catatan = [
@@ -63,7 +65,10 @@ class ReportUserController {
             6 => ['judul' => 'Sorting & Searching', 'isi' => 'Bubble, selection, insertion, merge, dan quick sort. Perbandingan kompleksitas serta binary search.'],
         ];
 
-        // Memanggil file view
-        require_once __DIR__ . '/../Views/user/report_user.php';
+        // Path view khusus konten report user
+        $contentView = ROOT_PATH . '/app/Views/user/report_user.php';
+
+        // Panggil layout utama (yang di dalamnya memanggil sidebar & header)
+        require_once ROOT_PATH . '/app/Views/layouts/main.php';
     }
 }
