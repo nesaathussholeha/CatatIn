@@ -101,11 +101,6 @@ switch ($page) {
 
         break;
 
-    case 'profil-admin':
-        $controller = new AdminProfileController();
-        $controller->index();
-        break;
-
 
     // FITUR REPORT USER
     case 'report-user':
@@ -151,6 +146,11 @@ switch ($page) {
         $controller = new AdminUserController();
         $controller->index();
 
+        break;
+
+    case 'profil-admin':
+        $controller = new AdminProfileController();
+        $controller->index();
         break;
 
 

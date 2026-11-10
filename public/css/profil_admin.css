@@ -1,0 +1,262 @@
+
+.profil-admin {
+    width: 100%;
+}
+
+.profil-heading {
+    margin-bottom: 24px;
+}
+
+.profil-heading h2 {
+    margin: 0 0 6px;
+    color: #17193f;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.profil-heading p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+/* CARD UTAMA */
+.profil-card {
+    display: grid;
+    grid-template-columns: 0.85fr 1.4fr;
+    gap: 35px;
+    padding: 30px;
+    background: #fff;
+    border: 1px solid #e8e8ee;
+    border-radius: 14px;
+    box-sizing: border-box;
+}
+
+/* BAGIAN KIRI */
+.profil-left {
+    padding-right: 30px;
+    border-right: 1px solid #e8e8ee;
+}
+
+.profil-avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.profil-avatar {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #e9eaff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profil-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.profil-avatar img.ada-foto {
+    display: block;
+}
+
+.profil-avatar span {
+    color: #343b9b;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.btn-foto {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 15px;
+    border: 1px solid #dedee8;
+    border-radius: 7px;
+    color: #343b9b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-foto:hover {
+    background: #f1f1ff;
+}
+
+.profil-user-info {
+    text-align: center;
+}
+
+.profil-user-info h3 {
+    margin: 0 0 9px;
+    color: #17193f;
+    font-size: 19px;
+}
+
+.profil-role {
+    display: inline-block;
+    padding: 6px 13px;
+    border-radius: 20px;
+    background: #e9eaff;
+    color: #343b9b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profil-biodata {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profil-info-item span {
+    display: block;
+    margin-bottom: 6px;
+    color: #888;
+    font-size: 12px;
+}
+
+.profil-info-item strong {
+    color: #292943;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.profil-info-item .status-aktif {
+    color: #21834a;
+}
+
+/* BAGIAN KANAN */
+.profil-right {
+    min-width: 0;
+}
+
+.profil-section-heading {
+    margin-bottom: 20px;
+}
+
+.profil-section-heading h3 {
+    margin: 0 0 6px;
+    color: #17193f;
+    font-size: 17px;
+}
+
+.profil-section-heading p {
+    margin: 0;
+    color: #888;
+    font-size: 13px;
+}
+
+.profil-form-group {
+    margin-bottom: 17px;
+}
+
+.profil-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #292943;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.profil-form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid #dedee8;
+    border-radius: 7px;
+    outline: none;
+    color: #292943;
+    font-size: 13px;
+    background: #fff;
+}
+
+.profil-form-group input:focus {
+    border-color: #5559b8;
+    box-shadow: 0 0 0 3px rgba(85, 89, 184, 0.1);
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 42px;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    transform: translateY(-50%);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #888;
+    cursor: pointer;
+}
+
+.profil-btn {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 7px;
+    background: #292b69;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.profil-btn:hover {
+    background: #41448e;
+}
+
+.profil-divider {
+    height: 1px;
+    margin: 25px 0;
+    background: #e8e8ee;
+}
+
+/* RESPONSIVE */
+@media (max-width: 850px) {
+    .profil-card {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .profil-left {
+        padding-right: 0;
+        padding-bottom: 25px;
+        border-right: none;
+        border-bottom: 1px solid #e8e8ee;
+    }
+
+    .profil-biodata {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .profil-card {
+        padding: 20px;
+    }
+
+    .profil-biodata {
+        grid-template-columns: 1fr;
+    }
+
+    .profil-btn {
+        width: 100%;
+    }
+}
