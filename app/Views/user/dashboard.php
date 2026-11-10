@@ -100,7 +100,7 @@
 
                     <a
                         class="detail"
-                        href="<?= BASE_URL ?>/?page=report">
+                        href="<?= BASE_URL ?>/?page=detail-catatan">
                         Lihat detail
                     </a>
 
