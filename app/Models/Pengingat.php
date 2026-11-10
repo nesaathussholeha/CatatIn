@@ -1,11 +1,13 @@
-
 <?php
 
 class Pengingat
 {
-    public function __construct()
+    private static function init()
     {
-        // Data awal jika Session belum memiliki data tugas
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         if (!isset($_SESSION['tugas'])) {
             $_SESSION['tugas'] = [
                 [
@@ -27,73 +29,39 @@ class Pengingat
                     'selesai' => true
                 ]
             ];
+        }
 
+        if (!isset($_SESSION['next_id'])) {
             $_SESSION['next_id'] = 4;
         }
     }
 
-    // Mengambil semua data tugas
-    public function getAll()
+    public static function semua()
     {
+        self::init();
         return $_SESSION['tugas'];
     }
 
-    // Menambahkan tugas
-    public function tambah($judul, $deadline)
+    public static function tambah($judul, $deadline)
     {
-        if ($judul === '' || $deadline === '') {
-            return false;
-        }
+        self::init();
 
         $_SESSION['tugas'][] = [
             'id' => $_SESSION['next_id']++,
-            'judul' => $judul,
+            'judul' => trim($judul),
             'deadline' => $deadline,
             'selesai' => false
         ];
-
-        return true;
     }
 
-    // Mengubah tugas
-    public function edit($id, $judul, $deadline)
+    public static function edit($id, $judul, $deadline)
     {
-        foreach ($_SESSION['tugas'] as &$tugas) {
-            if ($tugas['id'] === $id) {
-                if ($judul === '' || $deadline === '') {
-                    unset($tugas);
-                    return false;
-                }
+        self::init();
 
-                $tugas['judul'] = $judul;
+        foreach ($_SESSION['tugas'] as &$tugas) {
+            if ($tugas['id'] == $id) {
+                $tugas['judul'] = trim($judul);
                 $tugas['deadline'] = $deadline;
-
-                unset($tugas);
-                return true;
-            }
-        }
-
-        unset($tugas);
-        return false;
-    }
-
-    // Menghapus tugas
-    public function hapus($id)
-    {
-        $_SESSION['tugas'] = array_values(
-            array_filter(
-                $_SESSION['tugas'],
-                fn($tugas) => $tugas['id'] !== $id
-            )
-        );
-    }
-
-    // Mengubah status selesai tugas
-    public function toggle($id)
-    {
-        foreach ($_SESSION['tugas'] as &$tugas) {
-            if ($tugas['id'] === $id) {
-                $tugas['selesai'] = !$tugas['selesai'];
                 break;
             }
         }
@@ -101,71 +69,29 @@ class Pengingat
         unset($tugas);
     }
 
-    // Filter dan mengurutkan tugas
-    public function getFiltered($filter, $urut)
+    public static function hapus($id)
     {
-        $daftar = array_filter(
-            $this->getAll(),
-            function ($tugas) use ($filter) {
-                if ($filter === 'belum') {
-                    return !$tugas['selesai'];
-                }
+        self::init();
 
-                if ($filter === 'selesai') {
-                    return $tugas['selesai'];
-                }
-
-                return true;
-            }
+        $_SESSION['tugas'] = array_values(
+            array_filter(
+                $_SESSION['tugas'],
+                fn($tugas) => $tugas['id'] != $id
+            )
         );
-
-        $daftar = array_values($daftar);
-
-        usort($daftar, function ($a, $b) use ($urut) {
-            $hasil = strtotime($a['deadline'])
-                <=> strtotime($b['deadline']);
-
-            return $urut === 'terjauh' ? -$hasil : $hasil;
-        });
-
-        return $daftar;
     }
 
-    // Format tanggal
-    public function formatTanggal($tanggal)
+    public static function ubahStatus($id)
     {
-        $bulan = [
-            '', 'Jan', 'Feb', 'Mar', 'Apr',
-            'Mei', 'Jun', 'Jul', 'Agu',
-            'Sep', 'Okt', 'Nov', 'Des'
-        ];
+        self::init();
 
-        $ts = strtotime($tanggal);
-
-        return date('j', $ts) . ' '
-            . $bulan[(int) date('n', $ts)] . ' '
-            . date('Y', $ts);
-    }
-
-    // Menentukan status tugas
-    public function statusTugas($tugas)
-    {
-        if ($tugas['selesai']) {
-            return ['Selesai', 'badge-selesai'];
+        foreach ($_SESSION['tugas'] as &$tugas) {
+            if ($tugas['id'] == $id) {
+                $tugas['selesai'] = !$tugas['selesai'];
+                break;
+            }
         }
 
-        $hariIni = strtotime(date('Y-m-d'));
-        $deadline = strtotime($tugas['deadline']);
-        $sisaHari = ($deadline - $hariIni) / 86400;
-
-        if ($sisaHari < 0) {
-            return ['Terlambat', 'badge-terlambat'];
-        }
-
-        if ($sisaHari <= 3) {
-            return ['Mendekati deadline', 'badge-dekat'];
-        }
-
-        return ['Belum jatuh tempo', 'badge-aman'];
+        unset($tugas);
     }
 }

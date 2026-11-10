@@ -1,89 +1,107 @@
-
 <?php
 
-require_once dirname(__DIR__) . '/Models/Pengingat.php';
+require_once APP_PATH . '/Models/Pengingat.php';
 
 class PengingatController
 {
-    private $model;
-
-    public function __construct()
-    {
-        $this->model = new Pengingat();
-    }
-
-    // Halaman utama pengingat
     public function index()
     {
-        // Memproses aksi dari form
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // PROSES TAMBAH TUGAS
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->prosesAksi();
+            $aksi = $_POST['aksi'] ?? '';
+
+            if ($aksi === 'tambah') {
+                $judul = trim($_POST['judul'] ?? '');
+                $deadline = $_POST['deadline'] ?? '';
+
+                if ($judul !== '' && $deadline !== '') {
+                    Pengingat::tambah($judul, $deadline);
+                }
+            }
+
+            // PROSES EDIT TUGAS
+            elseif ($aksi === 'edit') {
+                $id = (int) ($_POST['id'] ?? 0);
+                $judul = trim($_POST['judul'] ?? '');
+                $deadline = $_POST['deadline'] ?? '';
+
+                if ($id > 0 && $judul !== '' && $deadline !== '') {
+                    Pengingat::edit($id, $judul, $deadline);
+                }
+            }
+
+            // PROSES HAPUS TUGAS
+            elseif ($aksi === 'hapus') {
+                $id = (int) ($_POST['id'] ?? 0);
+
+                if ($id > 0) {
+                    Pengingat::hapus($id);
+                }
+            }
+
+            // PROSES UBAH STATUS
+            elseif ($aksi === 'toggle') {
+                $id = (int) ($_POST['id'] ?? 0);
+
+                if ($id > 0) {
+                    Pengingat::ubahStatus($id);
+                }
+            }
+
+            header('Location: ' . BASE_URL . '/?page=pengingat');
+            exit;
         }
 
-        // Mengambil filter
-        $filter = $_GET['status'] ?? 'semua';
+        // AMBIL DATA DARI MODEL
+        $tugas = Pengingat::semua();
 
-        if (!in_array($filter, ['semua', 'belum', 'selesai'], true)) {
-            $filter = 'semua';
+        // FILTER STATUS
+        $filter = $_GET['filter'] ?? 'semua';
+
+        if ($filter === 'belum') {
+            $tugas = array_filter(
+                $tugas,
+                fn($item) => !$item['selesai']
+            );
+        } elseif ($filter === 'selesai') {
+            $tugas = array_filter(
+                $tugas,
+                fn($item) => $item['selesai']
+            );
         }
 
-        // Mengambil urutan
+        // PENGURUTAN DEADLINE
         $urut = $_GET['urut'] ?? 'terdekat';
 
-        if (!in_array($urut, ['terdekat', 'terjauh'], true)) {
-            $urut = 'terdekat';
-        }
+        usort($tugas, function ($a, $b) use ($urut) {
+            if ($urut === 'terjauh') {
+                return strcmp($b['deadline'], $a['deadline']);
+            }
 
-        // Mengambil data dari Model
-        $daftar = $this->model->getFiltered($filter, $urut);
+            return strcmp($a['deadline'], $b['deadline']);
+        });
 
-        // Pengaturan layout
-        $page_title = 'Tugas Belajar';
+        // DATA UNTUK LAYOUT
+        $page_title = 'Pengingat';
         $active_menu = 'tugas';
+        $page_css = 'pengingat.css';
+        $page_js = 'pengingat.js';
 
-        $user_name = 'Username';
-        $user_role = 'Role';
-        $user_initial = strtoupper(substr($user_name, 0, 1));
+        // DATA USER
+        // Sesuaikan dengan sistem login CatatIn yang sudah ada.
+        $user_name = $_SESSION['user_name'] ?? 'Username';
+        $user_role = $_SESSION['user_role'] ?? 'User';
 
-        // Memanggil View
-        require dirname(__DIR__) . '/Views/pengingat/index.php';
-    }
+        // SIAPKAN VIEW
+        ob_start();
+        require VIEW_PATH . '/user/pengingat.php';
+        $content = ob_get_clean();
 
-    // Memproses tambah, edit, hapus, dan toggle
-    private function prosesAksi()
-    {
-        $aksi = $_POST['aksi'] ?? '';
-        $id = (int) ($_POST['id'] ?? 0);
-
-        $judul = trim($_POST['judul'] ?? '');
-        $deadline = $_POST['deadline'] ?? '';
-
-        switch ($aksi) {
-            case 'tambah':
-                $this->model->tambah($judul, $deadline);
-                break;
-
-            case 'edit':
-                $this->model->edit($id, $judul, $deadline);
-                break;
-
-            case 'hapus':
-                $this->model->hapus($id);
-                break;
-
-            case 'toggle':
-                $this->model->toggle($id);
-                break;
-        }
-
-        // Kembali ke halaman sebelumnya
-        $qs = $_SERVER['QUERY_STRING'] ?? '';
-
-        header(
-            'Location: tugas.php' .
-            ($qs !== '' ? '?' . $qs : '')
-        );
-
-        exit;
+        // TAMPILKAN DENGAN LAYOUT UTAMA
+        require VIEW_PATH . '/layouts/main.php';
     }
 }

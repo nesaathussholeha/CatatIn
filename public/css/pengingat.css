@@ -1,0 +1,230 @@
+.halaman-pengingat {
+    width: 100%;
+}
+
+.pengingat-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.pengingat-heading h1 {
+    margin: 0 0 8px;
+    color: #10234f;
+    font-size: 25px;
+}
+
+.pengingat-heading p {
+    margin: 0;
+    color: #777;
+    font-size: 14px;
+}
+
+.tombol-tambah,
+.tombol-simpan {
+    background: #10234f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 17px;
+    cursor: pointer;
+}
+
+.pengingat-filter {
+    margin-bottom: 20px;
+}
+
+.pengingat-filter form {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.pengingat-filter select {
+    padding: 10px 13px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+}
+
+.daftar-pengingat {
+    display: grid;
+    gap: 15px;
+}
+
+.kartu-pengingat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #e7e9f0;
+    border-radius: 12px;
+}
+
+.pengingat-info h3 {
+    margin: 0 0 8px;
+    color: #10234f;
+    font-size: 16px;
+}
+
+.pengingat-info p {
+    margin: 0 0 10px;
+    color: #777;
+    font-size: 13px;
+}
+
+.teks-selesai {
+    text-decoration: line-through;
+    color: #999 !important;
+}
+
+.status-tugas {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status-belum {
+    background: #fff2d9;
+    color: #946200;
+}
+
+.status-selesai {
+    background: #e1f5e8;
+    color: #237342;
+}
+
+.pengingat-aksi {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pengingat-aksi button {
+    padding: 8px 11px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.tombol-status {
+    background: #e8efff;
+    color: #244b9b;
+}
+
+.tombol-edit {
+    background: #fff2d9;
+    color: #946200;
+}
+
+.tombol-hapus {
+    background: #ffe6e6;
+    color: #b52b2b;
+}
+
+.pengingat-kosong {
+    padding: 40px 20px;
+    text-align: center;
+    background: white;
+    border-radius: 12px;
+    color: #777;
+}
+
+.pengingat-kosong h3 {
+    color: #10234f;
+}
+
+.modal-pengingat {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, .45);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-pengingat.aktif {
+    display: flex;
+}
+
+.modal-konten {
+    width: 100%;
+    max-width: 430px;
+    padding: 25px;
+    background: white;
+    border-radius: 14px;
+}
+
+.modal-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-heading h2 {
+    margin: 0;
+    color: #10234f;
+    font-size: 20px;
+}
+
+.modal-heading button {
+    border: none;
+    background: none;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.modal-konten label {
+    display: block;
+    margin: 14px 0 7px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.modal-konten input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.modal-aksi {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.modal-aksi button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#batal-modal {
+    background: #eee;
+}
+
+@media (max-width: 700px) {
+    .pengingat-heading,
+    .kartu-pengingat {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .pengingat-aksi {
+        width: 100%;
+    }
+}
