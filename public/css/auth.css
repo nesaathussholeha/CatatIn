@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +18,8 @@ body {
 .card-container {
     background-color: #ffffff;
     border-radius: 1.5rem;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05),
+                0 8px 10px -6px rgba(0, 0, 0, 0.01);
     overflow: hidden;
     max-width: 56rem;
     width: 100%;
@@ -180,14 +182,29 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #dc2626; 
+    color: #dc2626;
     font-size: 0.8125rem;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
 }
 
 .inline-error svg {
     flex-shrink: 0;
+}
+
+.inline-error-container {
+    margin-bottom: 1rem;
+}
+
+.inline-success {
+    background-color: #ecfdf5;
+    border: 1px solid #10b981;
+    color: #047857;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
 }
 
 .input-group {
@@ -213,7 +230,8 @@ body {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.input-group input.is-invalid {
+.input-group input.is-invalid,
+.input-group input.input-error {
     border-color: #ef4444;
 }
 
@@ -222,7 +240,8 @@ body {
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
-.input-group input.is-invalid:focus {
+.input-group input.is-invalid:focus,
+.input-group input.input-error:focus {
     border-color: #ef4444;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
@@ -317,4 +336,48 @@ body {
 
 .btn-google:hover {
     background-color: #f9fafb;
+}
+
+/* Tab Section Display Control */
+.auth-section {
+    display: none;
+}
+
+.auth-section.active {
+    display: block;
+}
+
+/* Checkbox Style */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.checkbox-group label {
+    font-size: 0.8125rem;
+    color: #374151;
+}
+
+/* Live Validation Hint */
+.input-error {
+    border-color: #ef4444 !important;
+}
+
+.field-hint {
+    display: none;
+    font-size: 0.75rem;
+    color: #ef4444;
+    margin-top: 0.25rem;
+}
+
+.field-hint.show {
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .left-panel {
+        display: none;
+    }
 }

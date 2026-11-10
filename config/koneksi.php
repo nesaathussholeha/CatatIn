@@ -22,18 +22,3 @@ try {
     error_log($e->getMessage());
     die('Koneksi basis data gagal.');
 }
-
-// KONFIGURASI APLIKASI
-define('APP_NAME', 'CatatIn');
-
-define('ROOT_URL', '/CatatIn');
-define('BASE_URL', ROOT_URL . '/public');
-define('AUTH_URL', ROOT_URL . '/auth');
-
-// PATH FOLDER
-define('ROOT_PATH', dirname(__DIR__));
-define('APP_PATH', ROOT_PATH . '/app');
-
-define('VIEW_PATH', APP_PATH . '/Views');
-define('CONTROLLER_PATH', APP_PATH . '/Controllers');
-define('MODEL_PATH', APP_PATH . '/Models');

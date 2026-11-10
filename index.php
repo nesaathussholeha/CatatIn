@@ -1,3 +1,3 @@
 <?php
-header("Location: auth/login.php");
-exit;
+
+require_once __DIR__ . '/public/index.php';

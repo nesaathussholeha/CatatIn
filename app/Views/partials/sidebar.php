@@ -30,8 +30,8 @@ $active_menu = $active_menu ?? 'dashboard';
 
         <nav class="sidebar-nav">
 
-            <a href="<?= BASE_URL ?>/index.php?page=admin-dashboard"
-                class="nav-item <?= $active_menu === 'dashboard' ? 'active' : '' ?>">
+            <a href="<?= BASE_URL ?>/?page=admin-dashboard"
+                class="nav-item <?= $active_menu === 'dashboard' ? 'active' : ''; ?>">
                 Dashboard
             </a>
 
@@ -59,7 +59,7 @@ $active_menu = $active_menu ?? 'dashboard';
                 Profil
             </a>
 
-            <a href="<?= BASE_URL ?>/index.php?page=logout"
+            <a href="<?= BASE_URL ?>/?page=logout"
                 class="nav-item btn-logout"
                 onclick="return confirm('Apakah Anda yakin ingin keluar?')">
                 Keluar
@@ -150,7 +150,7 @@ $active_menu = $active_menu ?? 'dashboard';
         </div>
 
         <div>
-            <a href="<?= BASE_URL ?>/index.php?page=logout"
+            <a href="<?= BASE_URL ?>/?page=logout"
                 class="nav-link logout"
                 onclick="return confirm('Apakah Anda yakin ingin keluar?')">
                 <iconify-icon icon="hugeicons:logout-square-01"></iconify-icon>
