@@ -17,6 +17,8 @@ require_once ROOT_PATH . '/app/Controllers/PageController.php';
 require_once ROOT_PATH . '/app/Controllers/MasterDataController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminDashboardController.php';
 require_once ROOT_PATH . '/app/Controllers/UserDashboardController.php';
+require_once ROOT_PATH . '/app/Controllers/ReportUserController.php';  // <-- Tambahkan di sini
+require_once ROOT_PATH . '/app/Controllers/ReportAdminController.php'; // <-- Tambahkan di sini
 
 
 // Halaman default adalah login
@@ -73,6 +75,35 @@ switch ($page) {
 
         break;
 
+
+    // FITUR REPORT USER (DETAIL CATATAN & LAPORKAN)
+    case 'report-user':
+    case 'detail-catatan':
+
+        $controller = new ReportUserController();
+        $controller->index();
+
+        break;
+
+
+    // FITUR REPORT ADMIN (KELOLA LAPORAN KHUSUS ADMIN)
+    case 'report-admin':
+    case 'kelola-laporan':
+
+        if (
+            !isset($_SESSION['role']) ||
+            strtolower($_SESSION['role']) !== 'admin'
+        ) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new ReportAdminController();
+        $controller->index();
+
+        break;
+
+
     case 'logout':
         session_unset();
         session_destroy();
@@ -80,7 +111,8 @@ switch ($page) {
         header('Location: ' . BASE_URL . '/?page=login');
         exit;
 
-        // HALAMAN TIDAK DIKENAL
+
+    // HALAMAN TIDAK DIKENAL
     default:
 
         header('Location: ?page=login');
