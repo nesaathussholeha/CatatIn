@@ -16,10 +16,6 @@
     --report-done-text: #16a34a;
 }
 
-/* =====================================================
-   FILTER TABS
-===================================================== */
-
 .content-area .filter-tabs {
     display: flex;
     align-items: center;
@@ -198,10 +194,6 @@
     }
 }
 
-/* =====================================================
-   STATUS BADGE
-===================================================== */
-
 .content-area .status-pill {
     display: inline-flex;
     align-items: center;
@@ -255,10 +247,6 @@
     color: var(--report-done-text);
 }
 
-/* =====================================================
-   TOMBOL AKSI
-===================================================== */
-
 .content-area .action-cell {
     display: flex;
     align-items: center;
@@ -304,10 +292,6 @@
 .content-area .link-delete:hover {
     background: #fef2f2;
 }
-
-/* =====================================================
-   DROPDOWN STATUS
-===================================================== */
 
 .content-area .status-menu {
     position: fixed;
@@ -394,10 +378,6 @@
     color: var(--report-done-text);
 }
 
-/* =====================================================
-   LOADING DAN EMPTY STATE
-===================================================== */
-
 .content-area .state-row td {
     padding: 0;
     border-bottom: none;
@@ -477,10 +457,6 @@
         background-position: -200% 0;
     }
 }
-
-/* =====================================================
-   MODAL DETAIL DAN HAPUS
-===================================================== */
 
 .content-area .modal-backdrop {
     position: fixed;
@@ -750,12 +726,6 @@
     }
 }
 
-
-/* =====================================================
-   FINAL OVERRIDE - HALAMAN LAPORAN MASUK
-   Khusus untuk report_admin.php
-===================================================== */
-
 /* PEMBUNGKUS HALAMAN */
 .content-area .report-admin-page {
     width: 100%;
@@ -763,10 +733,6 @@
     min-width: 0;
     color: #1e293b;
 }
-
-/* =====================================================
-   HEADER HALAMAN
-===================================================== */
 
 .content-area .report-admin-page .report-page-header {
     display: block;
@@ -791,10 +757,6 @@
     font-weight: 400;
     line-height: 1.6;
 }
-
-/* =====================================================
-   FILTER STATUS
-===================================================== */
 
 .content-area .report-admin-page .filter-tabs {
     display: flex;
@@ -826,10 +788,6 @@
     background: var(--report-primary);
     color: #ffffff;
 }
-
-/* =====================================================
-   KARTU DAN TABEL
-===================================================== */
 
 .content-area .report-admin-page .table-card {
     width: 100%;
@@ -889,10 +847,6 @@
     background: #fafbff;
 }
 
-/* =====================================================
-   STATUS BADGE
-===================================================== */
-
 .content-area .report-admin-page .status-pill {
     min-width: 90px;
     padding: 8px 12px;
@@ -901,9 +855,6 @@
     font-weight: 700;
 }
 
-/* =====================================================
-   TOMBOL AKSI
-===================================================== */
 
 .content-area .report-admin-page .action-cell {
     gap: 12px;
@@ -916,10 +867,6 @@
     border-radius: 7px;
 }
 
-/* =====================================================
-   MODAL
-===================================================== */
-
 .content-area .report-admin-page .modal-backdrop {
     z-index: 1100;
 }
@@ -929,10 +876,6 @@
     overflow-y: auto;
 }
 
-/* =====================================================
-   DROPDOWN DAN NOTIFIKASI
-===================================================== */
-
 .content-area .report-admin-page .status-menu {
     z-index: 1050;
 }
@@ -940,10 +883,6 @@
 .content-area .report-admin-page .toast {
     z-index: 1200;
 }
-
-/* =====================================================
-   RESPONSIVE TABLET
-===================================================== */
 
 @media (max-width: 768px) {
 
@@ -983,10 +922,6 @@
         padding: 14px 15px;
     }
 }
-
-/* =====================================================
-   RESPONSIVE MOBILE
-===================================================== */
 
 @media (max-width: 480px) {
 
@@ -1036,10 +971,6 @@
     }
 }
 
-/* =========================================
-   KHUSUS HALAMAN LAPORAN MASUK
-   ========================================= */
-
 /* Sembunyikan judul header hanya di halaman laporan */
 .main-content:has(.report-admin-page) > .top-header .page-title {
     display: none !important;
@@ -1047,7 +978,7 @@
 
 /* Naikkan posisi konten laporan */
 .content-area .report-admin-page {
-    margin-top: -18px;
+    margin-top: -65px;
 }
 
 /* Rapikan judul utama */
@@ -1058,7 +989,7 @@
 
 .content-area .report-admin-page .report-page-header h1 {
     margin: 0 0 8px;
-    font-size: 35px;
+    font-size: 30px;
     font-weight: 700;
     line-height: 1.3;
     color: #000000;
