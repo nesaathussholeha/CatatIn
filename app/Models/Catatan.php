@@ -61,22 +61,46 @@ class Catatan
         return $_SESSION['catatan_data'];
     }
 
+    // Mengambil semua catatan untuk fitur user
+    public function ambilSemua(): array
+    {
+        return self::semua();
+    }
+
+    // Mengambil satu catatan berdasarkan ID
+    public function ambilById(int $id): ?array
+    {
+        self::init();
+
+        foreach ($_SESSION['catatan_data'] as $note) {
+            if ((int) $note['id'] === $id) {
+                return $note;
+            }
+        }
+
+        return null;
+    }
+
     public static function tambah($data)
     {
         self::init();
 
         $ids = array_column($_SESSION['catatan_data'], 'id');
-
         $newId = empty($ids) ? 1 : max($ids) + 1;
 
         $_SESSION['catatan_data'][] = [
             'id' => $newId,
             'judul' => trim($data['judul']),
-            'penulis' => trim($data['penulis']),
+            'penulis' => trim($data['penulis'] ?? ($_SESSION['nama'] ?? 'User')),
             'jurusan' => trim($data['jurusan']),
+            'matkul' => trim($data['matkul'] ?? ''),
+            'tipe' => trim($data['tipe'] ?? ''),
+            'deskripsi' => trim($data['deskripsi'] ?? $data['isi'] ?? ''),
+            'tautan' => trim($data['tautan'] ?? ''),
+            'anonim' => $data['anonim'] ?? false,
             'upvote' => 0,
             'status' => 'Draft',
-            'isi' => trim($data['isi']),
+            'isi' => trim($data['isi'] ?? $data['deskripsi'] ?? ''),
             'alasan' => ''
         ];
     }
@@ -87,23 +111,38 @@ class Catatan
 
         foreach ($_SESSION['catatan_data'] as $key => $note) {
             if ((int) $note['id'] === (int) $id) {
-                $_SESSION['catatan_data'][$key]['judul'] =
-                    trim($data['judul']);
+                $_SESSION['catatan_data'][$key]['matkul'] =
+                    trim($data['matkul'] ?? '');
 
-                $_SESSION['catatan_data'][$key]['penulis'] =
-                    trim($data['penulis']);
+                $_SESSION['catatan_data'][$key]['tipe'] =
+                    trim($data['tipe'] ?? '');
+
+                $_SESSION['catatan_data'][$key]['deskripsi'] =
+                    trim($data['deskripsi'] ?? $data['isi'] ?? '');
+
+                $_SESSION['catatan_data'][$key]['tautan'] =
+                    trim($data['tautan'] ?? '');
+
+                $_SESSION['catatan_data'][$key]['anonim'] =
+                    $data['anonim'] ?? false;
+
+                $_SESSION['catatan_data'][$key]['judul'] =
+                    trim($data['judul'] ?? $note['judul']);
 
                 $_SESSION['catatan_data'][$key]['jurusan'] =
-                    trim($data['jurusan']);
-
-                $_SESSION['catatan_data'][$key]['isi'] =
-                    trim($data['isi']);
-
+                    trim($data['jurusan'] ?? $note['jurusan']);
+                    
                 return true;
             }
         }
 
         return false;
+    }
+
+    // Memperbarui catatan dari fitur user
+    public function update(int $id, array $data): bool
+    {
+        return self::edit($id, $data);
     }
 
     public static function ubahStatus($id, $status)
@@ -149,7 +188,4 @@ class Catatan
 
         return false;
     }
-
 }
-
-

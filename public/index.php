@@ -21,6 +21,7 @@ require_once ROOT_PATH . '/app/Controllers/ReportUserController.php';
 require_once ROOT_PATH . '/app/Controllers/ReportAdminController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminUserController.php';
 require_once ROOT_PATH . '/app/Controllers/PengingatController.php';
+require_once ROOT_PATH . '/app/Controllers/CatatanController.php';
 
 // Controller Kelola Catatan
 require_once ROOT_PATH . '/app/Controllers/PengelolaCatatanController.php';
@@ -129,8 +130,8 @@ switch ($page) {
 
 
     // FITUR REPORT ADMIN
-       case 'laporan-admin':
- 
+    case 'laporan-admin':
+
         if (
             !isset($_SESSION['role']) ||
             strtolower($_SESSION['role']) !== 'admin'
@@ -138,10 +139,10 @@ switch ($page) {
             header('Location: ' . BASE_URL . '/?page=login');
             exit;
         }
- 
+
         $controller = new ReportAdminController();
         $controller->index();
- 
+
         break;
 
 
@@ -162,6 +163,38 @@ switch ($page) {
         $controller->index();
 
         break;
+
+    // CATATAN SAYA
+    case 'catatan-saya':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new CatatanController();
+        $controller->index();
+
+
+    // UNGGAH CATATAN
+    case 'unggah-catatan':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new CatatanController();
+        $controller->index();
+
+
+    // HAPUS CATATAN
+    case 'hapus-catatan':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new CatatanController();
+        $controller->index();
 
 
     // PROFIL ADMIN

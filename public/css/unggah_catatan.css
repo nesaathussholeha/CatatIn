@@ -1,0 +1,217 @@
+:root {
+    --page-bg: #f6f7fb;
+    --primer: #4f46e5;
+    --primer-tua: #4338ca;
+    --garis: #d9dce8;
+    --bahaya-muda: #fff1f1;
+}
+
+/* Latar halaman abu-abu muda sesuai desain */
+html, body,
+.app-container,
+.main-wrapper,
+.top-header,
+.content-area {
+    background-color: var(--page-bg);
+}
+
+:focus-visible { outline: 3px solid rgba(79, 70, 229, .4); outline-offset: 2px; }
+
+/* ---------- Kartu form ---------- */
+.card-form {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 22px;
+}
+
+.form-group label,
+.label-teks {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--garis);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #334155;
+    background-color: #ffffff;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: #94a3b8; }
+
+.form-group input[type="text"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primer);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, .12);
+}
+
+.form-group textarea {
+    min-height: 96px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* Select dengan ikon panah */
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 44px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    cursor: pointer;
+}
+
+/* Mata kuliah + Jurusan sebaris */
+.form-row {
+    display: flex;
+    gap: 28px;
+}
+.form-row .form-group { flex: 1; min-width: 0; }
+
+/* ---------- Tipe berkas (pill, 3 kolom sama lebar) ---------- */
+.pill-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+}
+
+.pill-btn {
+    display: block;
+    margin: 0;
+    cursor: pointer;
+}
+
+.pill-btn input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pill-btn span {
+    display: block;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--garis);
+    background: #ffffff;
+    color: #1e293b;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.pill-btn:hover span { border-color: var(--primer); }
+
+.pill-btn input[type="radio"]:checked + span {
+    background: var(--primer);
+    border-color: var(--primer);
+    color: #ffffff;
+}
+
+.pill-btn input[type="radio"]:focus-visible + span {
+    outline: 3px solid rgba(79, 70, 229, .4);
+    outline-offset: 2px;
+}
+
+/* ---------- Checkbox ---------- */
+.checkbox-group { margin: 14px 0 0; }
+
+.checkbox-group .checkbox-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primer);
+    cursor: pointer;
+}
+
+/* ---------- Tombol aksi (di luar kartu, rata kanan) ---------- */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 22px;
+    margin-top: 32px;
+}
+
+.btn-batal,
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease;
+}
+
+.btn-batal {
+    background: #ffffff;
+    color: var(--text-primary);
+    border: 1px solid var(--garis);
+}
+.btn-batal:hover { background: #f1f5f9; }
+
+.btn-primary {
+    background: var(--primer);
+    color: #ffffff;
+    border: 1px solid var(--primer);
+}
+.btn-primary:hover { background: var(--primer-tua); border-color: var(--primer-tua); }
+
+/* ---------- Pesan galat validasi ---------- */
+.alert-galat {
+    margin-bottom: 22px;
+    padding: 12px 16px;
+    color: #b42318;
+    background: var(--bahaya-muda);
+    border: 1px solid #f3b9bb;
+    border-radius: 10px;
+    font-size: 13px;
+}
+.alert-galat ul { margin: 0; padding-left: 18px; }
+
+/* ---------- Responsif ---------- */
+@media (max-width: 767px) {
+    .card-form { padding: 22px 18px; }
+    .form-row { flex-direction: column; gap: 0; }
+    .pill-group { gap: 10px; }
+    .pill-btn span { padding: 10px 8px; }
+    .form-actions { gap: 12px; }
+    .form-actions > * { flex: 1; }
+}

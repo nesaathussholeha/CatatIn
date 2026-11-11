@@ -34,17 +34,18 @@ class CatatanController
         }
     }
 
-    // Helper untuk keamanan output
-    private function e(?string $teks): string
+    private function validasiCsrf(): bool
     {
-        return htmlspecialchars(
-            (string) $teks,
-            ENT_QUOTES,
-            'UTF-8'
-        );
+        $token = $_POST['csrf'] ?? '';
+        $csrfSession = $_SESSION['csrf'] ?? '';
+
+        return is_string($token)
+            && is_string($csrfSession)
+            && $csrfSession !== ''
+            && hash_equals($csrfSession, $token);
     }
 
-    // Menampilkan halaman Catatan Saya
+    // Menampilkan Catatan Saya
     public function index(): void
     {
         $catatanSaya = $this->model->ambilSemua();
@@ -55,22 +56,21 @@ class CatatanController
         $page_title = 'Catatan Saya';
         $active_menu = 'catatan_saya';
 
-        $user_name = 'Username';
-        $user_role = 'Role';
+        $user_name = $_SESSION['nama'] ?? 'Username';
+        $user_role = $_SESSION['role'] ?? 'User';
         $user_initial = strtoupper(substr($user_name, 0, 1));
 
         $csrf = $_SESSION['csrf'];
 
-        require __DIR__ . '/../Views/catatan/index.php';
+        require ROOT_PATH . '/app/Views/user/catatan_saya.php';
     }
 
-    // Menampilkan formulir unggah atau edit
+    // Form unggah dan edit catatan
     public function form(): void
     {
         $galat = [];
         $idForm = 0;
 
-        // Nilai awal formulir
         $input = [
             'judul' => '',
             'matkul' => '',
@@ -81,34 +81,23 @@ class CatatanController
             'is_anonim' => false
         ];
 
-        // Jika formulir dikirim
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            // Validasi CSRF
-            $token = $_POST['csrf'] ?? '';
-
-            if (
-                !is_string($token) ||
-                !hash_equals($_SESSION['csrf'], $token)
-            ) {
+            if (!$this->validasiCsrf()) {
                 $galat[] = 'Sesi formulir tidak valid.';
             }
 
             $idForm = (int) ($_POST['id'] ?? 0);
 
-            // Mengambil input formulir
-            foreach (
-                [
-                    'judul',
-                    'matkul',
-                    'jurusan',
-                    'kategori',
-                    'deskripsi',
-                    'tautan'
-                ] as $field
-            ) {
+            foreach ([
+                'judul',
+                'matkul',
+                'jurusan',
+                'kategori',
+                'deskripsi',
+                'tautan'
+            ] as $field) {
                 $value = $_POST[$field] ?? '';
-
                 $input[$field] = is_string($value)
                     ? trim($value)
                     : '';
@@ -117,62 +106,38 @@ class CatatanController
             $input['is_anonim'] =
                 ($_POST['is_anonim'] ?? '') === '1';
 
-            // Validasi judul
             if (
                 $input['judul'] === '' ||
                 mb_strlen($input['judul']) > 150
             ) {
-                $galat[] =
-                    'Judul wajib diisi maksimal 150 karakter.';
+                $galat[] = 'Judul wajib diisi maksimal 150 karakter.';
             }
 
-            // Validasi mata kuliah
             if (
                 $input['matkul'] === '' ||
                 mb_strlen($input['matkul']) > 100
             ) {
-                $galat[] =
-                    'Mata kuliah wajib diisi maksimal 100 karakter.';
+                $galat[] = 'Mata kuliah wajib diisi maksimal 100 karakter.';
             }
 
-            // Validasi jurusan
-            if (
-                !in_array(
-                    $input['jurusan'],
-                    $this->daftarJurusan,
-                    true
-                )
-            ) {
+            if (!in_array($input['jurusan'], $this->daftarJurusan, true)) {
                 $galat[] = 'Jurusan tidak valid.';
             }
 
-            // Validasi kategori
-            if (
-                !in_array(
-                    $input['kategori'],
-                    $this->daftarKategori,
-                    true
-                )
-            ) {
+            if (!in_array($input['kategori'], $this->daftarKategori, true)) {
                 $galat[] = 'Tipe berkas tidak valid.';
             }
 
-            // Validasi deskripsi
             if (
                 $input['deskripsi'] === '' ||
                 mb_strlen($input['deskripsi']) > 255
             ) {
-                $galat[] =
-                    'Deskripsi wajib diisi maksimal 255 karakter.';
+                $galat[] = 'Deskripsi wajib diisi maksimal 255 karakter.';
             }
 
-            // Validasi tautan
             $tautan = $input['tautan'];
 
-            if (
-                $tautan !== '' &&
-                !preg_match('~^https?://~i', $tautan)
-            ) {
+            if ($tautan !== '' && !preg_match('~^https?://~i', $tautan)) {
                 $tautan = 'https://' . $tautan;
             }
 
@@ -181,10 +146,7 @@ class CatatanController
             if (
                 $tautan === '' ||
                 mb_strlen($tautan) > 500 ||
-                filter_var(
-                    $tautan,
-                    FILTER_VALIDATE_URL
-                ) === false ||
+                filter_var($tautan, FILTER_VALIDATE_URL) === false ||
                 !is_string($host) ||
                 strpos($host, '.') === false
             ) {
@@ -193,9 +155,7 @@ class CatatanController
                 $input['tautan'] = $tautan;
             }
 
-            // Jika tidak ada kesalahan, simpan data
             if ($galat === []) {
-
                 $data = [
                     'judul' => $input['judul'],
                     'matkul' => $input['matkul'],
@@ -206,26 +166,16 @@ class CatatanController
                     'anonim' => $input['is_anonim']
                 ];
 
-                // Memperbarui catatan
                 if ($idForm > 0) {
+                    $berhasil = $this->model->update($idForm, $data);
 
-                    $berhasil = $this->model->update(
-                        $idForm,
-                        $data
-                    );
-
-                    $_SESSION['flash'] = $berhasil
-                        ? [
-                            'pesan' => 'Catatan berhasil diperbarui.',
-                            'galat' => false
-                        ]
-                        : [
-                            'pesan' => 'Catatan tidak ditemukan.',
-                            'galat' => true
-                        ];
+                    $_SESSION['flash'] = [
+                        'pesan' => $berhasil
+                            ? 'Catatan berhasil diperbarui.'
+                            : 'Catatan tidak ditemukan.',
+                        'galat' => !$berhasil
+                    ];
                 } else {
-
-                    // Menambahkan catatan baru
                     $this->model->tambah($data);
 
                     $_SESSION['flash'] = [
@@ -234,20 +184,15 @@ class CatatanController
                     ];
                 }
 
-                header(
-                    'Location: ../catatan_saya/catatan_saya.php'
-                );
+                header('Location: ' . BASE_URL . '/?page=catatan-saya');
                 exit;
             }
         } elseif (isset($_GET['edit'])) {
 
-            // Mengambil data untuk diedit
             $idForm = (int) $_GET['edit'];
-
             $catatan = $this->model->ambilById($idForm);
 
             if ($catatan !== null) {
-
                 $input = [
                     'judul' => $catatan['judul'],
                     'matkul' => $catatan['matkul'],
@@ -258,22 +203,18 @@ class CatatanController
                     'is_anonim' => $catatan['anonim']
                 ];
             } else {
-
                 $idForm = 0;
-
-                $galat[] =
-                    'Catatan yang ingin diedit tidak ditemukan.';
+                $galat[] = 'Catatan yang ingin diedit tidak ditemukan.';
             }
         }
 
-        // Menentukan mode formulir
         $modeEdit = $idForm > 0;
 
-        $page_title = $modeEdit ? 'Edit catatan' : 'Unggah catatan';
+        $page_title = $modeEdit ? 'Edit Catatan' : 'Unggah Catatan';
         $active_menu = 'unggah';
 
-        $user_name = 'Username';
-        $user_role = 'Role';
+        $user_name = $_SESSION['nama'] ?? 'Username';
+        $user_role = $_SESSION['role'] ?? 'User';
         $user_initial = strtoupper(substr($user_name, 0, 1));
 
         $daftarJurusan = $this->daftarJurusan;
@@ -281,28 +222,23 @@ class CatatanController
 
         $csrf = $_SESSION['csrf'];
 
-        // Memanggil View
-        require __DIR__ . '/../Views/catatan/form.php';
+        require ROOT_PATH . '/app/Views/user/unggah_catatan.php';
     }
 
     // Menghapus catatan
     public function hapus(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php');
+            header('Location: ' . BASE_URL . '/?page=catatan-saya');
             exit;
         }
 
-        $token = $_POST['csrf'] ?? '';
         $id = filter_var(
             $_POST['id'] ?? null,
             FILTER_VALIDATE_INT
         );
 
-        if (
-            !is_string($token) ||
-            !hash_equals($_SESSION['csrf'], $token)
-        ) {
+        if (!$this->validasiCsrf()) {
             $_SESSION['flash'] = [
                 'pesan' => 'Sesi tidak valid.',
                 'galat' => true
@@ -323,7 +259,7 @@ class CatatanController
             ];
         }
 
-        header('Location: index.php');
+        header('Location: ' . BASE_URL . '/?page=catatan-saya');
         exit;
     }
 }
