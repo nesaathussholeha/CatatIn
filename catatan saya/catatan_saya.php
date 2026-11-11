@@ -72,6 +72,11 @@ $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
 $catatanSaya = $_SESSION['catatan'];
+
+require_once __DIR__ . '/../app/Controllers/CatatanController.php';
+
+$controller = new CatatanController();
+$controller->index();
 ?>
 <!DOCTYPE html>
 <html lang="id">

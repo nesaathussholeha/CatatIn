@@ -1,9 +1,13 @@
 <?php
-
 declare(strict_types=1);
 session_start();
 
 const APP_NAME = 'CatatIn';
+
+require_once __DIR__ . '/../app/Controllers/CatatanController.php';
+
+$controller = new CatatanController();
+$controller->form();
 
 function e(?string $teks): string
 {

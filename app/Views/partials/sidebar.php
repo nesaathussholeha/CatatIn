@@ -55,7 +55,7 @@ $active_menu = $active_menu ?? 'dashboard';
                 Kelola Laporan
             </a>
             <a href="<?= BASE_URL ?>/index.php?page=profil-admin"
-                class="nav-item <?= $active_menu === 'profil' ? 'active' : '' ?>">
+                class="nav-item <?= $active_menu === 'profil-admin' ? 'active' : '' ?>">
                 Profil
             </a>
 

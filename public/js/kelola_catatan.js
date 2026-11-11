@@ -1,27 +1,5 @@
+
 document.addEventListener('DOMContentLoaded', function () {
-
-    /* SIDEBAR */
-
-    const hamburger = document.getElementById('hamburger-btn');
-    const closeBtn = document.getElementById('sidebar-close-btn');
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-
-    hamburger?.addEventListener('click', function () {
-        sidebar.classList.add('active');
-        overlay.classList.add('active');
-    });
-
-    closeBtn?.addEventListener('click', function () {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-    });
-
-    overlay?.addEventListener('click', function () {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-    });
-
 
     /* DROPDOWN */
 
@@ -34,19 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const menu = this.nextElementSibling;
 
             document.querySelectorAll('.action-menu').forEach(item => {
-
                 if (item !== menu) {
                     item.classList.remove('show');
                 }
-
             });
 
             menu.classList.toggle('show');
-
         });
 
     });
-
 
     document.addEventListener('click', function () {
 
@@ -60,20 +34,31 @@ document.addEventListener('DOMContentLoaded', function () {
     /* SEARCH */
 
     const search = document.getElementById('search-input');
+    const emptySearch = document.getElementById('empty-search');
 
     search?.addEventListener('input', function () {
 
         const keyword = this.value.toLowerCase();
+        let jumlahTampil = 0;
 
-        document.querySelectorAll('#user-table tbody tr')
+        document.querySelectorAll('#catatan-table tbody tr')
             .forEach(row => {
 
-                row.style.display =
-                    row.textContent.toLowerCase().includes(keyword)
-                        ? ''
-                        : 'none';
+                const text = row.textContent.toLowerCase();
+
+                const cocok = text.includes(keyword);
+
+                row.style.display = cocok ? '' : 'none';
+
+                if (cocok) {
+                    jumlahTampil++;
+                }
 
             });
+
+        if (emptySearch) {
+            emptySearch.hidden = jumlahTampil !== 0;
+        }
 
     });
 
@@ -81,7 +66,11 @@ document.addEventListener('DOMContentLoaded', function () {
     /* MODAL */
 
     function openModal(id) {
-        document.getElementById(id).classList.add('show');
+        document.getElementById(id)?.classList.add('show');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id)?.classList.remove('show');
     }
 
 
@@ -97,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* EDIT */
 
-    document.querySelectorAll('.edit-user')
+    document.querySelectorAll('.edit-note')
         .forEach(button => {
 
             button.addEventListener('click', function () {
@@ -105,14 +94,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('edit-id').value =
                     this.dataset.id;
 
-                document.getElementById('edit-name').value =
-                    this.dataset.name;
+                document.getElementById('edit-title').value =
+                    this.dataset.title;
 
-                document.getElementById('edit-nim').value =
-                    this.dataset.nim;
+                document.getElementById('edit-author').value =
+                    this.dataset.author;
 
                 document.getElementById('edit-major').value =
                     this.dataset.major;
+
+                document.getElementById('edit-content').value =
+                    this.dataset.content;
 
                 openModal('edit-modal');
 
@@ -123,22 +115,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* LIHAT */
 
-    document.querySelectorAll('.view-user')
+    document.querySelectorAll('.view-note')
         .forEach(button => {
 
             button.addEventListener('click', function () {
 
-                document.getElementById('view-name').textContent =
-                    this.dataset.name;
+                document.getElementById('view-title').textContent =
+                    this.dataset.title;
 
-                document.getElementById('view-nim').textContent =
-                    this.dataset.nim;
+                document.getElementById('view-author').textContent =
+                    'Penulis: ' + this.dataset.author +
+                    ' | Jurusan: ' + this.dataset.major;
 
-                document.getElementById('view-major').textContent =
-                    this.dataset.major;
+                document.getElementById('view-content').textContent =
+                    this.dataset.content;
 
-                document.getElementById('view-status').textContent =
-                    this.dataset.status;
+                const reason = this.dataset.reason;
+
+                document.getElementById('view-reason').textContent =
+                    reason
+                        ? 'Alasan laporan: ' + reason
+                        : 'Catatan ini tidak sedang dilaporkan.';
 
                 openModal('view-modal');
 
@@ -154,9 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             button.addEventListener('click', function () {
 
-                document.getElementById(
-                    this.dataset.close
-                ).classList.remove('show');
+                closeModal(this.dataset.close);
 
             });
 

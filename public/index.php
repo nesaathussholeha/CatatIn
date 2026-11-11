@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -17,8 +18,13 @@ require_once ROOT_PATH . '/app/Controllers/PageController.php';
 require_once ROOT_PATH . '/app/Controllers/MasterDataController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminDashboardController.php';
 require_once ROOT_PATH . '/app/Controllers/UserDashboardController.php';
-require_once ROOT_PATH . '/app/Controllers/ReportUserController.php';  // <-- Tambahkan di sini
-require_once ROOT_PATH . '/app/Controllers/ReportAdminController.php'; // <-- Tambahkan di sini
+require_once ROOT_PATH . '/app/Controllers/ReportUserController.php';
+require_once ROOT_PATH . '/app/Controllers/ReportAdminController.php';
+require_once ROOT_PATH . '/app/Controllers/AdminUserController.php';
+
+// Controller Kelola Catatan
+require_once ROOT_PATH . '/app/Controllers/PengelolaCatatanController.php';
+require_once ROOT_PATH . '/app/Controllers/AdminProfileController.php';
 
 
 // Halaman default adalah login
@@ -36,6 +42,7 @@ switch ($page) {
         break;
 
 
+    // ADMIN DASHBOARD
     case 'admin-dashboard':
 
         if (
@@ -48,12 +55,34 @@ switch ($page) {
 
         $controller = new AdminDashboardController();
         $controller->index();
+
         break;
 
 
+    // USER DASHBOARD
     case 'dashboard':
+        require_once ROOT_PATH . '/app/Controllers/UserDashboardController.php';
+        (new UserDashboardController())->index();
+        break;
 
-        $controller = new UserDashboardController();
+    case 'koleksi':
+        require_once ROOT_PATH . '/app/Controllers/PlaylistController.php';
+        (new PlaylistController())->index();
+        break;
+
+
+    // KELOLA CATATAN (KHUSUS ADMIN)
+    case 'kelola_catatan':
+
+        if (
+            !isset($_SESSION['role']) ||
+            strtolower($_SESSION['role']) !== 'admin'
+        ) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new PengelolaCatatanController();
         $controller->index();
 
         break;
@@ -76,7 +105,7 @@ switch ($page) {
         break;
 
 
-    // FITUR REPORT USER (DETAIL CATATAN & LAPORKAN)
+    // FITUR REPORT USER
     case 'report-user':
     case 'detail-catatan':
 
@@ -86,7 +115,7 @@ switch ($page) {
         break;
 
 
-    // FITUR REPORT ADMIN (KELOLA LAPORAN KHUSUS ADMIN)
+    // FITUR REPORT ADMIN
     case 'report-admin':
     case 'kelola-laporan':
 
@@ -104,7 +133,33 @@ switch ($page) {
         break;
 
 
+    // KELOLA PENGGUNA
+    case 'kelola-pengguna':
+
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        if (strtolower($_SESSION['role'] ?? '') !== 'admin') {
+            header('Location: ' . BASE_URL . '/?page=dashboard');
+            exit;
+        }
+
+        $controller = new AdminUserController();
+        $controller->index();
+
+        break;
+
+    case 'profil-admin':
+        $controller = new AdminProfileController();
+        $controller->index();
+        break;
+
+
+    // LOGOUT
     case 'logout':
+
         session_unset();
         session_destroy();
 
@@ -112,7 +167,7 @@ switch ($page) {
         exit;
 
 
-    // HALAMAN TIDAK DIKENAL
+        // HALAMAN TIDAK DIKENAL
     default:
 
         header('Location: ?page=login');
