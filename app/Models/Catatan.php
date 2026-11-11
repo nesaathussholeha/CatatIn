@@ -1,4 +1,3 @@
-
 <?php
 
 class Catatan
@@ -150,4 +149,7 @@ class Catatan
 
         return false;
     }
+
 }
+
+

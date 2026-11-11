@@ -1,6 +1,6 @@
 <?php
 
-require_once APP_PATH . '/Models/Pengingat.php';
+require_once ROOT_PATH . '/app/Models/Pengingat.php';
 
 class PengingatController
 {
@@ -10,12 +10,19 @@ class PengingatController
             session_start();
         }
 
-        // PROSES TAMBAH TUGAS
+        // Harus login
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        // PROSES FORM (POST)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $aksi = $_POST['aksi'] ?? '';
 
+            // TAMBAH
             if ($aksi === 'tambah') {
-                $judul = trim($_POST['judul'] ?? '');
+                $judul    = trim($_POST['judul'] ?? '');
                 $deadline = $_POST['deadline'] ?? '';
 
                 if ($judul !== '' && $deadline !== '') {
@@ -23,10 +30,10 @@ class PengingatController
                 }
             }
 
-            // PROSES EDIT TUGAS
+            // EDIT
             elseif ($aksi === 'edit') {
-                $id = (int) ($_POST['id'] ?? 0);
-                $judul = trim($_POST['judul'] ?? '');
+                $id       = (int) ($_POST['id'] ?? 0);
+                $judul    = trim($_POST['judul'] ?? '');
                 $deadline = $_POST['deadline'] ?? '';
 
                 if ($id > 0 && $judul !== '' && $deadline !== '') {
@@ -34,7 +41,7 @@ class PengingatController
                 }
             }
 
-            // PROSES HAPUS TUGAS
+            // HAPUS
             elseif ($aksi === 'hapus') {
                 $id = (int) ($_POST['id'] ?? 0);
 
@@ -43,7 +50,7 @@ class PengingatController
                 }
             }
 
-            // PROSES UBAH STATUS
+            // UBAH STATUS
             elseif ($aksi === 'toggle') {
                 $id = (int) ($_POST['id'] ?? 0);
 
@@ -56,25 +63,19 @@ class PengingatController
             exit;
         }
 
-        // AMBIL DATA DARI MODEL
+        // AMBIL DATA
         $tugas = Pengingat::semua();
 
         // FILTER STATUS
         $filter = $_GET['filter'] ?? 'semua';
 
         if ($filter === 'belum') {
-            $tugas = array_filter(
-                $tugas,
-                fn($item) => !$item['selesai']
-            );
+            $tugas = array_filter($tugas, fn($item) => !$item['selesai']);
         } elseif ($filter === 'selesai') {
-            $tugas = array_filter(
-                $tugas,
-                fn($item) => $item['selesai']
-            );
+            $tugas = array_filter($tugas, fn($item) => $item['selesai']);
         }
 
-        // PENGURUTAN DEADLINE
+        // URUTKAN DEADLINE
         $urut = $_GET['urut'] ?? 'terdekat';
 
         usort($tugas, function ($a, $b) use ($urut) {
@@ -86,15 +87,14 @@ class PengingatController
         });
 
         // DATA UNTUK LAYOUT
-        $page_title = 'Pengingat';
+        $page_title  = 'Pengingat';
         $active_menu = 'tugas';
-        $page_css = 'pengingat.css';
-        $page_js = 'pengingat.js';
+        $page_css    = 'pengingat.css';
+        $page_js     = 'pengingat.js';
 
-        // DATA USER
-        // Sesuaikan dengan sistem login CatatIn yang sudah ada.
+        // DATA USER (disamakan dengan key session di router)
         $user_name = $_SESSION['user_name'] ?? 'Username';
-        $user_role = $_SESSION['user_role'] ?? 'User';
+        $user_role = $_SESSION['role'] ?? ($_SESSION['user_role'] ?? 'User');
 
         // SIAPKAN VIEW
         ob_start();
