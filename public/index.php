@@ -69,7 +69,7 @@ switch ($page) {
         require_once ROOT_PATH . '/app/Controllers/PlaylistController.php';
         (new PlaylistController())->index();
         break;
-    
+
     // PENGINGAT
     case 'pengingat':
 
@@ -82,7 +82,7 @@ switch ($page) {
         $controller->index();
 
         break;
-    
+
 
     // KELOLA CATATAN (KHUSUS ADMIN)
     case 'kelola_catatan':
@@ -164,9 +164,13 @@ switch ($page) {
 
         break;
 
+
+    // PROFIL ADMIN
     case 'profil-admin':
+
         $controller = new AdminProfileController();
         $controller->index();
+
         break;
 
 
@@ -183,26 +187,6 @@ switch ($page) {
         // HALAMAN TIDAK DIKENAL
     default:
 
-        header('Location: ?page=login');
-        exit();
-}        $controller = new AdminProfileController();
-        $controller->index();
-        break;
-
-
-    // LOGOUT
-    case 'logout':
-
-        session_unset();
-        session_destroy();
-
         header('Location: ' . BASE_URL . '/?page=login');
         exit;
-
-
-        // HALAMAN TIDAK DIKENAL
-    default:
-
-        header('Location: ?page=login');
-        exit();
 }
