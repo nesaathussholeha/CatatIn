@@ -1,6 +1,14 @@
+<?php
+/**
+ * View: Detail Catatan + Report User
+ * Hanya konten. Sidebar, header, <html>, <head> sudah diurus layouts/main.php
+ *
+ * Variabel dari controller: $catatan, $topik, $halaman_lain
+ */
+?>
 <div class="detail-page">
 
-    <a href="index.php?page=dashboard" class="back-link">
+    <a href="<?= BASE_URL ?>/index.php?page=dashboard" class="back-link">
         <iconify-icon icon="lucide:arrow-left"></iconify-icon>
         Kembali ke Jelajahi Catatan
     </a>
@@ -34,7 +42,8 @@
     </section>
 
     <div class="detail-grid">
-        <!-- Kolom Kiri: Pratinjau Catatan -->
+
+        <!-- Kolom kiri: pratinjau -->
         <section class="preview-card">
             <div class="preview-label">
                 <iconify-icon icon="lucide:file-text"></iconify-icon>
@@ -42,6 +51,7 @@
             </div>
 
             <div class="paper" id="paper">
+
                 <!-- Halaman 1 -->
                 <div class="paper-page active" data-page="1">
                     <span class="paper-tag">CATATAN KULIAH</span>
@@ -93,7 +103,7 @@
                 </div>
 
                 <!-- Halaman 2 - 6 -->
-                <?php foreach ($halamanLain as $no => $hal): ?>
+                <?php foreach ($halaman_lain as $no => $hal): ?>
                     <div class="paper-page" data-page="<?= $no; ?>">
                         <span class="paper-tag">CATATAN KULIAH</span>
                         <h3 class="paper-title"><?= htmlspecialchars($hal['judul']); ?></h3>
@@ -107,10 +117,11 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+
             </div>
 
             <div class="pager">
-                <span class="pager-text">Halaman <span id="pageNow">1</span> dari <?= $catatan['total_hal']; ?></span>
+                <span class="pager-text">Halaman <span id="pageNow">1</span> dari <?= (int) $catatan['total_hal']; ?></span>
                 <div class="pager-controls">
                     <button type="button" class="pager-btn" id="pagePrev" aria-label="Halaman sebelumnya">
                         <iconify-icon icon="lucide:chevron-left"></iconify-icon>
@@ -125,8 +136,9 @@
             </div>
         </section>
 
-        <!-- Kolom Kanan: Detail Penulis & Info -->
+        <!-- Kolom kanan -->
         <aside class="side-col">
+
             <div class="side-card">
                 <h5 class="side-title">Penulis</h5>
                 <div class="author">
@@ -137,7 +149,7 @@
                     </div>
                 </div>
                 <p class="side-note">Catatan kuliah ini disusun supaya teman belajar lebih mudah memahami materi.</p>
-                <a href="index.php?page=profil_penyusun" class="side-link">
+                <a href="<?= BASE_URL ?>/index.php?page=profil-penyusun" class="side-link">
                     Lihat profil
                     <iconify-icon icon="lucide:arrow-right"></iconify-icon>
                 </a>
@@ -175,23 +187,26 @@
     </div>
 </div>
 
-<!-- Modal Laporan -->
+<!-- ================= MODAL LAPORAN ================= -->
 <div class="modal-backdrop" id="modalLaporan" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
         <div class="modal-head">
             <div class="modal-icon">
                 <iconify-icon icon="lucide:file-text"></iconify-icon>
             </div>
             <div class="modal-head-text">
                 <h3 id="modalTitle">Buat Laporan</h3>
-                <p>Lengkapi informasi berikut untuk membuat laporan dari catatan Anda</p>
+                <p>Lengkapi informasi berikut untuk membuat laporan dari catatan anda</p>
             </div>
             <button type="button" class="modal-close" id="modalClose" aria-label="Tutup">
                 <iconify-icon icon="lucide:x"></iconify-icon>
             </button>
         </div>
 
-        <form id="formLaporan" class="modal-body" novalidate>
+        <!-- data-action dipakai JS supaya URL tidak di-hardcode -->
+        <form id="formLaporan" class="modal-body" novalidate
+              data-action="<?= BASE_URL ?>/index.php?page=report-user-kirim">
             <input type="hidden" name="catatan_id" value="<?= (int) $catatan['id']; ?>">
 
             <!-- Judul -->
@@ -236,11 +251,12 @@
             <!-- Unggah file -->
             <div class="field" data-field="file">
                 <label>Unggah File <span class="opt">(Opsional)</span></label>
+
                 <input type="file" id="inputFile" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx" hidden>
 
                 <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Unggah file">
                     <iconify-icon icon="lucide:upload-cloud" class="dz-icon"></iconify-icon>
-                    <p class="dz-title">Klik untuk menggunakan file atau tarik dan lepas</p>
+                    <p class="dz-title">Klik untuk mengunggah file atau tarik dan lepas</p>
                     <p class="dz-sub">Format : PDF, DOC, DOCX, XLS, XLSX (maks. 10 MB)</p>
                 </div>
 
@@ -271,5 +287,5 @@
     </div>
 </div>
 
-<!-- Toast Notification -->
+<!-- Toast -->
 <div class="toast-stack" id="toastStack" aria-live="polite"></div>

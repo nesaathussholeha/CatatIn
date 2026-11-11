@@ -1,18 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
-    /* ---------------- Sidebar Navigation ---------------- */
+
     const menuToggle = document.getElementById("menuToggle");
     const closeSidebar = document.getElementById("closeSidebar");
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("sidebarOverlay");
 
     const openMenu = () => {
-        if (sidebar) sidebar.classList.add("active");
-        if (overlay) overlay.classList.add("active");
+        sidebar.classList.add("active");
+        overlay.classList.add("active");
     };
 
     const closeMenu = () => {
-        if (sidebar) sidebar.classList.remove("active");
-        if (overlay) overlay.classList.remove("active");
+        sidebar.classList.remove("active");
+        overlay.classList.remove("active");
     };
 
     if (menuToggle) menuToggle.addEventListener("click", openMenu);
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         previewPage: 1,
     };
 
-    /* ---------------- Elemen Helper ---------------- */
+    /* ---------------- Elemen ---------------- */
     const $ = (id) => document.getElementById(id);
 
     const modal = $("modalLaporan");
@@ -56,29 +56,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnKirim = $("btnKirim");
     const toastStack = $("toastStack");
 
+    // URL endpoint dikirim dari view lewat atribut data-action
+    const ACTION_URL = form.dataset.action || "?page=detail-catatan&aksi=kirim-laporan";
+
     let lastFocused = null;
 
-    /* ---------------- Render Functions ---------------- */
     function renderModal() {
-        if (!modal) return;
         modal.classList.toggle("open", state.modalOpen);
         modal.setAttribute("aria-hidden", String(!state.modalOpen));
         document.body.classList.toggle("modal-open", state.modalOpen);
     }
 
     function renderCounters() {
-        if (counterJudul) {
-            counterJudul.textContent = `${state.form.judul.length}/100`;
-            counterJudul.classList.toggle("near-limit", state.form.judul.length >= 90);
-        }
-        if (counterDeskripsi) {
-            counterDeskripsi.textContent = `${state.form.deskripsi.length}/500`;
-            counterDeskripsi.classList.toggle("near-limit", state.form.deskripsi.length >= 450);
-        }
+        counterJudul.textContent = `${state.form.judul.length}/100`;
+        counterDeskripsi.textContent = `${state.form.deskripsi.length}/500`;
+        counterJudul.classList.toggle("near-limit", state.form.judul.length >= 90);
+        counterDeskripsi.classList.toggle("near-limit", state.form.deskripsi.length >= 450);
     }
 
     function renderChips() {
-        if (!chipGroup) return;
         chipGroup.querySelectorAll(".chip").forEach((chip) => {
             const active = chip.dataset.value === state.form.jenis;
             chip.classList.toggle("selected", active);
@@ -88,9 +84,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderFile() {
         const f = state.form.file;
-        if (dropzone) dropzone.hidden = !!f;
-        if (filePreview) filePreview.hidden = !f;
-        if (f && fileName && fileSize) {
+        dropzone.hidden = !!f;
+        filePreview.hidden = !f;
+        if (f) {
             fileName.textContent = f.name;
             fileSize.textContent = formatSize(f.size);
         }
@@ -101,21 +97,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const wrap = document.querySelector(`.field[data-field="${key}"]`);
             const text = document.querySelector(`[data-error="${key}"]`);
             const msg = state.errors[key] || "";
-            if (wrap) wrap.classList.toggle("has-error", !!msg);
-            if (text) text.textContent = msg;
+            wrap.classList.toggle("has-error", !!msg);
+            text.textContent = msg;
         });
     }
 
     function renderSubmitting() {
-        if (!btnKirim) return;
         btnKirim.disabled = state.submitting;
         btnKirim.classList.toggle("loading", state.submitting);
-        const labelEl = btnKirim.querySelector(".btn-label");
-        if (labelEl) {
-            labelEl.textContent = state.submitting ? "Mengirim..." : "Kirim Laporan";
-        }
-        const btnBatal = $("btnBatal");
-        if (btnBatal) btnBatal.disabled = state.submitting;
+        btnKirim.querySelector(".btn-label").textContent = state.submitting
+            ? "Mengirim..."
+            : "Kirim Laporan";
+        $("btnBatal").disabled = state.submitting;
     }
 
     function renderAll() {
@@ -134,7 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showToast(message, type = "success") {
-        if (!toastStack) return;
         const toast = document.createElement("div");
         toast.className = `toast ${type}`;
         const icon = type === "success" ? "lucide:check-circle-2" : "lucide:alert-circle";
@@ -176,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetForm() {
         state.form = { judul: "", jenis: "File Rusak", deskripsi: "", file: null };
         state.errors = {};
-        if (form) form.reset();
+        form.reset();
         renderAll();
     }
 
@@ -184,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
         lastFocused = document.activeElement;
         state.modalOpen = true;
         renderModal();
-        if (inputJudul) setTimeout(() => inputJudul.focus(), 150);
+        setTimeout(() => inputJudul.focus(), 150);
     }
 
     function closeModal(force = false) {
@@ -194,29 +186,25 @@ document.addEventListener("DOMContentLoaded", () => {
         if (lastFocused) lastFocused.focus();
     }
 
-    /* ---------------- Event Listeners Modal ---------------- */
-    const btnLaporkan = $("btnLaporkan");
-    const btnLaporkanBawah = $("btnLaporkanBawah");
-    const modalClose = $("modalClose");
-    const btnBatal = $("btnBatal");
+    $("btnLaporkan").addEventListener("click", openModal);
+    $("btnLaporkanBawah").addEventListener("click", openModal);
+    $("modalClose").addEventListener("click", () => closeModal());
+    $("btnBatal").addEventListener("click", () => {
+        closeModal();
+    });
 
-    if (btnLaporkan) btnLaporkan.addEventListener("click", openModal);
-    if (btnLaporkanBawah) btnLaporkanBawah.addEventListener("click", openModal);
-    if (modalClose) modalClose.addEventListener("click", () => closeModal());
-    if (btnBatal) btnBatal.addEventListener("click", () => closeModal());
-
-    if (modal) {
-        modal.addEventListener("mousedown", (e) => {
-            if (e.target === modal) closeModal();
-        });
-    }
+    // Klik area gelap menutup modal
+    modal.addEventListener("mousedown", (e) => {
+        if (e.target === modal) closeModal();
+    });
 
     document.addEventListener("keydown", (e) => {
         if (!state.modalOpen) return;
 
         if (e.key === "Escape") closeModal();
 
-        if (e.key === "Tab" && modal) {
+        // Focus trap sederhana
+        if (e.key === "Tab") {
             const focusables = modal.querySelectorAll(
                 'button:not([disabled]), input:not([hidden]):not([disabled]), textarea, [tabindex="0"]'
             );
@@ -234,43 +222,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    if (inputJudul) {
-        inputJudul.addEventListener("input", () => {
-            state.form.judul = inputJudul.value;
-            delete state.errors.judul;
-            renderCounters();
-            renderErrors();
-        });
-    }
+    inputJudul.addEventListener("input", () => {
+        state.form.judul = inputJudul.value;
+        delete state.errors.judul;
+        renderCounters();
+        renderErrors();
+    });
 
-    if (inputDeskripsi) {
-        inputDeskripsi.addEventListener("input", () => {
-            state.form.deskripsi = inputDeskripsi.value;
-            delete state.errors.deskripsi;
-            renderCounters();
-            renderErrors();
-        });
-    }
+    inputDeskripsi.addEventListener("input", () => {
+        state.form.deskripsi = inputDeskripsi.value;
+        delete state.errors.deskripsi;
+        renderCounters();
+        renderErrors();
+    });
 
-    if (chipGroup) {
-        chipGroup.addEventListener("click", (e) => {
-            const chip = e.target.closest(".chip");
-            if (!chip) return;
-            state.form.jenis = chip.dataset.value;
-            delete state.errors.jenis;
-            renderChips();
-            renderErrors();
-        });
-    }
+    chipGroup.addEventListener("click", (e) => {
+        const chip = e.target.closest(".chip");
+        if (!chip) return;
+        state.form.jenis = chip.dataset.value;
+        delete state.errors.jenis;
+        renderChips();
+        renderErrors();
+    });
 
-    /* ---------------- Upload File Event Handlers ---------------- */
+    /* ---------------- Upload file ---------------- */
     function setFile(file) {
         if (!file) return;
         const msg = validateFile(file);
         if (msg) {
             state.errors.file = msg;
             state.form.file = null;
-            if (inputFile) inputFile.value = "";
+            inputFile.value = "";
         } else {
             delete state.errors.file;
             state.form.file = file;
@@ -279,107 +261,99 @@ document.addEventListener("DOMContentLoaded", () => {
         renderErrors();
     }
 
-    if (dropzone && inputFile) {
-        dropzone.addEventListener("click", () => inputFile.click());
-        dropzone.addEventListener("keydown", (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                inputFile.click();
-            }
-        });
-
-        inputFile.addEventListener("change", () => setFile(inputFile.files[0]));
-
-        ["dragenter", "dragover"].forEach((evt) =>
-            dropzone.addEventListener(evt, (e) => {
-                e.preventDefault();
-                dropzone.classList.add("dragover");
-            })
-        );
-
-        ["dragleave", "drop"].forEach((evt) =>
-            dropzone.addEventListener(evt, (e) => {
-                e.preventDefault();
-                dropzone.classList.remove("dragover");
-            })
-        );
-
-        dropzone.addEventListener("drop", (e) => {
-            const file = e.dataTransfer.files[0];
-            if (file) {
-                const dt = new DataTransfer();
-                dt.items.add(file);
-                inputFile.files = dt.files;
-                setFile(file);
-            }
-        });
-    }
-
-    const fileRemove = $("fileRemove");
-    if (fileRemove) {
-        fileRemove.addEventListener("click", () => {
-            state.form.file = null;
-            if (inputFile) inputFile.value = "";
-            delete state.errors.file;
-            renderFile();
-            renderErrors();
-        });
-    }
-
-    /* ---------------- Submit Form Laporan ---------------- */
-    if (form) {
-        form.addEventListener("submit", async (e) => {
+    dropzone.addEventListener("click", () => inputFile.click());
+    dropzone.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            if (state.submitting) return;
+            inputFile.click();
+        }
+    });
 
-            state.errors = validateForm();
-            renderErrors();
+    inputFile.addEventListener("change", () => setFile(inputFile.files[0]));
 
-            if (Object.keys(state.errors).length) {
-                const first = document.querySelector(".field.has-error input, .field.has-error textarea, .field.has-error .chip");
-                if (first) first.focus();
-                return;
-            }
+    ["dragenter", "dragover"].forEach((evt) =>
+        dropzone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropzone.classList.add("dragover");
+        })
+    );
 
-            state.submitting = true;
-            renderSubmitting();
+    ["dragleave", "drop"].forEach((evt) =>
+        dropzone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropzone.classList.remove("dragover");
+        })
+    );
 
-            const data = new FormData();
-            data.append("catatan_id", form.elements["catatan_id"] ? form.elements["catatan_id"].value : "1");
-            data.append("judul", state.form.judul.trim());
-            data.append("jenis", state.form.jenis);
-            data.append("deskripsi", state.form.deskripsi.trim());
-            if (state.form.file) data.append("file", state.form.file);
+    dropzone.addEventListener("drop", (e) => {
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            inputFile.files = dt.files;
+            setFile(file);
+        }
+    });
 
-            try {
-                // Mengirim ke URL halaman yang sedang aktif saat ini + query param aksi
-                const fetchUrl = window.location.pathname + "?aksi=kirim-laporan";
-                const res = await fetch(fetchUrl, {
-                    method: "POST",
-                    body: data,
-                });
-                const json = await res.json();
+    $("fileRemove").addEventListener("click", () => {
+        state.form.file = null;
+        inputFile.value = "";
+        delete state.errors.file;
+        renderFile();
+        renderErrors();
+    });
 
-                if (res.ok && json.success) {
-                    state.submitting = false;
-                    closeModal(true);
-                    resetForm();
-                    showToast(json.message || "Laporan berhasil dikirim.", "success");
-                } else {
-                    state.errors = json.errors || {};
-                    renderErrors();
-                    showToast("Periksa kembali isian laporan Anda.", "error");
-                }
-            } catch (err) {
-                showToast("Terjadi kesalahan jaringan. Coba lagi.", "error");
-            } finally {
+    /* ---------------- Submit ---------------- */
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (state.submitting) return;
+
+        state.errors = validateForm();
+        renderErrors();
+
+        if (Object.keys(state.errors).length) {
+            // fokus ke field error pertama
+            const first = document.querySelector(".field.has-error input, .field.has-error textarea, .field.has-error .chip");
+            if (first) first.focus();
+            return;
+        }
+
+        state.submitting = true;
+        renderSubmitting();
+
+        const data = new FormData();
+        data.append("catatan_id", form.elements["catatan_id"].value);
+        data.append("judul", state.form.judul.trim());
+        data.append("jenis", state.form.jenis);
+        data.append("deskripsi", state.form.deskripsi.trim());
+        if (state.form.file) data.append("file", state.form.file);
+
+        try {
+            const res = await fetch(ACTION_URL, {
+                method: "POST",
+                body: data,
+            });
+            const json = await res.json();
+
+            if (res.ok && json.success) {
                 state.submitting = false;
-                renderSubmitting();
+                closeModal(true);
+                resetForm();
+                showToast(json.message || "Laporan berhasil dikirim.", "success");
+            } else {
+                state.errors = json.errors || {};
+                renderErrors();
+                showToast("Periksa kembali isian laporan Anda.", "error");
             }
-        });
-    }
+        } catch (err) {
+            showToast("Terjadi kesalahan jaringan. Coba lagi.", "error");
+        } finally {
+            state.submitting = false;
+            renderSubmitting();
+        }
+    });
 
-    /* ---------------- Pratinjau Halaman Catatan (Pager) ---------------- */
+    /* ---------------- Pratinjau halaman ---------------- */
     const pages = document.querySelectorAll(".paper-page");
     const pageNow = $("pageNow");
     const pagePrev = $("pagePrev");
@@ -389,28 +363,25 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderPreview() {
         pages.forEach((p) => p.classList.toggle("active", Number(p.dataset.page) === state.previewPage));
         pageNums.forEach((b) => b.classList.toggle("active", Number(b.dataset.goto) === state.previewPage));
-        if (pageNow) pageNow.textContent = state.previewPage;
-        if (pagePrev) pagePrev.disabled = state.previewPage === 1;
-        if (pageNext) pageNext.disabled = state.previewPage === TOTAL_PAGES || TOTAL_PAGES === 0;
+        pageNow.textContent = state.previewPage;
+        pagePrev.disabled = state.previewPage === 1;
+        pageNext.disabled = state.previewPage === TOTAL_PAGES;
     }
 
     function goToPage(n) {
-        state.previewPage = Math.min(Math.max(n, 1), TOTAL_PAGES || 1);
+        state.previewPage = Math.min(Math.max(n, 1), TOTAL_PAGES);
         renderPreview();
     }
 
-    if (pagePrev) pagePrev.addEventListener("click", () => goToPage(state.previewPage - 1));
-    if (pageNext) pageNext.addEventListener("click", () => goToPage(state.previewPage + 1));
+    pagePrev.addEventListener("click", () => goToPage(state.previewPage - 1));
+    pageNext.addEventListener("click", () => goToPage(state.previewPage + 1));
     pageNums.forEach((b) => b.addEventListener("click", () => goToPage(Number(b.dataset.goto))));
 
-    const btnUnduh = $("btnUnduh");
-    if (btnUnduh) {
-        btnUnduh.addEventListener("click", () => {
-            showToast("Unduhan catatan dimulai...", "success");
-        });
-    }
+    $("btnUnduh").addEventListener("click", () => {
+        showToast("Unduhan catatan dimulai...", "success");
+    });
 
-    /* ---------------- Inisialisasi Tampilan awal ---------------- */
+    /* ---------------- Init ---------------- */
     renderAll();
     renderPreview();
 });

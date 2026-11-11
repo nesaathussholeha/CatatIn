@@ -1,74 +1,99 @@
 <?php
 
-require_once ROOT_PATH . '/app/Models/ReportUserModel.php';
+require_once __DIR__ . '/../Models/ReportUser.php';
 
-class ReportUserController {
-    private $reportUserModel;
+class ReportUserController
+{
+    private ReportUser $model;
 
-    public function __construct() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $this->reportUserModel = new ReportUserModel();
+    public function __construct()
+    {
+        $this->model = new ReportUser();
     }
 
-    public function index() {
-        // Handle Request POST / AJAX Kirim Laporan
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['aksi'] ?? '') === 'kirim-laporan') {
-            header('Content-Type: application/json; charset=utf-8');
-            
-            $response = $this->reportUserModel->createReport($_POST, $_FILES['file'] ?? []);
-            
-            if (!$response['success']) {
-                http_response_code(422);
-            }
-            
-            echo json_encode($response);
-            exit;
+    /** Halaman detail catatan + modal laporan  (GET ?page=report-user&id=1) */
+    public function index(): void
+    {
+        $id      = (int) ($_GET['id'] ?? 1);
+        $catatan = $this->model->findCatatan($id);
+
+        if (!$catatan) {
+            http_response_code(404);
+            echo 'Catatan tidak ditemukan.';
+            return;
         }
 
-        // Variable yang dikirim ke Layout & View
-        $pageTitle   = "Detail Catatan";
-        $activeMenu  = "dashboard";
-        $userName    = $_SESSION['user_name'] ?? "Username";
-        $userRole    = $_SESSION['role'] ?? "Role";
-        $userInitial = strtoupper(substr($userName, 0, 1));
+        $topik        = $this->model->getTopik($id);
+        $halaman_lain = $this->model->getHalamanLain($id);
 
-        $catatan = [
-            'id'           => 1,
-            'judul'        => 'Rangkuman Struktur Data',
-            'deskripsi'    => 'Ringkasan konsep array, linked list, stack, queue, tree, dan graph lengkap dengan contoh dan kompleksitas.',
-            'penulis'      => 'Sf. Rangkuman',
-            'penulis_role' => 'Mahasiswa Informatika',
-            'tanggal'      => '8 Oktober 2025',
-            'jurusan'      => 'Informatika',
-            'kategori'     => 'Rangkuman',
-            'mata_kuliah'  => 'Struktur Data',
-            'format'       => 'PDF • 6 halaman',
-            'ukuran'       => '1,2 MB',
-            'total_hal'    => 6,
-        ];
+        $this->render('user/report_user', [
+            'page_title'   => 'Detail Catatan',
+            'active_menu'  => 'dashboard',
+            'user_name'    => $_SESSION['nama_lengkap'] ?? 'User',
+            'user_role'    => $_SESSION['role'] ?? 'user',
+            'page_css'     => 'report_user.css',
+            'page_js'      => 'report_user.js',
+            'catatan'      => $catatan,
+            'topik'        => $topik,
+            'halaman_lain' => $halaman_lain,
+        ]);
+    }
 
-        $topik = [
-            'Array & struktur linear',
-            'Linked list',
-            'Binary search tree',
-            'Rekursi',
-            'Sorting dan pembahasan',
-        ];
+    /** Kirim laporan via fetch  (POST ?page=report-user-kirim) */
+    public function kirim(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
 
-        $halamanLain = [
-            2 => ['judul' => 'Linked List',        'isi' => 'Single, double, dan circular linked list. Operasi sisip, hapus, dan telusur beserta kompleksitas waktunya.'],
-            3 => ['judul' => 'Tree & BST',         'isi' => 'Konsep node, root, leaf, dan tinggi pohon. Binary Search Tree: insert, search, delete, serta traversal in-order, pre-order, post-order.'],
-            4 => ['judul' => 'Graph',              'isi' => 'Representasi graph dengan adjacency matrix dan adjacency list. Penelusuran BFS dan DFS.'],
-            5 => ['judul' => 'Rekursi',            'isi' => 'Base case dan recursive case. Contoh faktorial, Fibonacci, dan Tower of Hanoi.'],
-            6 => ['judul' => 'Sorting & Searching', 'isi' => 'Bubble, selection, insertion, merge, dan quick sort. Perbandingan kompleksitas serta binary search.'],
-        ];
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Metode tidak diizinkan.']);
+            return;
+        }
 
-        // Path view khusus konten report user
-        $contentView = ROOT_PATH . '/app/Views/user/report_user.php';
+        $file   = $_FILES['file'] ?? null;
+        $errors = $this->model->validasi($_POST, $file);
 
-        // Panggil layout utama (yang di dalamnya memanggil sidebar & header)
-        require_once ROOT_PATH . '/app/Views/layouts/main.php';
+        if ($errors) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'errors' => $errors]);
+            return;
+        }
+
+        // Simpan file (kalau ada)
+        $namaFile = null;
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $ext    = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $folder = dirname(__DIR__, 2) . '/public/uploads/laporan/';
+            if (!is_dir($folder)) {
+                mkdir($folder, 0755, true);
+            }
+            $namaFile = uniqid('laporan_', true) . '.' . $ext;
+            move_uploaded_file($file['tmp_name'], $folder . $namaFile);
+        }
+
+        $this->model->simpan([
+            'catatan_id' => (int) ($_POST['catatan_id'] ?? 0),
+            'judul'      => trim($_POST['judul']),
+            'jenis'      => trim($_POST['jenis']),
+            'deskripsi'  => trim($_POST['deskripsi'] ?? ''),
+            'file'       => $namaFile,
+        ]);
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Laporan berhasil dikirim. Terima kasih atas masukan Anda!',
+        ]);
+    }
+
+    /** Render view ke dalam layouts/main.php */
+    private function render(string $view, array $data = []): void
+    {
+        extract($data);
+
+        ob_start();
+        require VIEW_PATH . '/' . $view . '.php';
+        $content = ob_get_clean();
+
+        require VIEW_PATH . '/layouts/main.php';
     }
 }
