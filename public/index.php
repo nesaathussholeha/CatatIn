@@ -129,11 +129,19 @@ switch ($page) {
 
 
     // FITUR REPORT ADMIN
-    case 'laporan-admin':
-
+       case 'laporan-admin':
+ 
+        if (
+            !isset($_SESSION['role']) ||
+            strtolower($_SESSION['role']) !== 'admin'
+        ) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+ 
         $controller = new ReportAdminController();
-        $controller->index();   
-
+        $controller->index();
+ 
         break;
 
 

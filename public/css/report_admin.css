@@ -1,385 +1,1072 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
+/* WARNA KHUSUS LAPORAN */
 :root {
-    --bg-sidebar: #111328;
-    --sidebar-text: #8286a2;
-    --sidebar-active-bg: #4f62e6;
-    --sidebar-active-text: #ffffff;
-    --danger-color: #ef4444;
-    --bg-main: #f8fafc;
-    --text-primary: #0f172a;
-    --avatar-bg: #f59e0b;
+    --report-primary: #4f5bd5;
+    --report-primary-dark: #4350c4;
+    --report-navy: #1e3a8a;
+    --report-border: #e8ecf5;
+    --report-muted: #64748b;
 
-    --primary: #4f62e6;
-    --border: #e2e8f0;
-    --muted: #64748b;
+    --report-waiting-bg: #fee2e2;
+    --report-waiting-text: #dc2626;
 
-    --menunggu-bg: #fee2e2;
-    --menunggu-fg: #dc2626;
-    --diproses-bg: #fef3c7;
-    --diproses-fg: #d97706;
-    --selesai-bg: #dcfce7;
-    --selesai-fg: #16a34a;
+    --report-process-bg: #fef3c7;
+    --report-process-text: #d97706;
+
+    --report-done-bg: #dcfce7;
+    --report-done-text: #16a34a;
 }
 
-html, body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    min-height: 100vh;
-    width: 100%;
-}
+/* =====================================================
+   FILTER TABS
+===================================================== */
 
-.app-container {
+.content-area .filter-tabs {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: var(--bg-main);
+    align-items: center;
+    gap: 4px;
+
+    width: fit-content;
+    max-width: 100%;
+
+    padding: 4px;
+    margin-bottom: 20px;
+
+    background: #ffffff;
+    border-radius: 14px;
+
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+
+    overflow-x: auto;
+    scrollbar-width: none;
 }
 
-/* ---------- Sidebar Navigasi ---------- */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -260px;
-    width: 260px;
-    height: 100vh;
-    background-color: var(--bg-sidebar);
-    color: var(--sidebar-text);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 24px 16px;
-    z-index: 1000;
-    transition: left 0.3s ease;
-}
-
-.sidebar.active {
-    left: 0;
-}
-
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+.content-area .filter-tabs::-webkit-scrollbar {
     display: none;
 }
 
-.sidebar-overlay.active {
-    display: block;
-}
-
-.sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 8px 32px 8px;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 22px;
-    font-weight: 700;
-    color: #38BDF8;
-}
-
-.brand svg {
-    color: #38BDF8;
-    width: 24px;
-    height: 24px;
+.content-area .tab-btn {
     flex-shrink: 0;
-}
 
-.close-sidebar-btn {
-    background: none;
     border: none;
-    color: var(--sidebar-text);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease;
-}
+    outline: none;
 
-.close-sidebar-btn iconify-icon {
-    font-size: 24px;
-}
+    background: transparent;
+    color: #1e293b;
 
-.close-sidebar-btn:hover {
-    color: #ffffff;
-}
-
-.nav-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px 18px;
-    color: var(--sidebar-text);
-    text-decoration: none;
+    font-family: inherit;
+    font-size: 13px;
     font-weight: 500;
-    font-size: 14px;
-    border-radius: 12px;
+
+    padding: 10px 20px;
+    border-radius: 11px;
+
+    cursor: pointer;
+    white-space: nowrap;
+
     transition: all 0.2s ease;
 }
 
-.nav-link iconify-icon {
-    font-size: 20px;
+.content-area .tab-btn:hover {
+    background: #f1f4fd;
 }
 
-.nav-link:hover {
+.content-area .tab-btn.active {
+    background: var(--report-primary);
     color: #ffffff;
+    font-weight: 600;
+
+    box-shadow: 0 4px 12px rgba(79, 91, 213, 0.25);
 }
 
-.nav-link.active {
-    background-color: var(--sidebar-active-bg);
-    color: var(--sidebar-active-text);
-}
+/* =====================================================
+   TABEL LAPORAN
+===================================================== */
 
-.nav-link.logout {
-    color: var(--danger-color);
-}
-
-/* ---------- Main Content Wrapper & Top Header ---------- */
-.main-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+.content-area .table-card {
     width: 100%;
-    background-color: var(--bg-main);
+    min-width: 0;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e9f2;
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow: 0 4px 20px rgba(30, 41, 99, 0.04);
 }
 
-.top-header {
-    min-height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 24px;
-    background-color: #ffffff;
-    border-bottom: 1px solid var(--border);
+.content-area .table-scroll {
+    width: 100%;
+    overflow-x: auto;
 }
 
-.header-left {
+.content-area .report-table {
+    width: 100%;
+    min-width: 720px;
+
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* HEADER TABEL */
+.content-area .report-table thead th {
+    background: #f8fafd;
+    color: var(--report-muted);
+
+    font-size: 12px;
+    font-weight: 500;
+
+    padding: 14px 16px;
+
+    text-align: left;
+    white-space: nowrap;
+
+    border-bottom: 1px solid var(--report-border);
+}
+
+/* ISI TABEL */
+.content-area .report-table tbody td {
+    padding: 16px;
+
+    color: #334155;
+    font-size: 12px;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid var(--report-border);
+}
+
+.content-area .report-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.content-area .report-table tbody tr:not(.state-row):hover {
+    background: #fafbff;
+}
+
+.content-area .report-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* POSISI KOLOM */
+.content-area .report-table .col-catatan {
+    text-align: left;
+}
+
+.content-area .report-table .col-center {
+    text-align: center;
+}
+
+/* NAMA CATATAN */
+.content-area .cell-catatan {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+/* TEKS PELAPOR DAN ALASAN */
+.content-area .cell-muted {
+    color: var(--report-muted);
+    font-weight: 500;
+}
+
+/* ANIMASI BARIS */
+.content-area .row-enter {
+    animation: reportRowIn 0.3s ease both;
+}
+
+.content-area .row-leave {
+    animation: reportRowOut 0.25s ease forwards;
+}
+
+@keyframes reportRowIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes reportRowOut {
+    to {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+}
+
+/* =====================================================
+   STATUS BADGE
+===================================================== */
+
+.content-area .status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-width: 80px;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 6px 12px;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.content-area .status-pill:hover {
+    filter: brightness(0.96);
+}
+
+.content-area .status-pill:active {
+    transform: scale(0.97);
+}
+
+.content-area .status-pill::after {
+    content: "";
+
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+}
+
+.content-area .status-menunggu {
+    background: var(--report-waiting-bg);
+    color: var(--report-waiting-text);
+}
+
+.content-area .status-diproses {
+    background: var(--report-process-bg);
+    color: var(--report-process-text);
+}
+
+.content-area .status-selesai {
+    background: var(--report-done-bg);
+    color: var(--report-done-text);
+}
+
+/* =====================================================
+   TOMBOL AKSI
+===================================================== */
+
+.content-area .action-cell {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 16px;
 }
 
-.menu-toggle {
-    background: none;
+.content-area .link-detail,
+.content-area .link-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    padding: 4px;
+
     border: none;
-    font-size: 24px;
+    border-radius: 6px;
+
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+
     cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+.content-area .link-detail {
+    color: var(--report-navy);
+}
+
+.content-area .link-delete {
+    color: #dc2626;
+}
+
+.content-area .link-detail:hover {
+    background: #eef1fb;
+}
+
+.content-area .link-delete:hover {
+    background: #fef2f2;
+}
+
+/* =====================================================
+   DROPDOWN STATUS
+===================================================== */
+
+.content-area .status-menu {
+    position: fixed;
+    z-index: 100;
+
+    min-width: 130px;
+
+    padding: 6px;
+
+    background: #ffffff;
+
+    border: 1px solid var(--report-border);
+    border-radius: 12px;
+
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+
+    animation: reportMenuIn 0.15s ease;
+}
+
+.content-area .status-menu[hidden] {
+    display: none;
+}
+
+@keyframes reportMenuIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-area .status-option {
     display: flex;
     align-items: center;
-    color: var(--text-primary);
+    gap: 8px;
+
+    width: 100%;
+
+    padding: 9px 10px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: left;
+    cursor: pointer;
 }
 
-.page-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-primary);
+.content-area .status-option::before {
+    content: "";
+
+    width: 8px;
+    height: 8px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    background: currentColor;
 }
 
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.content-area .status-option:hover,
+.content-area .status-option.selected {
+    background: #f4f6fc;
 }
 
-.user-info {
+.content-area .opt-menunggu {
+    color: var(--report-waiting-text);
+}
+
+.content-area .opt-diproses {
+    color: var(--report-process-text);
+}
+
+.content-area .opt-selesai {
+    color: var(--report-done-text);
+}
+
+/* =====================================================
+   LOADING DAN EMPTY STATE
+===================================================== */
+
+.content-area .state-row td {
+    padding: 0;
+    border-bottom: none;
+}
+
+.content-area .empty-state {
     display: flex;
     flex-direction: column;
-    text-align: right;
+    align-items: center;
+    gap: 8px;
+
+    padding: 48px 16px;
+
+    color: var(--report-muted);
+    text-align: center;
 }
 
-.user-name {
-    font-size: 14px;
-    font-weight: 600;
+.content-area .empty-state svg {
+    color: #cbd5e1;
+    margin-bottom: 4px;
 }
 
-.user-role {
-    font-size: 12px;
-    color: var(--muted);
+.content-area .empty-state strong {
+    color: #0f172a;
+    font-size: 15px;
 }
 
-.avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background-color: var(--avatar-bg);
-    color: #ffffff;
+.content-area .empty-state span {
+    font-size: 13px;
+}
+
+.content-area .skeleton-row td {
+    padding: 18px 20px;
+}
+
+.content-area .skeleton {
+    display: block;
+
+    height: 14px;
+
+    border-radius: 7px;
+
+    background: linear-gradient(
+        90deg,
+        #eef1fb 25%,
+        #f8f9fe 50%,
+        #eef1fb 75%
+    );
+
+    background-size: 200% 100%;
+
+    animation: reportShimmer 1.2s infinite linear;
+}
+
+.content-area .skeleton.w-60 {
+    width: 60%;
+}
+
+.content-area .skeleton.w-50 {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.content-area .skeleton.w-pill {
+    width: 90px;
+    height: 26px;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+@keyframes reportShimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* =====================================================
+   MODAL DETAIL DAN HAPUS
+===================================================== */
+
+.content-area .modal-backdrop {
+    position: fixed;
+    inset: 0;
+
+    z-index: 110;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+
+    padding: 16px;
+
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(2px);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
-.content-area {
-    padding: 24px;
-    flex: 1;
+.content-area .modal-backdrop.open {
+    opacity: 1;
+    visibility: visible;
 }
 
-/* ---------- Tabs Filter ---------- */
-.filter-tabs {
-    display: flex;
-    gap: 4px;
-    background: #ffffff;
-    padding: 4px;
-    border-radius: 12px;
-    width: fit-content;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.tab-btn {
-    border: none;
-    background: transparent;
-    color: var(--text-primary);
-    font-size: 14px;
-    font-weight: 500;
-    padding: 8px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tab-btn:hover { background: #f1f5f9; }
-
-.tab-btn.active {
-    background: var(--primary);
-    color: #ffffff;
-    font-weight: 600;
-}
-
-/* ---------- Tabel Admin ---------- */
-.table-card {
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-    overflow: hidden;
-    border: 1px solid var(--border);
-}
-
-.table-scroll { overflow-x: auto; }
-
-.report-table {
+.content-area .modal {
     width: 100%;
-    min-width: 650px;
+    max-width: 440px;
+
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    box-shadow: 0 25px 50px rgba(15, 23, 42, 0.25);
+
+    transform: translateY(12px) scale(0.98);
+
+    transition: transform 0.25s ease;
+}
+
+.content-area .modal-backdrop.open .modal {
+    transform: translateY(0) scale(1);
+}
+
+.content-area .modal-sm {
+    max-width: 380px;
+}
+
+.content-area .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 24px 8px;
+}
+
+.content-area .modal-header h2 {
+    color: #0f172a;
+
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.content-area .modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+    color: var(--report-muted);
+
+    cursor: pointer;
+}
+
+.content-area .modal-close:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.content-area .modal-body {
+    padding: 12px 24px 16px;
+}
+
+.content-area .detail-list {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+
+    gap: 12px 16px;
+
+    font-size: 13px;
+}
+
+.content-area .detail-list dt {
+    color: var(--report-muted);
+    font-weight: 500;
+}
+
+.content-area .detail-list dd {
+    color: #0f172a;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.content-area .detail-list dd.desc {
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.content-area .confirm-text {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.content-area .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    padding: 8px 24px 20px;
+}
+
+/* TOMBOL MODAL */
+.content-area .btn {
+    border: none;
+    border-radius: 10px;
+
+    padding: 10px 20px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.content-area .btn:active {
+    transform: scale(0.97);
+}
+
+.content-area .btn-light {
+    background: #eef1fb;
+    color: #1e293b;
+}
+
+.content-area .btn-light:hover {
+    background: #e2e7f7;
+}
+
+.content-area .btn-danger {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.content-area .btn-danger:hover {
+    background: #dc2626;
+}
+
+
+
+.content-area .toast {
+    position: fixed;
+
+    z-index: 120;
+
+    left: 50%;
+    bottom: 24px;
+
+    max-width: calc(100% - 32px);
+
+    padding: 13px 20px;
+
+    border-radius: 12px;
+
+    background: #0d122b;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    box-shadow: 0 10px 30px rgba(13, 18, 43, 0.35);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translate(-50%, 20px);
+
+    transition: all 0.3s ease;
+}
+
+.content-area .toast.show {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translate(-50%, 0);
+}
+
+.content-area .tab-btn:focus-visible,
+.content-area .btn:focus-visible,
+.content-area .status-pill:focus-visible,
+.content-area .link-detail:focus-visible,
+.content-area .link-delete:focus-visible {
+    outline: 2px solid var(--report-primary);
+    outline-offset: 2px;
+}
+
+
+@media (max-width: 768px) {
+
+    .content-area .filter-tabs {
+        width: 100%;
+    }
+
+    .content-area .tab-btn {
+        padding: 10px 14px;
+        font-size: 12px;
+    }
+
+    .content-area .table-card {
+        border-radius: 14px;
+    }
+
+    .content-area .report-table {
+        min-width: 720px;
+    }
+
+    .content-area .action-cell {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .content-area .detail-list {
+        grid-template-columns: 1fr;
+        gap: 3px;
+    }
+
+    .content-area .detail-list dd {
+        margin-bottom: 10px;
+    }
+
+    .content-area .report-table thead th,
+    .content-area .report-table tbody td {
+        padding: 13px 14px;
+    }
+
+    .content-area .modal-header {
+        padding: 18px 18px 8px;
+    }
+
+    .content-area .modal-body {
+        padding: 12px 18px 16px;
+    }
+
+    .content-area .modal-footer {
+        padding: 8px 18px 18px;
+    }
+}
+
+
+/* =====================================================
+   FINAL OVERRIDE - HALAMAN LAPORAN MASUK
+   Khusus untuk report_admin.php
+===================================================== */
+
+/* PEMBUNGKUS HALAMAN */
+.content-area .report-admin-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    color: #1e293b;
+}
+
+/* =====================================================
+   HEADER HALAMAN
+===================================================== */
+
+.content-area .report-admin-page .report-page-header {
+    display: block;
+    width: 100%;
+    margin: 0 0 28px;
+    padding: 0;
+}
+
+.content-area .report-admin-page .report-page-header h1 {
+    margin: 0 0 8px;
+    color: #172554;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+}
+
+.content-area .report-admin-page .report-page-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* =====================================================
+   FILTER STATUS
+===================================================== */
+
+.content-area .report-admin-page .filter-tabs {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 5px;
+
+    width: fit-content;
+    max-width: 100%;
+
+    margin: 0 0 24px;
+    padding: 5px;
+
+    background: #ffffff;
+    border: 1px solid #edf0f7;
+    border-radius: 12px;
+
+    box-shadow: 0 2px 8px rgba(30, 41, 99, 0.04);
+}
+
+.content-area .report-admin-page .tab-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 9px;
+}
+
+.content-area .report-admin-page .tab-btn.active {
+    background: var(--report-primary);
+    color: #ffffff;
+}
+
+/* =====================================================
+   KARTU DAN TABEL
+===================================================== */
+
+.content-area .report-admin-page .table-card {
+    width: 100%;
+    min-width: 0;
+
+    background: #ffffff;
+    border: 1px solid #e8ecf5;
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    box-shadow: 0 5px 20px rgba(30, 41, 99, 0.05);
+}
+
+.content-area .report-admin-page .table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.content-area .report-admin-page .report-table {
+    width: 100%;
+    min-width: 720px;
     border-collapse: collapse;
 }
 
-.report-table thead th {
-    background: #f8fafc;
-    color: var(--muted);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 14px 20px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-}
+.content-area .report-admin-page .report-table thead th {
+    padding: 17px 20px;
 
-.report-table tbody td {
-    padding: 14px 20px;
-    font-size: 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-}
+    background: #f8fafd;
+    color: #64748b;
 
-.report-table th.col-center,
-.report-table td.col-center { text-align: center; }
-
-/* Status Pill & Actions */
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border: none;
     font-size: 12px;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+
+    border-bottom: 1px solid #e8ecf5;
 }
 
-.status-menunggu { background: var(--menunggu-bg); color: var(--menunggu-fg); }
-.status-diproses { background: var(--diproses-bg); color: var(--diproses-fg); }
-.status-selesai  { background: var(--selesai-bg);  color: var(--selesai-fg); }
+.content-area .report-admin-page .report-table tbody td {
+    padding: 18px 20px;
 
-.action-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-}
-
-.link-detail, .link-delete {
-    background: none;
-    border: none;
-    cursor: pointer;
+    color: #334155;
     font-size: 13px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    line-height: 1.5;
+
+    border-bottom: 1px solid #edf0f7;
 }
 
-.link-detail { color: var(--primary); }
-.link-delete { color: var(--danger-color); }
-
-/* Dropdown Status & Modals */
-.status-menu {
-    position: fixed;
-    z-index: 1050;
-    background: #ffffff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    padding: 6px;
+.content-area .report-admin-page .report-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
-.status-menu[hidden] { display: none; }
+.content-area .report-admin-page .report-table tbody tr:not(.state-row):hover {
+    background: #fafbff;
+}
 
-.status-option {
-    display: block;
-    width: 100%;
-    border: none;
-    background: transparent;
-    font-size: 13px;
-    font-weight: 600;
+/* =====================================================
+   STATUS BADGE
+===================================================== */
+
+.content-area .report-admin-page .status-pill {
+    min-width: 90px;
     padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    text-align: left;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
 }
 
-.status-option:hover { background: #f1f5f9; }
-.opt-menunggu { color: var(--menunggu-fg); }
-.opt-diproses { color: var(--diproses-fg); }
-.opt-selesai  { color: var(--selesai-fg); }
+/* =====================================================
+   TOMBOL AKSI
+===================================================== */
 
-/* Breakpoint Dekstop untuk Sidebar Permanen */
-@media (min-width: 1024px) {
-    .sidebar { left: 0; }
-    .main-wrapper {
-        margin-left: 260px;
-        width: calc(100% - 260px);
+.content-area .report-admin-page .action-cell {
+    gap: 12px;
+}
+
+.content-area .report-admin-page .link-detail,
+.content-area .report-admin-page .link-delete {
+    padding: 7px 9px;
+    font-size: 12px;
+    border-radius: 7px;
+}
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+.content-area .report-admin-page .modal-backdrop {
+    z-index: 1100;
+}
+
+.content-area .report-admin-page .modal {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+/* =====================================================
+   DROPDOWN DAN NOTIFIKASI
+===================================================== */
+
+.content-area .report-admin-page .status-menu {
+    z-index: 1050;
+}
+
+.content-area .report-admin-page .toast {
+    z-index: 1200;
+}
+
+/* =====================================================
+   RESPONSIVE TABLET
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .content-area .report-admin-page .report-page-header {
+        margin-bottom: 20px;
     }
-    .menu-toggle, .close-sidebar-btn { display: none; }
+
+    .content-area .report-admin-page .report-page-header h1 {
+        font-size: 23px;
+    }
+
+    .content-area .report-admin-page .report-page-header p {
+        font-size: 13px;
+    }
+
+    .content-area .report-admin-page .filter-tabs {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .content-area .report-admin-page .tab-btn {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .content-area .report-admin-page .table-card {
+        border-radius: 13px;
+    }
+
+    .content-area .report-admin-page .report-table {
+        min-width: 720px;
+    }
+
+    .content-area .report-admin-page .report-table thead th,
+    .content-area .report-admin-page .report-table tbody td {
+        padding: 14px 15px;
+    }
+}
+
+/* =====================================================
+   RESPONSIVE MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .content-area .report-admin-page .report-page-header h1 {
+        font-size: 21px;
+    }
+
+    .content-area .report-admin-page .report-page-header p {
+        font-size: 12px;
+    }
+
+    .content-area .report-admin-page .filter-tabs {
+        gap: 3px;
+        padding: 4px;
+    }
+
+    .content-area .report-admin-page .tab-btn {
+        padding: 9px 8px;
+        font-size: 11px;
+    }
+
+    .content-area .report-admin-page .detail-list {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .content-area .report-admin-page .detail-list dd {
+        margin-bottom: 10px;
+    }
+
+    .content-area .report-admin-page .modal {
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    .content-area .report-admin-page .modal-header {
+        padding: 18px 18px 8px;
+    }
+
+    .content-area .report-admin-page .modal-body {
+        padding: 12px 18px 16px;
+    }
+
+    .content-area .report-admin-page .modal-footer {
+        padding: 8px 18px 18px;
+    }
+}
+
+/* =========================================
+   KHUSUS HALAMAN LAPORAN MASUK
+   ========================================= */
+
+/* Sembunyikan judul header hanya di halaman laporan */
+.main-content:has(.report-admin-page) > .top-header .page-title {
+    display: none !important;
+}
+
+/* Naikkan posisi konten laporan */
+.content-area .report-admin-page {
+    margin-top: -18px;
+}
+
+/* Rapikan judul utama */
+.content-area .report-admin-page .report-page-header {
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+.content-area .report-admin-page .report-page-header h1 {
+    margin: 0 0 8px;
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #000000;
+}
+
+.content-area .report-admin-page .report-page-header p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #64748b;
 }

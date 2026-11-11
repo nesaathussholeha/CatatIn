@@ -6,7 +6,7 @@ class ReportAdminController
 {
     public function index()
     {
-        // Wajib login & admin
+        // Hanya admin yang boleh membuka halaman ini
         if (
             empty($_SESSION['user_id']) ||
             strtolower($_SESSION['role'] ?? '') !== 'admin'
@@ -15,23 +15,24 @@ class ReportAdminController
             exit;
         }
 
-        // Data
-        $model   = new ReportAdmin();
+        // Ambil data dari Model
+        $model   = new ReportAdmin($GLOBALS['pdo'] ?? null);
         $laporan = $model->getAll();
 
-        // Variabel untuk layout
+        // Variabel untuk layout main.php
         $page_title  = 'Laporan Masuk';
-        $user_name   = $_SESSION['nama_lengkap'] ?? 'Administrator';
-        $user_role   = $_SESSION['role'] ?? 'admin';
-        $active_menu = 'laporan';          // sama dengan yang dicek di sidebar.php
+        $active_menu = 'laporan';
+        $user_name   = $_SESSION['user_name'] ?? 'Administrator';
+        $user_role   = $_SESSION['role'] ?? 'Admin';
         $page_css    = 'report_admin.css';
         $page_js     = 'report_admin.js';
 
-        // Render view ke dalam $content, lalu bungkus dengan layout
+        // Render isi halaman ke dalam $content
         ob_start();
         require VIEW_PATH . '/admin/report_admin.php';
         $content = ob_get_clean();
 
+        // Tampilkan lewat layout utama
         require VIEW_PATH . '/layouts/main.php';
     }
 }
