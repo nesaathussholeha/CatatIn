@@ -131,8 +131,8 @@ $active_menu = $active_menu ?? 'dashboard';
                 </li>
 
                 <li>
-                    <a href="<?= BASE_URL ?>/index.php?page=tugas"
-                        class="nav-link <?= $active_menu === 'tugas' ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>/index.php?page=pengingat"
+                        class="nav-link <?= $active_menu === 'pengingat' ? 'active' : '' ?>">
                         <iconify-icon icon="hugeicons:sticky-note-02"></iconify-icon>
                         Tugas
                     </a>
