@@ -27,6 +27,7 @@ require_once ROOT_PATH . '/app/Controllers/PengelolaCatatanController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminProfileController.php';
 require_once ROOT_PATH . '/app/Models/ProfileUser.php';
 require_once ROOT_PATH . '/app/Controllers/UserProfileController.php';
+require_once ROOT_PATH . '/app/Controllers/ProfilePenulisController.php';
 
 // Halaman default adalah login
 $page = $_GET['page'] ?? 'login';
@@ -96,6 +97,10 @@ switch ($page) {
 
         break;
 
+    case 'profile-penulis':
+        $controller = new ProfilePenulisController();
+        $controller->index();
+        break;
     // KELOLA CATATAN (KHUSUS ADMIN)
     case 'kelola_catatan':
 
