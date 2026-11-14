@@ -25,7 +25,8 @@ require_once ROOT_PATH . '/app/Controllers/PengingatController.php';
 // Controller Kelola Catatan
 require_once ROOT_PATH . '/app/Controllers/PengelolaCatatanController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminProfileController.php';
-
+require_once ROOT_PATH . '/app/Models/ProfileUser.php';
+require_once ROOT_PATH . '/app/Controllers/UserProfileController.php';
 
 // Halaman default adalah login
 $page = $_GET['page'] ?? 'login';
@@ -83,6 +84,17 @@ switch ($page) {
 
         break;
 
+    case 'profil-user':
+
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new UserProfileController();
+        $controller->index();
+
+        break;
 
     // KELOLA CATATAN (KHUSUS ADMIN)
     case 'kelola_catatan':
@@ -129,8 +141,8 @@ switch ($page) {
 
 
     // FITUR REPORT ADMIN
-       case 'laporan-admin':
- 
+    case 'laporan-admin':
+
         if (
             !isset($_SESSION['role']) ||
             strtolower($_SESSION['role']) !== 'admin'
@@ -138,10 +150,10 @@ switch ($page) {
             header('Location: ' . BASE_URL . '/?page=login');
             exit;
         }
- 
+
         $controller = new ReportAdminController();
         $controller->index();
- 
+
         break;
 
 
