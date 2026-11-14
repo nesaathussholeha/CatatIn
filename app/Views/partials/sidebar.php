@@ -140,7 +140,8 @@ $active_menu = $active_menu ?? 'dashboard';
 
                 <li>
                     <a href="<?= BASE_URL ?>/index.php?page=profil-user"
-                        class="nav-link <?= $active_menu === 'profile-user' ? 'active' : '' ?>"
+                        class="nav-link <?= $active_menu === 'profile-user' ? 'active' : '' ?>">
+
                         <iconify-icon icon="iconamoon:profile-circle"></iconify-icon>
                         Profil
 
