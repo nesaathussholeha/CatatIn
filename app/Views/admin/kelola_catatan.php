@@ -1,13 +1,4 @@
 
-<?php
-
-function e($text)
-{
-    return htmlspecialchars((string) ($text ?? ''), ENT_QUOTES, 'UTF-8');
-}
-
-?>
-
 <section class="page-card">
 
     <div class="page-card-header">
