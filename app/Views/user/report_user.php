@@ -1,4 +1,5 @@
 <?php
+
 /**
  * View: Detail Catatan + Report User
  * Hanya konten. Sidebar, header, <html>, <head> sudah diurus layouts/main.php
@@ -87,10 +88,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>Array</td><td>Indeks acak</td><td>Daftar nilai</td></tr>
-                                    <tr><td>Linked list</td><td>Node berantai</td><td>Playlist musik</td></tr>
-                                    <tr><td>Stack</td><td>LIFO (terakhir masuk)</td><td>Undo, riwayat operasi</td></tr>
-                                    <tr><td>Queue</td><td>FIFO (pertama masuk)</td><td>Antrean pemrosesan</td></tr>
+                                    <tr>
+                                        <td>Array</td>
+                                        <td>Indeks acak</td>
+                                        <td>Daftar nilai</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Linked list</td>
+                                        <td>Node berantai</td>
+                                        <td>Playlist musik</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Stack</td>
+                                        <td>LIFO (terakhir masuk)</td>
+                                        <td>Undo, riwayat operasi</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Queue</td>
+                                        <td>FIFO (pertama masuk)</td>
+                                        <td>Antrean pemrosesan</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -149,7 +166,7 @@
                     </div>
                 </div>
                 <p class="side-note">Catatan kuliah ini disusun supaya teman belajar lebih mudah memahami materi.</p>
-                <a href="<?= BASE_URL ?>/index.php?page=profil-penyusun" class="side-link">
+                <a href="<?= BASE_URL ?>/?page=profile-penulis" class="side-link">
                     Lihat profil
                     <iconify-icon icon="lucide:arrow-right"></iconify-icon>
                 </a>
@@ -158,11 +175,26 @@
             <div class="side-card">
                 <h5 class="side-title">Info Catatan</h5>
                 <dl class="info-list">
-                    <div><dt>Mata Kuliah</dt><dd><?= htmlspecialchars($catatan['mata_kuliah']); ?></dd></div>
-                    <div><dt>Jurusan</dt><dd><?= htmlspecialchars($catatan['jurusan']); ?></dd></div>
-                    <div><dt>Kategori</dt><dd><?= htmlspecialchars($catatan['kategori']); ?></dd></div>
-                    <div><dt>Format</dt><dd><?= htmlspecialchars($catatan['format']); ?></dd></div>
-                    <div><dt>Ukuran</dt><dd><?= htmlspecialchars($catatan['ukuran']); ?></dd></div>
+                    <div>
+                        <dt>Mata Kuliah</dt>
+                        <dd><?= htmlspecialchars($catatan['mata_kuliah']); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Jurusan</dt>
+                        <dd><?= htmlspecialchars($catatan['jurusan']); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Kategori</dt>
+                        <dd><?= htmlspecialchars($catatan['kategori']); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Format</dt>
+                        <dd><?= htmlspecialchars($catatan['format']); ?></dd>
+                    </div>
+                    <div>
+                        <dt>Ukuran</dt>
+                        <dd><?= htmlspecialchars($catatan['ukuran']); ?></dd>
+                    </div>
                 </dl>
                 <div class="verified">
                     <iconify-icon icon="lucide:check-circle-2"></iconify-icon>
@@ -206,7 +238,7 @@
 
         <!-- data-action dipakai JS supaya URL tidak di-hardcode -->
         <form id="formLaporan" class="modal-body" novalidate
-              data-action="<?= BASE_URL ?>/index.php?page=report-user-kirim">
+            data-action="<?= BASE_URL ?>/index.php?page=report-user-kirim">
             <input type="hidden" name="catatan_id" value="<?= (int) $catatan['id']; ?>">
 
             <!-- Judul -->

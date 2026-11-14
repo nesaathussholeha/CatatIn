@@ -6,6 +6,7 @@ class PengingatController
 {
     public function index()
     {
+        
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -88,7 +89,7 @@ class PengingatController
 
         // DATA UNTUK LAYOUT
         $page_title  = 'Pengingat';
-        $active_menu = 'tugas';
+        $active_menu = 'pengingat';
         $page_css    = 'pengingat.css';
         $page_js     = 'pengingat.js';
 
