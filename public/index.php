@@ -102,6 +102,7 @@ switch ($page) {
         $controller = new ProfilePenulisController();
         $controller->index();
         break;
+
     // KELOLA CATATAN (KHUSUS ADMIN)
     case 'kelola_catatan':
 
@@ -191,6 +192,8 @@ switch ($page) {
         $controller = new CatatanController();
         $controller->index();
 
+        break;
+
 
     // UNGGAH CATATAN
     case 'unggah-catatan':
@@ -200,8 +203,9 @@ switch ($page) {
         }
 
         $controller = new CatatanController();
-        $controller->index();
+        $controller->form();
 
+        break;
 
     // HAPUS CATATAN
     case 'hapus-catatan':
@@ -209,10 +213,12 @@ switch ($page) {
             header('Location: ' . BASE_URL . '/?page=login');
             exit;
         }
+        
 
         $controller = new CatatanController();
         $controller->index();
 
+        break;
 
     // PROFIL ADMIN
     case 'profil-admin':

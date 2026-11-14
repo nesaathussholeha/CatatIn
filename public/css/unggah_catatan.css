@@ -1,3 +1,6 @@
+/* upload.css — khusus konten halaman upload.php
+   (sidebar, header, dan layout dasar ada di ../layout_user/style.css) */
+
 :root {
     --page-bg: #f6f7fb;
     --primer: #4f46e5;
@@ -93,6 +96,14 @@ html, body,
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 48px;
+}
+
+.pill-group.dua-kolom { grid-template-columns: repeat(2, 1fr); }
+
+.bantuan-teks {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #64748b;
 }
 
 .pill-btn {
