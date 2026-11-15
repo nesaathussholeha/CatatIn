@@ -17,10 +17,18 @@ require_once ROOT_PATH . '/app/Controllers/PageController.php';
 require_once ROOT_PATH . '/app/Controllers/MasterDataController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminDashboardController.php';
 require_once ROOT_PATH . '/app/Controllers/UserDashboardController.php';
-require_once ROOT_PATH . '/app/Controllers/ReportUserController.php';  // <-- Tambahkan di sini
-require_once ROOT_PATH . '/app/Controllers/ReportAdminController.php'; // <-- Tambahkan di sini
+require_once ROOT_PATH . '/app/Controllers/ReportUserController.php';
+require_once ROOT_PATH . '/app/Controllers/ReportAdminController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminUserController.php';
+require_once ROOT_PATH . '/app/Controllers/PengingatController.php';
+require_once ROOT_PATH . '/app/Controllers/CatatanController.php';
 
+// Controller Kelola Catatan
+require_once ROOT_PATH . '/app/Controllers/PengelolaCatatanController.php';
+require_once ROOT_PATH . '/app/Controllers/AdminProfileController.php';
+require_once ROOT_PATH . '/app/Models/ProfileUser.php';
+require_once ROOT_PATH . '/app/Controllers/UserProfileController.php';
+require_once ROOT_PATH . '/app/Controllers/ProfilePenulisController.php';
 
 // Halaman default adalah login
 $page = $_GET['page'] ?? 'login';
@@ -37,6 +45,7 @@ switch ($page) {
         break;
 
 
+    // ADMIN DASHBOARD
     case 'admin-dashboard':
 
         if (
@@ -49,12 +58,63 @@ switch ($page) {
 
         $controller = new AdminDashboardController();
         $controller->index();
+
         break;
 
 
+    // USER DASHBOARD
     case 'dashboard':
+        require_once ROOT_PATH . '/app/Controllers/UserDashboardController.php';
+        (new UserDashboardController())->index();
+        break;
 
-        $controller = new UserDashboardController();
+    case 'koleksi':
+        require_once ROOT_PATH . '/app/Controllers/PlaylistController.php';
+        (new PlaylistController())->index();
+        break;
+
+    // PENGINGAT
+    case 'pengingat':
+
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new PengingatController();
+        $controller->index();
+
+        break;
+
+    case 'profil-user':
+
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new UserProfileController();
+        $controller->index();
+
+        break;
+
+    case 'profile-penulis':
+        $controller = new ProfilePenulisController();
+        $controller->index();
+        break;
+
+    // KELOLA CATATAN (KHUSUS ADMIN)
+    case 'kelola_catatan':
+
+        if (
+            !isset($_SESSION['role']) ||
+            strtolower($_SESSION['role']) !== 'admin'
+        ) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new PengelolaCatatanController();
         $controller->index();
 
         break;
@@ -77,7 +137,7 @@ switch ($page) {
         break;
 
 
-    // FITUR REPORT USER (DETAIL CATATAN & LAPORKAN)
+    // FITUR REPORT USER
     case 'report-user':
     case 'detail-catatan':
 
@@ -87,9 +147,8 @@ switch ($page) {
         break;
 
 
-    // FITUR REPORT ADMIN (KELOLA LAPORAN KHUSUS ADMIN)
-    case 'report-admin':
-    case 'kelola-laporan':
+    // FITUR REPORT ADMIN
+    case 'laporan-admin':
 
         if (
             !isset($_SESSION['role']) ||
@@ -104,7 +163,10 @@ switch ($page) {
 
         break;
 
+
+    // KELOLA PENGGUNA
     case 'kelola-pengguna':
+
         if (empty($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/?page=login');
             exit;
@@ -117,10 +179,59 @@ switch ($page) {
 
         $controller = new AdminUserController();
         $controller->index();
+
+        break;
+
+    // CATATAN SAYA
+    case 'catatan-saya':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new CatatanController();
+        $controller->index();
+
         break;
 
 
+    // UNGGAH CATATAN
+    case 'unggah-catatan':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+
+        $controller = new CatatanController();
+        $controller->form();
+
+        break;
+
+    // HAPUS CATATAN
+    case 'hapus-catatan':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '/?page=login');
+            exit;
+        }
+        
+
+        $controller = new CatatanController();
+        $controller->index();
+
+        break;
+
+    // PROFIL ADMIN
+    case 'profil-admin':
+
+        $controller = new AdminProfileController();
+        $controller->index();
+
+        break;
+
+
+    // LOGOUT
     case 'logout':
+
         session_unset();
         session_destroy();
 
@@ -131,6 +242,6 @@ switch ($page) {
         // HALAMAN TIDAK DIKENAL
     default:
 
-        header('Location: ?page=login');
-        exit();
+        header('Location: ' . BASE_URL . '/?page=login');
+        exit;
 }

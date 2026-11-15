@@ -1,0 +1,39 @@
+.pl-page { padding: 24px; }
+.pl-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.pl-header h1 { margin: 0 0 4px; font-size: 24px; }
+.pl-header p { margin: 0; color: #6b7280; }
+
+.pl-btn, .pl-btn-light {
+    padding: 10px 16px; border-radius: 8px; border: 0;
+    font-size: 14px; cursor: pointer;
+}
+.pl-btn { background: #4338ca; color: #fff; }
+.pl-btn-light { background: #f3f4f6; color: #374151; }
+
+.pl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.pl-card {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px;
+    display: flex; flex-direction: column; gap: 8px;
+}
+.pl-card h3 { margin: 0; font-size: 16px; }
+.pl-card p { margin: 0; font-size: 13px; color: #6b7280; }
+.pl-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 13px; }
+.pl-delete { background: none; border: 0; color: #dc2626; cursor: pointer; font-size: 13px; }
+.pl-empty { text-align: center; color: #6b7280; margin-top: 40px; }
+
+.pl-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.pl-modal[hidden] { display: none; }
+.pl-modal-box {
+    background: #fff; border-radius: 12px; padding: 24px;
+    width: min(420px, 92vw); display: flex; flex-direction: column; gap: 8px;
+}
+.pl-modal-box h2 { margin: 0 0 8px; font-size: 18px; }
+.pl-modal-box label { font-size: 13px; color: #374151; }
+.pl-modal-box input, .pl-modal-box textarea {
+    padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px;
+    font-size: 14px; font-family: inherit;
+}
+.pl-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
