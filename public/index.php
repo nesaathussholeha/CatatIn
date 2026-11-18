@@ -21,7 +21,7 @@ require_once ROOT_PATH . '/app/Controllers/UserDashboardController.php';
 require_once ROOT_PATH . '/app/Controllers/ReportUserController.php';
 require_once ROOT_PATH . '/app/Controllers/ReportAdminController.php';
 require_once ROOT_PATH . '/app/Controllers/AdminUserController.php';
-require_once ROOT_PATH . '/app/Controllers/PengingatController.php';
+require_once ROOT_PATH . '/app/Controllers/TugasController.php';
 
 // Controller Kelola Catatan
 require_once ROOT_PATH . '/app/Controllers/PengelolaCatatanController.php';
@@ -72,14 +72,14 @@ switch ($page) {
         break;
     
     // PENGINGAT
-    case 'pengingat':
+    case 'tugas':
 
         if (empty($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . '/?page=login');
             exit;
         }
 
-        $controller = new PengingatController();
+        $controller = new TugasController();
         $controller->index();
 
         break;

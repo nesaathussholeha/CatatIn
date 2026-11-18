@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('modal-pengingat');
+    const modal = document.getElementById('modal-tugas');
     const tombolTambah = document.getElementById('buka-modal');
     const tombolTutup = document.getElementById('tutup-modal');
     const tombolBatal = document.getElementById('batal-modal');
 
-    const form = document.getElementById('form-pengingat');
+    const form = document.getElementById('form-tugas');
     const judulModal = document.getElementById('judul-modal');
 
     const inputAksi = document.getElementById('aksi');

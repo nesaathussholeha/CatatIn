@@ -1,8 +1,8 @@
 <?php
 
-require_once ROOT_PATH . '/app/Models/Pengingat.php';
+require_once ROOT_PATH . '/app/Models/Tugas.php';
 
-class PengingatController
+class TugasController
 {
     public function index()
     {
@@ -26,7 +26,7 @@ class PengingatController
                 $deadline = $_POST['deadline'] ?? '';
 
                 if ($judul !== '' && $deadline !== '') {
-                    Pengingat::tambah($judul, $deadline);
+                    Tugas::tambah($judul, $deadline);
                 }
             }
 
@@ -37,7 +37,7 @@ class PengingatController
                 $deadline = $_POST['deadline'] ?? '';
 
                 if ($id > 0 && $judul !== '' && $deadline !== '') {
-                    Pengingat::edit($id, $judul, $deadline);
+                    Tugas::edit($id, $judul, $deadline);
                 }
             }
 
@@ -46,7 +46,7 @@ class PengingatController
                 $id = (int) ($_POST['id'] ?? 0);
 
                 if ($id > 0) {
-                    Pengingat::hapus($id);
+                    Tugas::hapus($id);
                 }
             }
 
@@ -55,16 +55,16 @@ class PengingatController
                 $id = (int) ($_POST['id'] ?? 0);
 
                 if ($id > 0) {
-                    Pengingat::ubahStatus($id);
+                    Tugas::ubahStatus($id);
                 }
             }
 
-            header('Location: ' . BASE_URL . '/?page=pengingat');
+            header('Location: ' . BASE_URL . '/?page=tugas');
             exit;
         }
 
         // AMBIL DATA
-        $tugas = Pengingat::semua();
+        $tugas = Tugas::semua();
 
         // FILTER STATUS
         $filter = $_GET['filter'] ?? 'semua';
@@ -87,10 +87,10 @@ class PengingatController
         });
 
         // DATA UNTUK LAYOUT
-        $page_title  = 'Pengingat';
+        $page_title  = 'Tugas';
         $active_menu = 'tugas';
-        $page_css    = 'pengingat.css';
-        $page_js     = 'pengingat.js';
+        $page_css    = 'tugas.css';
+        $page_js     = 'tugas.js';
 
         // DATA USER (disamakan dengan key session di router)
         $user_name = $_SESSION['user_name'] ?? 'Username';
@@ -98,7 +98,7 @@ class PengingatController
 
         // SIAPKAN VIEW
         ob_start();
-        require VIEW_PATH . '/user/pengingat.php';
+        require VIEW_PATH . '/user/tugas.php';
         $content = ob_get_clean();
 
         // TAMPILKAN DENGAN LAYOUT UTAMA

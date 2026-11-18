@@ -1,8 +1,8 @@
-.halaman-pengingat {
+.halaman-tugas {
     width: 100%;
 }
 
-.pengingat-heading {
+.tugas-heading {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -10,13 +10,13 @@
     margin-bottom: 28px;
 }
 
-.pengingat-heading h1 {
+.tugas-heading h1 {
     margin: 0 0 8px;
     color: #10234f;
     font-size: 25px;
 }
 
-.pengingat-heading p {
+.tugas-heading p {
     margin: 0;
     color: #777;
     font-size: 14px;
@@ -32,29 +32,29 @@
     cursor: pointer;
 }
 
-.pengingat-filter {
+.tugas-filter {
     margin-bottom: 20px;
 }
 
-.pengingat-filter form {
+.tugas-filter form {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
 }
 
-.pengingat-filter select {
+.tugas-filter select {
     padding: 10px 13px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background: white;
 }
 
-.daftar-pengingat {
+.daftar-tugas {
     display: grid;
     gap: 15px;
 }
 
-.kartu-pengingat {
+.kartu-tugas {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -65,13 +65,13 @@
     border-radius: 12px;
 }
 
-.pengingat-info h3 {
+.tugas-info h3 {
     margin: 0 0 8px;
     color: #10234f;
     font-size: 16px;
 }
 
-.pengingat-info p {
+.tugas-info p {
     margin: 0 0 10px;
     color: #777;
     font-size: 13px;
@@ -99,14 +99,14 @@
     color: #237342;
 }
 
-.pengingat-aksi {
+.tugas-aksi {
     display: flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-.pengingat-aksi button {
+.tugas-aksi button {
     padding: 8px 11px;
     border: none;
     border-radius: 7px;
@@ -129,7 +129,7 @@
     color: #b52b2b;
 }
 
-.pengingat-kosong {
+.tugas-kosong {
     padding: 40px 20px;
     text-align: center;
     background: white;
@@ -137,11 +137,11 @@
     color: #777;
 }
 
-.pengingat-kosong h3 {
+.tugas-kosong h3 {
     color: #10234f;
 }
 
-.modal-pengingat {
+.modal-tugas {
     display: none;
     position: fixed;
     inset: 0;
@@ -152,7 +152,7 @@
     padding: 20px;
 }
 
-.modal-pengingat.aktif {
+.modal-tugas.aktif {
     display: flex;
 }
 
@@ -218,13 +218,13 @@
 }
 
 @media (max-width: 700px) {
-    .pengingat-heading,
-    .kartu-pengingat {
+    .tugas-heading,
+    .kartu-tugas {
         align-items: flex-start;
         flex-direction: column;
     }
 
-    .pengingat-aksi {
+    .tugas-aksi {
         width: 100%;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Pengingat
+class Tugas
 {
     private static function init()
     {
