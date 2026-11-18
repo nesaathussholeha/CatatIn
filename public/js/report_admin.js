@@ -1,32 +1,10 @@
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Sidebar Navigation (Sesuai ID Terbaru) 
-    const menuToggle = document.getElementById('menuToggle');
-    const closeSidebar = document.getElementById('closeSidebar');
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    // ==========================================
+    // 1. KONFIGURASI DAN STATE
+    // ==========================================
 
-    function openSidebar() {
-        if (sidebar && sidebarOverlay) {
-            sidebar.classList.add('active');
-            sidebarOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    function closeSidebar() {
-        if (sidebar && sidebarOverlay) {
-            sidebar.classList.remove('active');
-            sidebarOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    }
-
-    if (menuToggle) menuToggle.addEventListener('click', openSidebar);
-    if (closeSidebar) closeSidebar.addEventListener('click', closeSidebar);
-    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-
-    // State & Konfigurasi Laporan 
     const STORAGE_KEY = 'catatin_laporan_state_v1';
 
     const STATUS_LABEL = {
@@ -44,38 +22,67 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteId: null
     };
 
+    // ==========================================
+    // 2. MENGAMBIL DAN MENYIMPAN DATA
+    // ==========================================
+
     function loadReports() {
-        const fromServer = Array.isArray(window.LAPORAN_DATA) ? window.LAPORAN_DATA : [];
+        const fromServer = Array.isArray(window.LAPORAN_DATA)
+            ? window.LAPORAN_DATA
+            : [];
+
         try {
             const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
             if (saved && Array.isArray(saved.reports)) {
                 return saved.reports;
             }
-        } catch (e) {}
+        } catch (error) {
+            console.warn('Data laporan lokal tidak dapat dibaca:', error);
+        }
+
         return fromServer.slice();
     }
 
     function persist() {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ reports: state.reports }));
-        } catch (e) {}
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({ reports: state.reports })
+            );
+        } catch (error) {
+            console.warn('Data laporan gagal disimpan:', error);
+        }
     }
 
-    // Elemen DOM 
+    // ==========================================
+    // 3. MENGAMBIL ELEMEN HTML
+    // ==========================================
+
     const tbody = document.getElementById('report-body');
+
     const tabsWrap = document.getElementById('filter-tabs');
-    const tabButtons = tabsWrap ? tabsWrap.querySelectorAll('.tab-btn') : [];
+    const tabButtons = tabsWrap
+        ? tabsWrap.querySelectorAll('.tab-btn')
+        : [];
 
     const statusMenu = document.getElementById('status-menu');
+
     const detailModal = document.getElementById('detail-modal');
     const detailBody = document.getElementById('detail-body');
+
     const deleteModal = document.getElementById('delete-modal');
     const deleteText = document.getElementById('delete-text');
     const confirmDeleteBtn = document.getElementById('confirm-delete');
+
     const toastEl = document.getElementById('toast');
 
-    function escapeHtml(str) {
-        return String(str ?? '')
+    // ==========================================
+    // 4. FUNGSI BANTUAN
+    // ==========================================
+
+    function escapeHtml(value) {
+        return String(value ?? '')
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -85,114 +92,229 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function formatTanggal(iso) {
         if (!iso) return '-';
-        const d = new Date(iso + 'T00:00:00');
-        if (isNaN(d)) return iso;
-        return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        const date = new Date(iso + 'T00:00:00');
+
+        if (isNaN(date.getTime())) {
+            return iso;
+        }
+
+        return date.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
     }
 
     function findReport(id) {
-        return state.reports.find(r => Number(r.id) === Number(id));
+        return state.reports.find(function (report) {
+            return Number(report.id) === Number(id);
+        });
     }
+
+    function getStatus(status) {
+        return STATUS_LABEL[status] ? status : 'menunggu';
+    }
+
+    // ==========================================
+    // 5. TOAST NOTIFICATION
+    // ==========================================
 
     let toastTimer = null;
+
     function showToast(message) {
         if (!toastEl) return;
+
         toastEl.textContent = message;
         toastEl.classList.add('show');
+
         clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+
+        toastTimer = setTimeout(function () {
+            toastEl.classList.remove('show');
+        }, 2400);
     }
+
+    // ==========================================
+    // 6. ICON
+    // ==========================================
 
     const ICON_TRASH =
-        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" ' +
+        'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+        'stroke-linejoin="round">' +
         '<polyline points="3 6 5 6 21 6"></polyline>' +
         '<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>' +
-        '<path d="M10 11v6"></path><path d="M14 11v6"></path>' +
-        '<path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>';
+        '<path d="M10 11v6"></path>' +
+        '<path d="M14 11v6"></path>' +
+        '<path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>' +
+        '</svg>';
 
     const ICON_EMPTY =
-        '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+        '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" ' +
+        'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ' +
+        'stroke-linejoin="round">' +
         '<path d="M22 12h-6l-2 3h-4l-2-3H2"></path>' +
-        '<path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>';
+        '<path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>' +
+        '</svg>';
+
+    // ==========================================
+    // 7. FILTER LAPORAN
+    // ==========================================
 
     function getFiltered() {
-        if (state.filter === 'semua') return state.reports;
-        return state.reports.filter(r => r.status === state.filter);
+        if (state.filter === 'semua') {
+            return state.reports;
+        }
+
+        return state.reports.filter(function (report) {
+            return getStatus(report.status) === state.filter;
+        });
     }
 
-    // Render Table & Tabs 
+    // ==========================================
+    // 8. TAMPILAN LOADING
+    // ==========================================
+
     function renderLoading() {
         if (!tbody) return;
+
         let html = '';
+
         for (let i = 0; i < 3; i++) {
             html +=
                 '<tr class="skeleton-row">' +
-                '<td><span class="skeleton w-60"></span></td>' +
-                '<td><span class="skeleton w-50"></span></td>' +
-                '<td><span class="skeleton w-50"></span></td>' +
-                '<td><span class="skeleton w-pill"></span></td>' +
-                '<td><span class="skeleton w-50"></span></td>' +
+                    '<td><span class="skeleton w-60"></span></td>' +
+                    '<td><span class="skeleton w-50"></span></td>' +
+                    '<td><span class="skeleton w-50"></span></td>' +
+                    '<td><span class="skeleton w-pill"></span></td>' +
+                    '<td><span class="skeleton w-50"></span></td>' +
                 '</tr>';
         }
+
         tbody.innerHTML = html;
     }
 
+    // ==========================================
+    // 9. TAMPILAN KETIKA DATA KOSONG
+    // ==========================================
+
     function renderEmpty() {
         if (!tbody) return;
+
         const isAll = state.filter === 'semua';
-        const title = isAll ? 'Belum ada laporan masuk' : 'Tidak ada laporan "' + (STATUS_LABEL[state.filter] || state.filter) + '"';
-        const desc = isAll
+
+        const title = isAll
+            ? 'Belum ada laporan masuk'
+            : 'Tidak ada laporan "' +
+                (STATUS_LABEL[state.filter] || state.filter) + '"';
+
+        const description = isAll
             ? 'Laporan dari pengguna akan tampil di sini.'
             : 'Coba pilih tab status yang lain.';
+
         tbody.innerHTML =
-            '<tr class="state-row"><td colspan="5">' +
-            '<div class="empty-state">' + ICON_EMPTY +
-            '<strong>' + escapeHtml(title) + '</strong>' +
-            '<span>' + escapeHtml(desc) + '</span></div></td></tr>';
+            '<tr class="state-row">' +
+                '<td colspan="5">' +
+                    '<div class="empty-state">' +
+                        ICON_EMPTY +
+                        '<strong>' + escapeHtml(title) + '</strong>' +
+                        '<span>' + escapeHtml(description) + '</span>' +
+                    '</div>' +
+                '</td>' +
+            '</tr>';
     }
+
+    // ==========================================
+    // 10. MENAMPILKAN DATA LAPORAN
+    // ==========================================
 
     function renderRows(animate) {
         if (!tbody) return;
+
         const rows = getFiltered();
+
         if (rows.length === 0) {
             renderEmpty();
             return;
         }
 
-        tbody.innerHTML = rows.map(function (r) {
-            const status = STATUS_LABEL[r.status] ? r.status : 'menunggu';
+        tbody.innerHTML = rows.map(function (report) {
+
+            const status = getStatus(report.status);
+
             return (
-                '<tr data-id="' + Number(r.id) + '"' + (animate ? ' class="row-enter"' : '') + '>' +
-                    '<td class="cell-catatan">' + escapeHtml(r.catatan) + '</td>' +
-                    '<td class="col-center cell-muted">' + escapeHtml(r.pelapor) + '</td>' +
-                    '<td class="col-center cell-muted">' + escapeHtml(r.alasan) + '</td>' +
+                '<tr data-id="' + Number(report.id) + '"' +
+                    (animate ? ' class="row-enter"' : '') + '>' +
+
+                    '<td class="cell-catatan">' +
+                        escapeHtml(report.catatan) +
+                    '</td>' +
+
+                    '<td class="col-center cell-muted">' +
+                        escapeHtml(report.pelapor) +
+                    '</td>' +
+
+                    '<td class="col-center cell-muted">' +
+                        escapeHtml(report.alasan) +
+                    '</td>' +
+
                     '<td class="col-center">' +
-                        '<button type="button" class="status-pill status-' + status + '" data-action="status" aria-haspopup="menu">' +
+                        '<button type="button" ' +
+                            'class="status-pill status-' + status + '" ' +
+                            'data-action="status" ' +
+                            'aria-haspopup="menu">' +
                             STATUS_LABEL[status] +
                         '</button>' +
                     '</td>' +
+
                     '<td class="col-center">' +
                         '<div class="action-cell">' +
-                            '<button type="button" class="link-detail" data-action="detail">Detail</button>' +
-                            '<button type="button" class="link-delete" data-action="delete">' + ICON_TRASH + 'Hapus</button>' +
+
+                            '<button type="button" ' +
+                                'class="link-detail" ' +
+                                'data-action="detail">' +
+                                'Detail' +
+                            '</button>' +
+
+                            '<button type="button" ' +
+                                'class="link-delete" ' +
+                                'data-action="delete">' +
+                                ICON_TRASH + 'Hapus' +
+                            '</button>' +
+
                         '</div>' +
                     '</td>' +
+
                 '</tr>'
             );
+
         }).join('');
     }
 
+    // ==========================================
+    // 11. MENGATUR TAB FILTER
+    // ==========================================
+
     function renderTabs() {
         if (!tabButtons.length) return;
-        tabButtons.forEach(function (btn) {
-            const active = btn.dataset.filter === state.filter;
-            btn.classList.toggle('active', active);
-            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+
+        tabButtons.forEach(function (button) {
+
+            const active = button.dataset.filter === state.filter;
+
+            button.classList.toggle('active', active);
+
+            button.setAttribute(
+                'aria-selected',
+                active ? 'true' : 'false'
+            );
         });
     }
 
     function render(animate) {
         renderTabs();
+
         if (state.loading) {
             renderLoading();
         } else {
@@ -201,37 +323,60 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (tabsWrap) {
-        tabsWrap.addEventListener('click', function (e) {
-            const btn = e.target.closest('.tab-btn');
-            if (!btn || state.loading) return;
-            state.filter = btn.dataset.filter;
+        tabsWrap.addEventListener('click', function (event) {
+
+            const button = event.target.closest('.tab-btn');
+
+            if (!button || state.loading) return;
+
+            state.filter = button.dataset.filter;
+
             closeStatusMenu();
+
             render(true);
         });
     }
 
-    // Dropdown Menu Status 
+    // ==========================================
+    // 12. DROPDOWN STATUS
+    // ==========================================
+
     function openStatusMenu(id, anchor) {
         if (!statusMenu) return;
+
         const report = findReport(id);
+
         if (!report) return;
 
         state.menuForId = id;
 
-        statusMenu.querySelectorAll('.status-option').forEach(function (opt) {
-            opt.classList.toggle('selected', opt.dataset.status === report.status);
-        });
+        statusMenu.querySelectorAll('.status-option').forEach(
+            function (option) {
+
+                option.classList.toggle(
+                    'selected',
+                    option.dataset.status === getStatus(report.status)
+                );
+
+            }
+        );
 
         statusMenu.hidden = false;
 
         const rect = anchor.getBoundingClientRect();
+
         const menuW = statusMenu.offsetWidth;
         const menuH = statusMenu.offsetHeight;
 
         let left = rect.left + rect.width / 2 - menuW / 2;
-        left = Math.max(8, Math.min(left, window.innerWidth - menuW - 8));
+
+        left = Math.max(
+            8,
+            Math.min(left, window.innerWidth - menuW - 8)
+        );
 
         let top = rect.bottom + 6;
+
         if (top + menuH > window.innerHeight - 8) {
             top = rect.top - menuH - 6;
         }
@@ -242,163 +387,290 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function closeStatusMenu() {
         if (!statusMenu) return;
+
         state.menuForId = null;
         statusMenu.hidden = true;
     }
 
     if (statusMenu) {
-        statusMenu.addEventListener('click', function (e) {
-            const opt = e.target.closest('.status-option');
-            if (!opt || state.menuForId === null) return;
+        statusMenu.addEventListener('click', function (event) {
+
+            const option = event.target.closest('.status-option');
+
+            if (!option || state.menuForId === null) return;
 
             const report = findReport(state.menuForId);
-            const newStatus = opt.dataset.status;
+            const newStatus = option.dataset.status;
+
             closeStatusMenu();
 
-            if (!report || report.status === newStatus) return;
+            if (!report || !STATUS_LABEL[newStatus]) return;
+
+            if (report.status === newStatus) return;
 
             report.status = newStatus;
+
             persist();
             render(false);
-            showToast('Status "' + report.catatan + '" diubah menjadi ' + STATUS_LABEL[newStatus]);
+
+            showToast(
+                'Status "' + report.catatan +
+                '" diubah menjadi ' + STATUS_LABEL[newStatus]
+            );
         });
     }
 
-    document.addEventListener('click', function (e) {
+    // Menutup dropdown ketika klik di luar dropdown
+
+    document.addEventListener('click', function (event) {
+
         if (state.menuForId === null) return;
-        if (e.target.closest('#status-menu') || e.target.closest('[data-action="status"]')) return;
+
+        if (
+            event.target.closest('#status-menu') ||
+            event.target.closest('[data-action="status"]')
+        ) {
+            return;
+        }
+
         closeStatusMenu();
     });
 
     window.addEventListener('resize', closeStatusMenu);
     window.addEventListener('scroll', closeStatusMenu, true);
 
-    // Table Event Handler 
+    // ==========================================
+    // 13. AKSI PADA TABEL
+    // ==========================================
+
     if (tbody) {
-        tbody.addEventListener('click', function (e) {
-            const actionEl = e.target.closest('[data-action]');
+        tbody.addEventListener('click', function (event) {
+
+            const actionEl = event.target.closest('[data-action]');
+
             if (!actionEl) return;
 
             const tr = actionEl.closest('tr');
-            const id = tr ? Number(tr.dataset.id) : null;
-            if (id === null) return;
+
+            if (!tr) return;
+
+            const id = Number(tr.dataset.id);
+
+            if (!Number.isFinite(id)) return;
 
             const action = actionEl.dataset.action;
 
             if (action === 'status') {
-                e.stopPropagation();
+
+                event.stopPropagation();
+
                 if (state.menuForId === id) {
                     closeStatusMenu();
                 } else {
                     openStatusMenu(id, actionEl);
                 }
+
             } else if (action === 'detail') {
+
                 openDetail(id);
+
             } else if (action === 'delete') {
+
                 openDelete(id);
+
             }
+
         });
     }
 
-    // Modals (Detail & Delete) 
+    // ==========================================
+    // 14. MODAL DETAIL DAN HAPUS
+    // ==========================================
+
     function openModal(modal) {
         if (!modal) return;
+
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
     }
 
     function closeModal(modal) {
         if (!modal) return;
+
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
     }
 
     function closeAllModals() {
-        if (detailModal) closeModal(detailModal);
-        if (deleteModal) closeModal(deleteModal);
+        closeModal(detailModal);
+        closeModal(deleteModal);
+
         state.detailId = null;
         state.deleteId = null;
     }
 
     [detailModal, deleteModal].forEach(function (modal) {
-        if (modal) {
-            modal.addEventListener('click', function (e) {
-                if (e.target === modal || e.target.closest('[data-close]')) {
-                    closeAllModals();
-                }
-            });
-        }
+
+        if (!modal) return;
+
+        modal.addEventListener('click', function (event) {
+
+            if (
+                event.target === modal ||
+                event.target.closest('[data-close]')
+            ) {
+                closeAllModals();
+            }
+
+        });
+
     });
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
+    // Menutup modal dengan tombol Escape
+
+    document.addEventListener('keydown', function (event) {
+
+        if (event.key === 'Escape') {
             closeAllModals();
             closeStatusMenu();
-            closeSidebar();
         }
+
     });
 
+    // ==========================================
+    // 15. MODAL DETAIL LAPORAN
+    // ==========================================
+
     function openDetail(id) {
-        const r = findReport(id);
-        if (!r || !detailBody) return;
+        const report = findReport(id);
+
+        if (!report || !detailBody) return;
+
         state.detailId = id;
+
+        const status = getStatus(report.status);
 
         detailBody.innerHTML =
             '<dl class="detail-list">' +
-                '<dt>Catatan</dt><dd>' + escapeHtml(r.catatan) + '</dd>' +
-                '<dt>Pelapor</dt><dd>' + escapeHtml(r.pelapor) + '</dd>' +
-                '<dt>Alasan</dt><dd>' + escapeHtml(r.alasan) + '</dd>' +
-                '<dt>Tanggal</dt><dd>' + escapeHtml(formatTanggal(r.tanggal)) + '</dd>' +
-                '<dt>Status</dt><dd><span class="status-pill status-' + escapeHtml(r.status) + '" style="pointer-events:none">' +
-                    escapeHtml(STATUS_LABEL[r.status] || r.status) + '</span></dd>' +
-                '<dt>Keterangan</dt><dd class="desc">' + escapeHtml(r.deskripsi || '-') + '</dd>' +
+
+                '<dt>Catatan</dt>' +
+                '<dd>' + escapeHtml(report.catatan) + '</dd>' +
+
+                '<dt>Pelapor</dt>' +
+                '<dd>' + escapeHtml(report.pelapor) + '</dd>' +
+
+                '<dt>Alasan</dt>' +
+                '<dd>' + escapeHtml(report.alasan) + '</dd>' +
+
+                '<dt>Tanggal</dt>' +
+                '<dd>' + escapeHtml(formatTanggal(report.tanggal)) + '</dd>' +
+
+                '<dt>Status</dt>' +
+                '<dd>' +
+                    '<span class="status-pill status-' + status + '" ' +
+                        'style="pointer-events:none">' +
+                        escapeHtml(STATUS_LABEL[status]) +
+                    '</span>' +
+                '</dd>' +
+
+                '<dt>Keterangan</dt>' +
+                '<dd class="desc">' +
+                    escapeHtml(report.deskripsi || '-') +
+                '</dd>' +
+
             '</dl>';
 
         openModal(detailModal);
     }
 
+    // ==========================================
+    // 16. MODAL KONFIRMASI HAPUS
+    // ==========================================
+
     function openDelete(id) {
-        const r = findReport(id);
-        if (!r || !deleteText) return;
+        const report = findReport(id);
+
+        if (!report || !deleteText) return;
+
         state.deleteId = id;
+
         deleteText.textContent =
-            'Laporan untuk "' + r.catatan + '" dari ' + r.pelapor + ' akan dihapus dan tidak dapat dikembalikan.';
+            'Laporan untuk "' + report.catatan +
+            '" dari ' + report.pelapor +
+            ' akan dihapus dan tidak dapat dikembalikan.';
+
         openModal(deleteModal);
     }
 
+    // ==========================================
+    // 17. PROSES HAPUS LAPORAN
+    // ==========================================
+
     if (confirmDeleteBtn) {
+
         confirmDeleteBtn.addEventListener('click', function () {
+
             if (state.deleteId === null) return;
 
             const id = state.deleteId;
             const report = findReport(id);
+
             closeModal(deleteModal);
+
             state.deleteId = null;
 
-            const row = tbody ? tbody.querySelector('tr[data-id="' + id + '"]') : null;
+            const row = tbody
+                ? tbody.querySelector('tr[data-id="' + id + '"]')
+                : null;
 
-            function finalize() {
-                state.reports = state.reports.filter(r => Number(r.id) !== Number(id));
+            function finalizeDelete() {
+
+                state.reports = state.reports.filter(function (item) {
+                    return Number(item.id) !== Number(id);
+                });
+
                 persist();
+
                 render(false);
-                if (report) showToast('Laporan "' + report.catatan + '" berhasil dihapus');
+
+                if (report) {
+                    showToast(
+                        'Laporan "' + report.catatan +
+                        '" berhasil dihapus'
+                    );
+                }
             }
 
             if (row) {
+
                 row.classList.add('row-leave');
-                setTimeout(finalize, 250);
+
+                setTimeout(finalizeDelete, 250);
+
             } else {
-                finalize();
+
+                finalizeDelete();
+
             }
+
         });
+
     }
 
-    //Inisialisasi Data awal 
+    // ==========================================
+    // 18. INISIALISASI
+    // ==========================================
+
     state.reports = loadReports();
+
     render(false);
 
     setTimeout(function () {
+
         state.loading = false;
+
         render(true);
+
     }, 600);
+
 });

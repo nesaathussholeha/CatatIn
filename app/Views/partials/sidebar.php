@@ -35,7 +35,7 @@ $active_menu = $active_menu ?? 'dashboard';
                 Dashboard
             </a>
 
-            <a href="<?= BASE_URL ?>/index.php?page=kelola-catatan"
+            <a href="<?= BASE_URL ?>/index.php?page=kelola_catatan"
                 class="nav-item <?= $active_menu === 'kelola_catatan' ? 'active' : '' ?>">
                 Kelola Catatan
             </a>
@@ -107,7 +107,7 @@ $active_menu = $active_menu ?? 'dashboard';
                 </li>
 
                 <li>
-                    <a href="<?= BASE_URL ?>/index.php?page=unggah"
+                    <a href="<?= BASE_URL ?>/index.php?page=unggah-catatan"
                         class="nav-link <?= $active_menu === 'unggah' ? 'active' : '' ?>">
                         <iconify-icon icon="reicon:document-upload"></iconify-icon>
                         Unggah Catatan
@@ -115,7 +115,7 @@ $active_menu = $active_menu ?? 'dashboard';
                 </li>
 
                 <li>
-                    <a href="<?= BASE_URL ?>/index.php?page=catatan"
+                    <a href="<?= BASE_URL ?>/index.php?page=catatan-saya"
                         class="nav-link <?= $active_menu === 'catatan_saya' ? 'active' : '' ?>">
                         <iconify-icon icon="hugeicons:note"></iconify-icon>
                         Catatan Saya
@@ -139,10 +139,12 @@ $active_menu = $active_menu ?? 'dashboard';
                 </li>
 
                 <li>
-                    <a href="<?= BASE_URL ?>/index.php?page=profil"
-                        class="nav-link <?= $active_menu === 'profil' ? 'active' : '' ?>">
+                    <a href="<?= BASE_URL ?>/index.php?page=profil-user"
+                        class="nav-link <?= $active_menu === 'profile-user' ? 'active' : '' ?>">
+
                         <iconify-icon icon="iconamoon:profile-circle"></iconify-icon>
                         Profil
+
                     </a>
                 </li>
 

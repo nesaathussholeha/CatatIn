@@ -1,5 +1,3 @@
-/* catatan_saya.js — khusus halaman catatan_saya.php
-   (menu sidebar mobile ditangani oleh ../layout_user/script.js) */
 (function () {
     'use strict';
 

@@ -76,6 +76,8 @@ html, body,
 .badge-rangkuman { background: #e0e7ff; color: #4f5bd5; }
 .badge-soal      { background: #ffedd5; color: #f59e0b; }
 .badge-modul     { background: #dcfce7; color: #16a34a; }
+.badge-publik    { background: #dcfce7; color: #16a34a; }
+.badge-pribadi   { background: #f1f5f9; color: #475569; }
 
 /* Upvote */
 .upvote {
